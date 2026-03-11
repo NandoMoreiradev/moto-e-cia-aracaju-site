@@ -1,6 +1,8 @@
 import type { Metadata } from 'next';
 import StyledComponentsRegistry from '@/lib/styled-registry';
 import { Providers } from '@/lib/providers';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 export const metadata: Metadata = {
   title: {
@@ -22,7 +24,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="pt-BR">
       <body>
         <StyledComponentsRegistry>
-          <Providers>{children}</Providers>
+          <Providers>
+            <Header />
+            <main style={{ minHeight: 'calc(100vh - 80px)' }}>
+              {children}
+            </main>
+            <Footer />
+          </Providers>
         </StyledComponentsRegistry>
       </body>
     </html>
