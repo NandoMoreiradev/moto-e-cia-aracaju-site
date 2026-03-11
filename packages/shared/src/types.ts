@@ -1,0 +1,151 @@
+// Tipos de Motos
+export type MarcaMoto = 'SUZUKI' | 'HAOJUE' | 'ZONTES' | 'KYMCO' | 'OUTRO';
+export type TipoMoto = 'SPORT' | 'NAKED' | 'ADVENTURE' | 'SCOOTER' | 'TRAIL';
+export type StatusMoto = 'DISPONIVEL' | 'VENDIDA' | 'RESERVADA' | 'ALUGUEL';
+
+export interface MotoFotoDto {
+  id: string;
+  url: string;
+  r2Key: string;
+  principal: boolean;
+  ordem: number;
+}
+
+export interface MotoDto {
+  id: string;
+  slug: string;
+  nome: string;
+  marca: MarcaMoto;
+  tipo: TipoMoto;
+  preco: number | null;
+  precoFormatado: string | null;
+  descricao: string;
+  specs: MotoSpecs;
+  fotos: MotoFotoDto[];
+  destaque: boolean;
+  status: StatusMoto;
+  metaProductId: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface MotoSpecs {
+  motor?: string;
+  potencia?: string;
+  torque?: string;
+  peso?: string;
+  tanque?: string;
+  transmissao?: string;
+  freios?: string;
+  pneuDianteiro?: string;
+  pneuTraseiro?: string;
+  anoModelo?: string;
+  cor?: string[];
+  [key: string]: string | string[] | undefined;
+}
+
+export interface CreateMotoDto {
+  nome: string;
+  marca: MarcaMoto;
+  tipo: TipoMoto;
+  preco?: number;
+  precoFormatado?: string;
+  descricao: string;
+  specs?: MotoSpecs;
+  destaque?: boolean;
+  status?: StatusMoto;
+}
+
+export interface UpdateMotoDto extends Partial<CreateMotoDto> {}
+
+// Tipos de Blog
+export interface BlogPostDto {
+  id: string;
+  slug: string;
+  titulo: string;
+  resumo: string;
+  conteudo: Record<string, unknown>; // TipTap JSON
+  coverUrl: string | null;
+  coverR2Key: string | null;
+  tags: string[];
+  publicado: boolean;
+  publicadoEm: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateBlogPostDto {
+  titulo: string;
+  resumo: string;
+  conteudo?: Record<string, unknown>;
+  tags?: string[];
+}
+
+export interface UpdateBlogPostDto extends Partial<CreateBlogPostDto> {
+  publicado?: boolean;
+}
+
+// Tipos de Lead
+export interface LeadDto {
+  id: string;
+  nome: string;
+  email: string;
+  whatsapp: string | null;
+  mensagem: string;
+  motoInteresse: string | null;
+  lido: boolean;
+  createdAt: string;
+}
+
+export interface CreateLeadDto {
+  nome: string;
+  email: string;
+  whatsapp?: string;
+  mensagem: string;
+  motoInteresse?: string;
+}
+
+// Tipos de Auth
+export type UserRole = 'ADMIN' | 'EDITOR';
+
+export interface UserDto {
+  id: string;
+  email: string;
+  name: string;
+  role: UserRole;
+}
+
+export interface LoginDto {
+  email: string;
+  password: string;
+}
+
+export interface AuthResponseDto {
+  user: UserDto;
+  accessToken: string;
+}
+
+// Paginação
+export interface PaginationDto {
+  page?: number;
+  limit?: number;
+}
+
+export interface PaginatedResponse<T> {
+  data: T[];
+  total: number;
+  page: number;
+  limit: number;
+  totalPages: number;
+}
+
+// Filtros de Moto
+export interface MotoFiltersDto extends PaginationDto {
+  marca?: MarcaMoto;
+  tipo?: TipoMoto;
+  status?: StatusMoto;
+  destaque?: boolean;
+  search?: string;
+  precoMin?: number;
+  precoMax?: number;
+}

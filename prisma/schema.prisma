@@ -1,0 +1,148 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==========================================
+// USERS & AUTH
+// ==========================================
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(EDITOR)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
+}
+
+// ==========================================
+// MOTOS
+// ==========================================
+
+model Moto {
+  id             String     @id @default(cuid())
+  slug           String     @unique
+  nome           String
+  marca          MarcaMoto
+  tipo           TipoMoto
+  preco          Decimal?   @db.Decimal(10, 2)
+  precoFormatado String?
+  descricao      String     @db.Text
+  specs          Json       @default("{}")
+  destaque       Boolean    @default(false)
+  status         StatusMoto @default(DISPONIVEL)
+  metaProductId  String?    // ID do produto sincronizado com Meta Commerce
+
+  fotos MotoFoto[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("motos")
+}
+
+model MotoFoto {
+  id        String  @id @default(cuid())
+  url       String  // URL pública do Cloudflare R2
+  r2Key     String  // Chave do objeto no bucket R2
+  principal Boolean @default(false)
+  ordem     Int     @default(0)
+
+  motoId String
+  moto   Moto   @relation(fields: [motoId], references: [id], onDelete: Cascade)
+
+  @@map("moto_fotos")
+}
+
+enum MarcaMoto {
+  SUZUKI
+  HAOJUE
+  ZONTES
+  KYMCO
+  OUTRO
+}
+
+enum TipoMoto {
+  SPORT
+  NAKED
+  ADVENTURE
+  SCOOTER
+  TRAIL
+}
+
+enum StatusMoto {
+  DISPONIVEL
+  VENDIDA
+  RESERVADA
+  ALUGUEL
+}
+
+// ==========================================
+// BLOG
+// ==========================================
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  titulo      String
+  resumo      String    @db.Text
+  conteudo    Json      @default("{}") // TipTap JSON
+  coverUrl    String?   // URL pública do Cloudflare R2
+  coverR2Key  String?   // Chave do objeto no bucket R2
+  tags        String[]
+  publicado   Boolean   @default(false)
+  publicadoEm DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+// ==========================================
+// LEADS / CONTATO
+// ==========================================
+
+model Lead {
+  id             String  @id @default(cuid())
+  nome           String
+  email          String
+  whatsapp       String?
+  mensagem       String  @db.Text
+  motoInteresse  String? // slug da moto de interesse
+  lido           Boolean @default(false)
+
+  createdAt DateTime @default(now())
+
+  @@map("leads")
+}
+
+// ==========================================
+// CONFIGURAÇÕES DO SITE
+// ==========================================
+
+model SiteConfig {
+  id    String @id @default(cuid())
+  key   String @unique
+  value Json
+
+  updatedAt DateTime @updatedAt
+
+  @@map("site_configs")
+}
