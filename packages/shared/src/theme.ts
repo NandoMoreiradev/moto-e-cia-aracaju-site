@@ -1,13 +1,13 @@
 export const theme = {
   colors: {
     // Cores da marca
-    primary: '#E2231A',       // Vermelho principal
-    primaryDark: '#B81A13',   // Vermelho escuro (hover)
-    primaryLight: '#FF3B31',  // Vermelho claro
+    primary: '#0055A4',       // Azul principal
+    primaryDark: '#003E7A',   // Azul escuro (hover)
+    primaryLight: '#1A6FBC',  // Azul claro
 
-    secondary: '#0055A4',     // Azul principal
-    secondaryDark: '#003E7A', // Azul escuro (hover)
-    secondaryLight: '#1A6FBC', // Azul claro
+    secondary: '#E2231A',     // Vermelho principal
+    secondaryDark: '#B81A13', // Vermelho escuro (hover)
+    secondaryLight: '#FF3B31',// Vermelho claro
 
     // Neutros
     dark: '#151515',          // Fundo escuro (header, footer)
@@ -101,7 +101,7 @@ export const theme = {
     xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1)',
     '2xl': '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
     card: '0 4px 20px rgba(0, 0, 0, 0.08)',
-    button: '0 4px 14px rgba(226, 35, 26, 0.4)',
+    button: '0 4px 14px rgba(0, 85, 164, 0.4)',
   },
 
   breakpoints: {

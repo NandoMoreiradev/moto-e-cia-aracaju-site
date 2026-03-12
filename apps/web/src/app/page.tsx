@@ -320,13 +320,15 @@ const WhatsAppButton = styled.a`
   }
 `;
 
+import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck } from 'lucide-react';
+
 const SERVICOS = [
-  { icon: '🔧', titulo: 'Revisão Completa', desc: 'Manutenção preventiva e corretiva com técnicos certificados' },
-  { icon: '🏍️', titulo: 'Mecânica em Geral', desc: 'Reparo e diagnóstico para todas as marcas e modelos' },
-  { icon: '🔩', titulo: 'Instalação de Acessórios', desc: 'Instalação profissional de baús, proteções e tecnologia' },
-  { icon: '⚙️', titulo: 'Troca de Pneus', desc: 'Borracharia especializada com as melhores marcas do mercado' },
-  { icon: '🛢️', titulo: 'Troca de Óleo', desc: 'Óleos Motul originais para proteger seu motor' },
-  { icon: '🛑', titulo: 'Inspeção de Freio', desc: 'Garantia de segurança com revisão completa dos sistemas de freio' },
+  { icon: <Wrench size={32} />, titulo: 'Revisão Completa', desc: 'Manutenção preventiva e corretiva com técnicos certificados' },
+  { icon: <Settings size={32} />, titulo: 'Mecânica em Geral', desc: 'Reparo e diagnóstico para todas as marcas e modelos' },
+  { icon: <Plus size={32} />, titulo: 'Instalação de Acessórios', desc: 'Instalação profissional de baús, proteções e tecnologia' },
+  { icon: <RotateCcw size={32} />, titulo: 'Troca de Pneus', desc: 'Borracharia especializada com as melhores marcas do mercado' },
+  { icon: <Droplets size={32} />, titulo: 'Troca de Óleo', desc: 'Óleos Motul originais para proteger seu motor' },
+  { icon: <ShieldCheck size={32} />, titulo: 'Inspeção de Freio', desc: 'Garantia de segurança com revisão completa dos sistemas de freio' },
 ];
 
 export default function HomePage() {
