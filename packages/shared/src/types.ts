@@ -11,6 +11,8 @@ export interface MotoFotoDto {
   r2Key: string;
   principal: boolean;
   ordem: number;
+  corHex: string | null;
+  corNome: string | null;
 }
 
 export interface MotoDto {
@@ -22,6 +24,8 @@ export interface MotoDto {
   preco: number | null;
   precoFormatado: string | null;
   descricao: string;
+  capaUrl: string | null;
+  capaR2Key: string | null;
   specs: MotoSpecs;
   fotos: MotoFotoDto[];
   destaque: boolean;
@@ -57,6 +61,8 @@ export interface CreateMotoDto {
   preco?: number;
   precoFormatado?: string;
   descricao: string;
+  capaUrl?: string;
+  capaR2Key?: string;
   specs?: MotoSpecs;
   destaque?: boolean;
   status?: StatusMoto;

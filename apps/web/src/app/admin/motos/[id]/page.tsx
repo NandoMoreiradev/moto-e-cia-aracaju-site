@@ -69,12 +69,22 @@ export default function AdminMotoEditPage() {
     setSaving(true);
     setMsg(null);
     try {
+      const {
+        id: _id,
+        slug: _slug,
+        metaProductId: _meta,
+        createdAt: _created,
+        updatedAt: _updated,
+        fotos: _f,
+        ...dataToSave
+      } = moto as any;
+
       if (nova) {
-        const created = await adminMotos.create(moto);
+        const created = await adminMotos.create(dataToSave);
         setMsg({ type: 'ok', text: 'Moto criada com sucesso!' });
         router.replace(`/admin/motos/${created.id}`);
       } else {
-        await adminMotos.update(id, moto);
+        await adminMotos.update(id, dataToSave);
         setMsg({ type: 'ok', text: 'Alterações salvas!' });
         load();
       }
@@ -130,6 +140,39 @@ export default function AdminMotoEditPage() {
       setMsg({ type: 'err', text: err.message });
     } finally {
       setSyncing(false);
+    }
+  }
+
+  async function handleUploadCapa(files: FileList | null) {
+    if (!files || files.length === 0 || nova) return;
+    setUploading(true);
+    try {
+      const updatedMoto = await adminMotos.uploadCapa(id, files[0]);
+      setMoto((prev) => ({ ...prev, capaUrl: updatedMoto.capaUrl }));
+      setMsg({ type: 'ok', text: 'Capa enviada com sucesso!' });
+    } catch (err: any) {
+      setMsg({ type: 'err', text: err.message });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleDeleteCapa() {
+    if (!confirm('Remover a imagem de capa?')) return;
+    try {
+      await adminMotos.deleteCapa(id);
+      setMoto((prev) => ({ ...prev, capaUrl: null }));
+    } catch (err: any) {
+      alert(err.message);
+    }
+  }
+
+  async function handleUpdateCor(fotoId: string, corHex: string) {
+    try {
+      await adminMotos.updateFoto(id, fotoId, { corHex });
+      setFotos((prev) => prev.map((f) => (f.id === fotoId ? { ...f, corHex } : f)));
+    } catch (err: any) {
+      alert(err.message);
     }
   }
 
@@ -248,6 +291,33 @@ export default function AdminMotoEditPage() {
             </div>
           </Card>
 
+          {/* CAPA DA MOTO (HERO) */}
+          {!nova && (
+             <Card title="Hero Banner (Capa Principal)">
+               <p style={{ color: '#555', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}>
+                 Será mostrada grande no topo da página. Se não enviar, a página usa fundo sólido.
+               </p>
+               {moto.capaUrl ? (
+                 <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '2px solid #333' }}>
+                    <div style={{ height: '200px', position: 'relative' }}>
+                      <Image src={moto.capaUrl} alt="capa" fill style={{ objectFit: 'cover' }} />
+                    </div>
+                    <div style={{ padding: '8px', background: '#111', display: 'flex', justifyContent: 'flex-end' }}>
+                      <button type="button" onClick={handleDeleteCapa} style={{
+                        padding: '6px 12px', background: 'transparent', border: '1px solid #cc4444',
+                        borderRadius: '4px', color: '#cc4444', fontSize: '12px', cursor: 'pointer',
+                      }}>🗑️ Remover Capa</button>
+                    </div>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <input type="file" accept="image/*" onChange={e => handleUploadCapa(e.target.files)} style={inputStyle} />
+                    {uploading && <span style={{ color: '#E2231A', fontSize: '13px' }}>Enviando imagem...</span>}
+                 </div>
+               )}
+             </Card>
+          )}
+
           {/* Fotos */}
           {!nova && (
             <Card title={`📷 Fotos (${fotos.length})`}>
@@ -274,20 +344,33 @@ export default function AdminMotoEditPage() {
                     <div style={{ height: '120px', position: 'relative' }}>
                       <Image src={foto.url} alt="foto" fill style={{ objectFit: 'cover' }} />
                     </div>
-                    <div style={{ padding: '6px', background: '#111', display: 'flex', gap: '4px' }}>
-                      {!foto.principal && (
-                        <button type="button" onClick={() => handleSetPrincipal(foto.id)} title="Definir como principal" style={{
-                          flex: 1, padding: '3px', background: '#1a1a1a', border: '1px solid #333',
-                          borderRadius: '4px', color: '#888', fontSize: '11px', cursor: 'pointer',
-                        }}>⭐</button>
-                      )}
-                      {foto.principal && (
-                        <span style={{ flex: 1, textAlign: 'center', color: '#E2231A', fontSize: '11px', padding: '3px' }}>Principal</span>
-                      )}
-                      <button type="button" onClick={() => handleDeleteFoto(foto.id)} style={{
-                        padding: '3px 6px', background: 'transparent', border: '1px solid #330000',
-                        borderRadius: '4px', color: '#cc4444', fontSize: '11px', cursor: 'pointer',
-                      }}>🗑️</button>
+                    {/* Controles de Cor e Botões */}
+                    <div style={{ padding: '8px', background: '#111', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                         <label style={{ color: '#888', fontSize: '11px', flex: 1 }}>Cor / Dot:</label>
+                         <input 
+                           type="color" 
+                           value={foto.corHex || '#ffffff'} 
+                           onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
+                           style={{ width: '30px', height: '30px', padding: '0', border: 'none', cursor: 'pointer', background: 'transparent' }}
+                           title="Escolha a cor dessa moto para o seletor"
+                         />
+                      </div>
+                      <div style={{ display: 'flex', gap: '4px' }}>
+                        {!foto.principal && (
+                          <button type="button" onClick={() => handleSetPrincipal(foto.id)} title="Definir como principal" style={{
+                            flex: 1, padding: '4px', background: '#1a1a1a', border: '1px solid #333',
+                            borderRadius: '4px', color: '#888', fontSize: '11px', cursor: 'pointer',
+                          }}>⭐</button>
+                        )}
+                        {foto.principal && (
+                          <span style={{ flex: 1, textAlign: 'center', color: '#E2231A', fontSize: '11px', padding: '4px' }}>Principal</span>
+                        )}
+                        <button type="button" onClick={() => handleDeleteFoto(foto.id)} style={{
+                          padding: '4px 8px', background: 'transparent', border: '1px solid #330000',
+                          borderRadius: '4px', color: '#cc4444', fontSize: '11px', cursor: 'pointer',
+                        }}>🗑️</button>
+                      </div>
                     </div>
                   </div>
                 ))}

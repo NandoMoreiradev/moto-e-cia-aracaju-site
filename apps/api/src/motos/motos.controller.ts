@@ -112,4 +112,48 @@ export class MotosController {
   setFotoPrincipal(@Param('id') id: string, @Param('fotoId') fotoId: string) {
     return this.motosService.setFotoPrincipal(id, fotoId);
   }
+
+  @ApiOperation({ summary: '[Admin] Atualizar metadados da foto (Cor)' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
+  @Patch('admin/motos/:id/fotos/:fotoId')
+  updateFoto(
+    @Param('id') id: string,
+    @Param('fotoId') fotoId: string,
+    @Body() body: { corHex?: string; corNome?: string },
+  ) {
+    return this.motosService.updateFoto(id, fotoId, body);
+  }
+
+  @ApiOperation({ summary: '[Admin] Upload da foto de capa (Banner)' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
+  @Post('admin/motos/:id/capa')
+  @UseInterceptors(FileInterceptor('capa'))
+  uploadCapa(
+    @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
+          new FileTypeValidator({ fileType: /^image\/(jpeg|png|webp)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.motosService.uploadCapa(id, file);
+  }
+
+  @ApiOperation({ summary: '[Admin] Deletar foto de capa' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
+  @Delete('admin/motos/:id/capa')
+  deleteCapa(@Param('id') id: string) {
+    return this.motosService.deleteCapa(id);
+  }
 }

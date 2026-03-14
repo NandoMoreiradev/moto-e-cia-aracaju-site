@@ -18,7 +18,6 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        // Encaminha todas as chamadas /api/* para o backend NestJS
         source: '/api/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/:path*`,
       },

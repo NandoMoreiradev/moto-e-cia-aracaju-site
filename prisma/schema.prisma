@@ -52,6 +52,10 @@ model Moto {
   status         StatusMoto @default(DISPONIVEL)
   metaProductId  String?    // ID do produto sincronizado com Meta Commerce
 
+  // Imagem de Capa (Hero Banner)
+  capaUrl        String?
+  capaR2Key      String?
+
   // Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0)
   ano           Int?        // Ano de fabricação
   km            Int?        // Quilometragem (0 = zero km)
@@ -74,6 +78,8 @@ model MotoFoto {
   r2Key     String  // Chave do objeto no bucket R2
   principal Boolean @default(false)
   ordem     Int     @default(0)
+  corHex    String? // Código Hexadecimal para o dot de seleção
+  corNome   String? // Nome da cor (ex: Vermelho Candy)
 
   motoId String
   moto   Moto   @relation(fields: [motoId], references: [id], onDelete: Cascade)

@@ -167,6 +167,66 @@ export class MotosService {
     return { message: 'Foto removida com sucesso' };
   }
 
+  async updateFoto(motoId: string, fotoId: string, data: { corHex?: string; corNome?: string }) {
+    const foto = await this.prisma.motoFoto.findFirst({
+      where: { id: fotoId, motoId },
+    });
+
+    if (!foto) throw new NotFoundException('Foto não encontrada');
+
+    const updated = await this.prisma.motoFoto.update({
+      where: { id: fotoId },
+      data: {
+        corHex: data.corHex,
+        corNome: data.corNome,
+      },
+    });
+
+    return updated;
+  }
+
+  async uploadCapa(id: string, file: Express.Multer.File) {
+    const moto = await this.findById(id);
+
+    // Se já havia uma capa, excluí-la primeiro do R2
+    if (moto.capaR2Key) {
+      await this.r2.deleteFile(moto.capaR2Key).catch(() => null);
+    }
+
+    const r2Key = `motos/${id}/capa-${Date.now()}-${file.originalname}`;
+    const url = await this.r2.uploadFile(r2Key, file.buffer, file.mimetype);
+
+    const updatedMoto = await this.prisma.moto.update({
+      where: { id },
+      data: {
+        capaUrl: url,
+        capaR2Key: r2Key,
+      },
+      include: { fotos: { orderBy: { ordem: 'asc' } } },
+    });
+
+    return updatedMoto;
+  }
+
+  async deleteCapa(id: string) {
+    const moto = await this.findById(id);
+
+    if (moto.capaR2Key) {
+      await this.r2.deleteFile(moto.capaR2Key).catch(() => null);
+    }
+
+    const updatedMoto = await this.prisma.moto.update({
+      where: { id },
+      data: {
+        capaUrl: null,
+        capaR2Key: null,
+      },
+      include: { fotos: { orderBy: { ordem: 'asc' } } },
+    });
+
+    return updatedMoto;
+  }
+
   async setFotoPrincipal(motoId: string, fotoId: string) {
     await this.findById(motoId);
 

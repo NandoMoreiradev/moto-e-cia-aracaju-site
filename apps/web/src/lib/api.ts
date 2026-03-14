@@ -86,15 +86,30 @@ export const adminMotos = {
   delete: (id: string) =>
     apiFetch<{ message: string }>(`/admin/motos/${id}`, { method: 'DELETE' }),
 
-  // Fotos
+  // Fotos & Capa
+  uploadCapa: (motoId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('capa', file);
+    return apiFetchFormData<MotoDto>(`/admin/motos/${motoId}/capa`, formData);
+  },
+
+  deleteCapa: (motoId: string) =>
+    apiFetch<MotoDto>(`/admin/motos/${motoId}/capa`, { method: 'DELETE' }),
+
   uploadFoto: (motoId: string, file: File) => {
     const formData = new FormData();
-    formData.append('file', file);
-    return apiFetchFormData<{ id: string; url: string; principal: boolean }>(
+    formData.append('foto', file);
+    return apiFetchFormData<{ id: string; url: string; principal: boolean; corHex: string | null }>(
       `/admin/motos/${motoId}/fotos`,
       formData,
     );
   },
+
+  updateFoto: (motoId: string, fotoId: string, data: { corHex?: string; corNome?: string }) =>
+    apiFetch<{ id: string }>(`/admin/motos/${motoId}/fotos/${fotoId}`, {
+      method: 'PATCH',
+      body: JSON.stringify(data),
+    }),
 
   deleteFoto: (motoId: string, fotoId: string) =>
     apiFetch<{ message: string }>(`/admin/motos/${motoId}/fotos/${fotoId}`, { method: 'DELETE' }),
