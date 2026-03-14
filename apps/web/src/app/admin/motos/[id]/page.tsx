@@ -167,6 +167,30 @@ export default function AdminMotoEditPage() {
     }
   }
 
+  async function handleUploadLogo(files: FileList | null) {
+    if (!files || files.length === 0 || nova) return;
+    setUploading(true);
+    try {
+      const updatedMoto = await adminMotos.uploadLogo(id, files[0]);
+      setMoto((prev) => ({ ...prev, logoUrl: updatedMoto.logoUrl }));
+      setMsg({ type: 'ok', text: 'Logo enviada com sucesso!' });
+    } catch (err: any) {
+      setMsg({ type: 'err', text: err.message });
+    } finally {
+      setUploading(false);
+    }
+  }
+
+  async function handleDeleteLogo() {
+    if (!confirm('Remover a logomarca da moto?')) return;
+    try {
+      await adminMotos.deleteLogo(id);
+      setMoto((prev) => ({ ...prev, logoUrl: null }));
+    } catch (err: any) {
+      alert(err.message);
+    }
+  }
+
   async function handleUpdateCor(fotoId: string, corHex: string) {
     try {
       await adminMotos.updateFoto(id, fotoId, { corHex });
@@ -224,6 +248,10 @@ export default function AdminMotoEditPage() {
               <div style={fieldStyle}>
                 <label style={labelStyle}>Nome / Modelo *</label>
                 <input style={inputStyle} value={moto.nome || ''} onChange={e => set('nome', e.target.value)} required />
+              </div>
+              <div style={fieldStyle}>
+                <label style={labelStyle}>Slogan de destaque (Abaixo da logo)</label>
+                <input style={inputStyle} value={moto.slogan || ''} onChange={e => set('slogan', e.target.value)} placeholder="Ex: A NAKED DA SUA GARAGEM" />
               </div>
               <div style={fieldStyle}>
                 <label style={labelStyle}>Marca *</label>
@@ -312,6 +340,33 @@ export default function AdminMotoEditPage() {
                ) : (
                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <input type="file" accept="image/*" onChange={e => handleUploadCapa(e.target.files)} style={inputStyle} />
+                    {uploading && <span style={{ color: '#E2231A', fontSize: '13px' }}>Enviando imagem...</span>}
+                 </div>
+               )}
+             </Card>
+          )}
+
+          {/* LOGOMARCA */}
+          {!nova && (
+             <Card title="Logomarca da Moto">
+               <p style={{ color: '#555', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}>
+                 Aparecerá sobreposta à Capa (em branco, de preferência SVG ou PNG transparente).
+               </p>
+               {moto.logoUrl ? (
+                 <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '2px solid #333', background: '#333' }}>
+                    <div style={{ height: '100px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <Image src={moto.logoUrl} alt="Logo da Moto" fill style={{ objectFit: 'contain', padding: '10px' }} />
+                    </div>
+                    <div style={{ padding: '8px', background: '#111', display: 'flex', justifyContent: 'flex-end' }}>
+                      <button type="button" onClick={handleDeleteLogo} style={{
+                        padding: '6px 12px', background: 'transparent', border: '1px solid #cc4444',
+                        borderRadius: '4px', color: '#cc4444', fontSize: '12px', cursor: 'pointer',
+                      }}>🗑️ Remover Logo</button>
+                    </div>
+                 </div>
+               ) : (
+                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <input type="file" accept="image/png, image/svg+xml, image/webp" onChange={e => handleUploadLogo(e.target.files)} style={inputStyle} />
                     {uploading && <span style={{ color: '#E2231A', fontSize: '13px' }}>Enviando imagem...</span>}
                  </div>
                )}

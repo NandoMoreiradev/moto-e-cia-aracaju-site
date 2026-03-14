@@ -227,6 +227,48 @@ export class MotosService {
     return updatedMoto;
   }
 
+  async uploadLogo(id: string, file: Express.Multer.File) {
+    const moto = await this.findById(id);
+
+    // Se já havia uma logo, excluí-la primeiro do R2
+    if (moto.logoR2Key) {
+      await this.r2.deleteFile(moto.logoR2Key).catch(() => null);
+    }
+
+    const r2Key = `motos/${id}/logo-${Date.now()}-${file.originalname}`;
+    const url = await this.r2.uploadFile(r2Key, file.buffer, file.mimetype);
+
+    const updatedMoto = await this.prisma.moto.update({
+      where: { id },
+      data: {
+        logoUrl: url,
+        logoR2Key: r2Key,
+      },
+      include: { fotos: { orderBy: { ordem: 'asc' } } },
+    });
+
+    return updatedMoto;
+  }
+
+  async deleteLogo(id: string) {
+    const moto = await this.findById(id);
+
+    if (moto.logoR2Key) {
+      await this.r2.deleteFile(moto.logoR2Key).catch(() => null);
+    }
+
+    const updatedMoto = await this.prisma.moto.update({
+      where: { id },
+      data: {
+        logoUrl: null,
+        logoR2Key: null,
+      },
+      include: { fotos: { orderBy: { ordem: 'asc' } } },
+    });
+
+    return updatedMoto;
+  }
+
   async setFotoPrincipal(motoId: string, fotoId: string) {
     await this.findById(motoId);
 

@@ -81,12 +81,25 @@ export default function MotoDetalhePage() {
       </div>
 
       {/* 2. ÁREA DA MOTO ISOLADA E SELETOR DE COR */}
-      <section style={{ maxWidth: '1200px', margin: '60px auto', padding: '0 5%', textAlign: 'center' }}>
+      <section style={{ maxWidth: '1200px', margin: '40px auto 60px', padding: '0 5%', textAlign: 'center' }}>
         
-        {/* Título Inspirado Haojue */}
-        <h2 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, marginBottom: '24px', color: '#333' }}>
-          Conquiste sua <span style={{ color: '#e31b23' }}>{moto.nome}</span>
-        </h2>
+        {/* Logomarca e Slogan ou Título Fallback */}
+        {moto.logoUrl ? (
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
+             <div style={{ position: 'relative', width: '300px', height: '100px' }}>
+               <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain' }} />
+             </div>
+             {moto.slogan && (
+               <div style={{ marginTop: '12px', fontSize: '20px', fontWeight: 700, letterSpacing: '2px', color: '#111', textTransform: 'uppercase' }}>
+                 {moto.slogan}
+               </div>
+             )}
+          </div>
+        ) : (
+          <h2 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, marginBottom: '24px', color: '#333' }}>
+            Conquiste sua <span style={{ color: '#e31b23' }}>{moto.nome}</span>
+          </h2>
+        )}
         
         {/* Badge de Preço */}
         {moto.preco && (

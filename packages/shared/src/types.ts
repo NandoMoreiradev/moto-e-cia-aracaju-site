@@ -26,6 +26,9 @@ export interface MotoDto {
   descricao: string;
   capaUrl: string | null;
   capaR2Key: string | null;
+  logoUrl: string | null;
+  logoR2Key: string | null;
+  slogan: string | null;
   specs: MotoSpecs;
   fotos: MotoFotoDto[];
   destaque: boolean;

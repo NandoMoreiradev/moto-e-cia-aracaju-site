@@ -96,6 +96,15 @@ export const adminMotos = {
   deleteCapa: (motoId: string) =>
     apiFetch<MotoDto>(`/admin/motos/${motoId}/capa`, { method: 'DELETE' }),
 
+  uploadLogo: (motoId: string, file: File) => {
+    const formData = new FormData();
+    formData.append('logo', file);
+    return apiFetchFormData<MotoDto>(`/admin/motos/${motoId}/logo`, formData);
+  },
+
+  deleteLogo: (motoId: string) =>
+    apiFetch<MotoDto>(`/admin/motos/${motoId}/logo`, { method: 'DELETE' }),
+
   uploadFoto: (motoId: string, file: File) => {
     const formData = new FormData();
     formData.append('foto', file);

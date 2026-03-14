@@ -51,6 +51,31 @@ export class CreateMotoDto {
   @IsEnum(STATUS)
   status?: StatusMoto;
 
+  @ApiPropertyOptional({ description: 'URL da capa' })
+  @IsOptional()
+  @IsString()
+  capaUrl?: string;
+
+  @ApiPropertyOptional({ description: 'Key R2 da capa' })
+  @IsOptional()
+  @IsString()
+  capaR2Key?: string;
+
+  @ApiPropertyOptional({ description: 'URL da logo' })
+  @IsOptional()
+  @IsString()
+  logoUrl?: string;
+
+  @ApiPropertyOptional({ description: 'Key R2 da logo' })
+  @IsOptional()
+  @IsString()
+  logoR2Key?: string;
+
+  @ApiPropertyOptional({ description: 'Slogan da Moto' })
+  @IsOptional()
+  @IsString()
+  slogan?: string;
+
   // ── Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0) ─────────────
 
   @ApiProperty({ example: 2024, description: 'Ano de fabricação' })

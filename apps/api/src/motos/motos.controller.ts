@@ -156,4 +156,35 @@ export class MotosController {
   deleteCapa(@Param('id') id: string) {
     return this.motosService.deleteCapa(id);
   }
+
+  @ApiOperation({ summary: '[Admin] Upload da logomarca da moto' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
+  @Post('admin/motos/:id/logo')
+  @UseInterceptors(FileInterceptor('logo'))
+  uploadLogo(
+    @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 5 * 1024 * 1024 }), // 5MB
+          new FileTypeValidator({ fileType: /^image\/(jpeg|png|webp|svg\+xml)$/ }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.motosService.uploadLogo(id, file);
+  }
+
+  @ApiOperation({ summary: '[Admin] Deletar logomarca da moto' })
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
+  @Delete('admin/motos/:id/logo')
+  deleteLogo(@Param('id') id: string) {
+    return this.motosService.deleteLogo(id);
+  }
 }

@@ -56,6 +56,11 @@ model Moto {
   capaUrl        String?
   capaR2Key      String?
 
+  // Logomarca e Slogan
+  logoUrl        String?
+  logoR2Key      String?
+  slogan         String?
+
   // Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0)
   ano           Int?        // Ano de fabricação
   km            Int?        // Quilometragem (0 = zero km)
