@@ -3,7 +3,7 @@ import { Theme } from '@moto-e-cia/shared';
 
 export const GlobalStyles = createGlobalStyle`
   /* Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap');
 
   *, *::before, *::after {
     box-sizing: border-box;

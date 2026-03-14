@@ -1,127 +1,10 @@
 'use client';
 
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-
-const fadeInUp = keyframes`
-  from { opacity: 0; transform: translateY(30px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
-
-const HeroSection = styled.section`
-  min-height: 100vh;
-  background: ${({ theme }) => theme.colors.dark};
-  display: flex;
-  align-items: center;
-  position: relative;
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(
-      135deg,
-      rgba(226, 35, 26, 0.15) 0%,
-      rgba(0, 85, 164, 0.1) 100%
-    );
-    pointer-events: none;
-  }
-`;
-
-const HeroContent = styled.div`
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.spacing.lg};
-`;
-
-const HeroLabel = styled.span`
-  display: inline-block;
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  animation: ${fadeInUp} 0.6s ease forwards;
-`;
-
-const HeroTitle = styled.h1`
-  font-size: clamp(2.5rem, 6vw, 5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  color: ${({ theme }) => theme.colors.white};
-  line-height: 1.1;
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
-  animation: ${fadeInUp} 0.6s ease 0.1s forwards;
-  opacity: 0;
-
-  span {
-    color: ${({ theme }) => theme.colors.primary};
-  }
-`;
-
-const HeroSubtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.xl};
-  color: rgba(255, 255, 255, 0.7);
-  max-width: 560px;
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
-  animation: ${fadeInUp} 0.6s ease 0.2s forwards;
-  opacity: 0;
-`;
-
-const HeroActions = styled.div`
-  display: flex;
-  gap: ${({ theme }) => theme.spacing.md};
-  flex-wrap: wrap;
-  animation: ${fadeInUp} 0.6s ease 0.3s forwards;
-  opacity: 0;
-`;
-
-const PrimaryButton = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['2xl']}`};
-  background: ${({ theme }) => theme.colors.primary};
-  color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: all ${({ theme }) => theme.transitions.normal};
-  box-shadow: ${({ theme }) => theme.shadows.button};
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primaryDark};
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(226, 35, 26, 0.5);
-  }
-
-  &:active { transform: translateY(0); }
-`;
-
-const SecondaryButton = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['2xl']}`};
-  background: transparent;
-  color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  transition: all ${({ theme }) => theme.transitions.normal};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.white};
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-2px);
-  }
-`;
+import { HeroCarousel } from '@/components/common/HeroCarousel';
+import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck } from 'lucide-react';
 
 const BrandsSection = styled.section`
   padding: ${({ theme }) => `${theme.spacing['3xl']} 0`};
@@ -320,7 +203,25 @@ const WhatsAppButton = styled.a`
   }
 `;
 
-import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck } from 'lucide-react';
+const PrimaryButton = styled(Link)`
+  display: inline-flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${props => `${props.theme.spacing.md} ${props.theme.spacing['2xl']}`};
+  background: ${props => props.theme.colors.primary};
+  color: ${props => props.theme.colors.white};
+  font-size: ${props => props.theme.fontSizes.md};
+  font-weight: ${props => props.theme.fontWeights.semibold};
+  border-radius: ${props => props.theme.borderRadius.md};
+  transition: all ${props => props.theme.transitions.normal};
+  box-shadow: ${props => props.theme.shadows.button};
+
+  &:hover {
+    background: ${props => props.theme.colors.primaryDark};
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(226, 35, 26, 0.5);
+  }
+`;
 
 const SERVICOS = [
   { icon: <Wrench size={32} />, titulo: 'Revisão Completa', desc: 'Manutenção preventiva e corretiva com técnicos certificados' },
@@ -334,22 +235,7 @@ const SERVICOS = [
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <HeroSection>
-        <HeroContent>
-          <HeroLabel>Concessionária Oficial em Aracaju</HeroLabel>
-          <HeroTitle>
-            Encontre sua <span>próxima moto</span> com facilidade
-          </HeroTitle>
-          <HeroSubtitle>
-            Revendedora oficial Suzuki, Haojue e Zontes. Motos novas, usadas, peças e serviços em Aracaju/SE.
-          </HeroSubtitle>
-          <HeroActions>
-            <PrimaryButton href="/motos">Ver catálogo</PrimaryButton>
-            <SecondaryButton href="/contato">Falar conosco</SecondaryButton>
-          </HeroActions>
-        </HeroContent>
-      </HeroSection>
+      <HeroCarousel />
 
       {/* Marcas */}
       <BrandsSection>
@@ -411,12 +297,12 @@ export default function HomePage() {
       <CTASection>
         <CTAContent>
           <SectionLabel>Atendimento</SectionLabel>
-          <HeroTitle style={{ color: 'white', fontSize: '2rem', marginTop: '0.5rem' }}>
+          <SectionTitle style={{ color: 'white', marginTop: '0.5rem' }}>
             Precisa de ajuda para escolher?
-          </HeroTitle>
-          <HeroSubtitle>
+          </SectionTitle>
+          <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: '1rem 0 2rem' }}>
             Nossa equipe está pronta para te ajudar a encontrar a moto perfeita para você.
-          </HeroSubtitle>
+          </p>
           <WhatsAppButton
             href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}`}
             target="_blank"
