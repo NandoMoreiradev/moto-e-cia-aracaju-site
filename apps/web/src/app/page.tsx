@@ -342,8 +342,7 @@ export default function HomePage() {
             Encontre sua <span>próxima moto</span> com facilidade
           </HeroTitle>
           <HeroSubtitle>
-            Revendedora oficial Suzuki, Haojue e Zontes. Motos novas, usadas, peças, serviços e
-            aluguel em Aracaju/SE.
+            Revendedora oficial Suzuki, Haojue e Zontes. Motos novas, usadas, peças e serviços em Aracaju/SE.
           </HeroSubtitle>
           <HeroActions>
             <PrimaryButton href="/motos">Ver catálogo</PrimaryButton>

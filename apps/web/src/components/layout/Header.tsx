@@ -138,7 +138,7 @@ export function Header() {
 
   const navLinks = [
     { href: '/', label: 'Início' },
-    { href: '/motos', label: 'Catálogo' },
+    { href: '/motos', label: 'Motos' },
     { href: '/servicos', label: 'Serviços' },
     { href: '/blog', label: 'Blog' },
     { href: '/contato', label: 'Contato' },
