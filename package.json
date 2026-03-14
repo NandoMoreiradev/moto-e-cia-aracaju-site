@@ -1,6 +1,10 @@
 {
   "name": "moto-e-cia-aracaju",
   "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
@@ -11,17 +15,20 @@
     "db:studio": "cd prisma && npx prisma studio"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "@types/bcryptjs": "^2.4.6",
     "@prisma/client": "^6.4.1",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20.0.0",
     "bcryptjs": "^2.4.3",
     "prettier": "^3.5.2",
+    "ts-node": "^10.9.2",
     "turbo": "^2.4.4",
     "typescript": "^5.7.3"
   },
   "engines": {
-    "node": ">=20.0.0",
-    "pnpm": ">=9.0.0"
+    "node": ">=20.0.0"
   },
-  "packageManager": "pnpm@9.15.4"
+  "prisma": {
+    "schema": "prisma/schema.prisma",
+    "seed": "npx ts-node --project ./prisma/tsconfig.json ./prisma/seed.ts"
+  }
 }

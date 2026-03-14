@@ -1,292 +1,178 @@
 'use client';
 
-import styled from 'styled-components';
-import { useState } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect, useState, useCallback } from 'react';
+import Image from 'next/image';
 import Link from 'next/link';
+import { motos as motosApi } from '@/lib/api';
+import type { MotoDto, MarcaMoto, TipoMoto } from '@moto-e-cia/shared';
 
-// --- MOCK DATA ---
-const MOCK_MOTOS = [
-  { id: '1', slug: 'gsx-8s', nome: 'GSX-8S', marca: 'SUZUKI', tipo: 'NAKED', preco: '51.500,00', foto: '🏍️' },
-  { id: '2', slug: 'v-strom-650', nome: 'V-Strom 650', marca: 'SUZUKI', tipo: 'ADVENTURE', preco: '58.900,00', foto: '🏔️' },
-  { id: '3', slug: 'dk-160', nome: 'DK 160', marca: 'HAOJUE', tipo: 'STREET', preco: '15.990,00', foto: '🛵' },
-  { id: '4', slug: 't310', nome: 'T310', marca: 'ZONTES', tipo: 'ADVENTURE', preco: '30.990,00', foto: '🏍️' },
-  { id: '5', slug: 'hayabusa', nome: 'Hayabusa GSX-1300R', marca: 'SUZUKI', tipo: 'SPORT', preco: '130.000,00', foto: '🦅' },
-  { id: '6', slug: 'dr-160', nome: 'DR 160', marca: 'HAOJUE', tipo: 'STREET', preco: '18.590,00', foto: '🛵' },
+const MARCAS: { value: MarcaMoto | ''; label: string }[] = [
+  { value: '', label: 'Todas as marcas' },
+  { value: 'SUZUKI', label: 'Suzuki' },
+  { value: 'HAOJUE', label: 'Haojue' },
+  { value: 'ZONTES', label: 'Zontes' },
+  { value: 'KYMCO', label: 'Kymco' },
+  { value: 'SEMINOVA', label: 'Seminovas' },
+  { value: 'OUTRO', label: 'Outras' },
+];
+const TIPOS: { value: TipoMoto | ''; label: string }[] = [
+  { value: '', label: 'Todos os tipos' },
+  { value: 'SPORT', label: 'Sport' },
+  { value: 'NAKED', label: 'Naked' },
+  { value: 'ADVENTURE', label: 'Adventure' },
+  { value: 'SCOOTER', label: 'Scooter' },
+  { value: 'TRAIL', label: 'Trail' },
 ];
 
-const MARCAS = ['Todas', 'SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO'];
-const TIPOS = ['Todos', 'SPORT', 'NAKED', 'ADVENTURE', 'STREET', 'SCOOTER'];
+const STATUS_BADGE: Record<string, { label: string; color: string }> = {
+  DISPONIVEL: { label: 'Disponível', color: '#2ecc71' },
+  RESERVADA: { label: 'Reservada', color: '#f39c12' },
+  VENDIDA: { label: 'Vendida', color: '#888' },
+  ALUGUEL: { label: 'Aluguel', color: '#4f8ef7' },
+};
 
-// --- STYLES ---
-const PageContainer = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${({ theme }) => `${theme.spacing['4xl']} ${theme.spacing.lg}`};
-`;
+export default function MotosPage() {
+  const [motos, setMotos] = useState<MotoDto[]>([]);
+  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [marca, setMarca] = useState<MarcaMoto | ''>('');
+  const [tipo, setTipo] = useState<TipoMoto | ''>('');
+  const [search, setSearch] = useState('');
+  const [loading, setLoading] = useState(true);
 
-const Header = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing['3xl']};
-  text-align: center;
-`;
+  const LIMIT = 12;
 
-const Title = styled.h1`
-  font-size: clamp(2rem, 4vw, 3rem);
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  color: ${({ theme }) => theme.colors.dark};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
+  const load = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await motosApi.list({
+        page, limit: LIMIT,
+        marca: marca || undefined,
+        tipo: tipo || undefined,
+        search: search || undefined,
+        status: 'DISPONIVEL',
+      });
+      setMotos(res.data);
+      setTotal(res.total);
+    } finally {
+      setLoading(false);
+    }
+  }, [page, marca, tipo, search]);
 
-const Subtitle = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  color: ${({ theme }) => theme.colors.textSecondary};
-`;
-
-const Layout = styled.div`
-  display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: ${({ theme }) => theme.spacing['3xl']};
-
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
-    grid-template-columns: 1fr;
-  }
-`;
-
-// -- Sidebar (Filtros)
-const Sidebar = styled.aside`
-  background: ${({ theme }) => theme.colors.offWhite};
-  padding: ${({ theme }) => theme.spacing.xl};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  height: fit-content;
-  position: sticky;
-  top: 100px;
-`;
-
-const FilterSection = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-`;
-
-const FilterTitle = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-  padding-bottom: ${({ theme }) => theme.spacing.sm};
-  border-bottom: 2px solid ${({ theme }) => theme.colors.lightGray};
-`;
-
-const FilterOptions = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: ${({ theme }) => theme.spacing.sm};
-`;
-
-const FilterButton = styled.button<{ $active: boolean }>`
-  text-align: left;
-  padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ $active, theme }) => ($active ? theme.fontWeights.semibold : theme.fontWeights.medium)};
-  color: ${({ $active, theme }) => ($active ? theme.colors.white : theme.colors.textSecondary)};
-  background: ${({ $active, theme }) => ($active ? theme.colors.primary : 'transparent')};
-  transition: all ${({ theme }) => theme.transitions.fast};
-
-  &:hover {
-    background: ${({ $active, theme }) => ($active ? theme.colors.primaryDark : theme.colors.lightGray)};
-    color: ${({ $active, theme }) => ($active ? theme.colors.white : theme.colors.textPrimary)};
-  }
-`;
-
-// -- Grid de Motos
-const MainContent = styled.div``;
-
-const TopBar = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  padding-bottom: ${({ theme }) => theme.spacing.md};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.lightGray};
-  color: ${({ theme }) => theme.colors.textSecondary};
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: ${({ theme }) => theme.spacing.xl};
-`;
-
-const MotoCard = styled(motion.div)`
-  background: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.card};
-  border: 1px solid transparent;
-  transition: all ${({ theme }) => theme.transitions.normal};
-  display: flex;
-  flex-direction: column;
-
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-    border-color: ${({ theme }) => theme.colors.lightGray};
-  }
-`;
-
-const MotoImage = styled.div`
-  height: 200px;
-  background: ${({ theme }) => theme.colors.offWhite};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 4rem;
-`;
-
-const MotoBody = styled.div`
-  padding: ${({ theme }) => theme.spacing.lg};
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-`;
-
-const MotoMarca = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.primary};
-  letter-spacing: 0.1em;
-`;
-
-const MotoNome = styled.h2`
-  font-size: ${({ theme }) => theme.fontSizes.xl};
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  margin: ${({ theme }) => `${theme.spacing.xs} 0 ${theme.spacing.sm}`};
-  color: ${({ theme }) => theme.colors.dark};
-`;
-
-const MotoFooter = styled.div`
-  margin-top: auto;
-  padding-top: ${({ theme }) => theme.spacing.md};
-  border-top: 1px solid ${({ theme }) => theme.colors.lightGray};
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-`;
-
-const MotoPreco = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.secondary};
-`;
-
-const VerMaisButton = styled(Link)`
-  color: ${({ theme }) => theme.colors.primary};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  
-  &:hover {
-    text-decoration: underline;
-  }
-`;
-
-export default function CatalogPage() {
-  const [marcaAtiva, setMarcaAtiva] = useState('Todas');
-  const [tipoAtivo, setTipoAtivo] = useState('Todos');
-
-  // Filtro
-  const motosFiltradas = MOCK_MOTOS.filter((moto) => {
-    const matchMarca = marcaAtiva === 'Todas' || moto.marca === marcaAtiva;
-    const matchTipo = tipoAtivo === 'Todos' || moto.tipo === tipoAtivo;
-    return matchMarca && matchTipo;
-  });
+  useEffect(() => { load(); }, [load]);
+  function resetFilters() { setMarca(''); setTipo(''); setSearch(''); setPage(1); }
 
   return (
-    <PageContainer>
-      <Header>
-        <Title>Catálogo de Motos</Title>
-        <Subtitle>Encontre a moto perfeita para o seu estilo de vida</Subtitle>
-      </Header>
+    <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
+      {/* Header banner */}
+      <div style={{
+        background: 'linear-gradient(135deg, #111 0%, #1a0000 100%)',
+        padding: '64px 24px 48px', textAlign: 'center',
+      }}>
+        <p style={{ color: '#E2231A', fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 8px' }}>
+          Catálogo
+        </p>
+        <h1 style={{ color: '#fff', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, margin: '0 0 12px' }}>
+          Nossas Motos
+        </h1>
+        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', margin: 0 }}>
+          {total > 0 ? `${total} moto${total !== 1 ? 's' : ''} disponíve${total !== 1 ? 'is' : 'l'}` : 'Carregando catálogo...'}
+        </p>
+      </div>
 
-      <Layout>
-        {/* Sidebar Filters */}
-        <Sidebar>
-          <FilterSection>
-            <FilterTitle>Marca</FilterTitle>
-            <FilterOptions>
-              {MARCAS.map((marca) => (
-                <FilterButton
-                  key={marca}
-                  $active={marcaAtiva === marca}
-                  onClick={() => setMarcaAtiva(marca)}
-                >
-                  {marca}
-                </FilterButton>
-              ))}
-            </FilterOptions>
-          </FilterSection>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
+        {/* Filters */}
+        <div style={{
+          background: '#fff', borderRadius: '12px', padding: '20px',
+          display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center',
+          marginBottom: '28px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+        }}>
+          <input type="text" placeholder="🔍 Buscar moto..." value={search}
+            onChange={e => { setSearch(e.target.value); setPage(1); }}
+            style={{ flex: 1, minWidth: '180px', padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px' }}
+          />
+          <select value={marca} onChange={e => { setMarca(e.target.value as any); setPage(1); }}
+            style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
+            {MARCAS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
+          </select>
+          <select value={tipo} onChange={e => { setTipo(e.target.value as any); setPage(1); }}
+            style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
+            {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
+          </select>
+          {(marca || tipo || search) && (
+            <button onClick={resetFilters} style={{ padding: '10px 14px', background: 'transparent', border: '1px solid #e5e5e5', borderRadius: '8px', color: '#888', fontSize: '13px', cursor: 'pointer' }}>
+              ✕ Limpar
+            </button>
+          )}
+        </div>
 
-          <FilterSection>
-            <FilterTitle>Estilo</FilterTitle>
-            <FilterOptions>
-              {TIPOS.map((tipo) => (
-                <FilterButton
-                  key={tipo}
-                  $active={tipoAtivo === tipo}
-                  onClick={() => setTipoAtivo(tipo)}
-                >
-                  {tipo}
-                </FilterButton>
-              ))}
-            </FilterOptions>
-          </FilterSection>
-        </Sidebar>
-
-        {/* Listagem */}
-        <MainContent>
-          <TopBar>
-            <span>Mostrando {motosFiltradas.length} motos encontradas</span>
-          </TopBar>
-
-          <Grid>
-            {motosFiltradas.map((moto, index) => (
-              <MotoCard
-                key={moto.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.3, delay: index * 0.05 }}
-              >
-                <Link href={`/motos/${moto.slug}`}>
-                  <MotoImage>{moto.foto}</MotoImage>
+        {/* Grid */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '64px', color: '#999' }}>Carregando...</div>
+        ) : motos.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '64px', color: '#999' }}>
+            <p style={{ fontSize: '48px', margin: '0 0 16px' }}>🔍</p>
+            <p>Nenhuma moto encontrada com esses filtros.</p>
+            <button onClick={resetFilters} style={{ marginTop: '16px', padding: '10px 20px', background: '#E2231A', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer' }}>
+              Ver todas
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+            {motos.map(moto => {
+              const foto = moto.fotos?.find(f => f.principal) ?? moto.fotos?.[0];
+              const st = STATUS_BADGE[moto.status];
+              return (
+                <Link key={moto.id} href={`/motos/${moto.slug}`} style={{ textDecoration: 'none' }}>
+                  <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(0,0,0,0.1)'; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; }}
+                  >
+                    <div style={{ height: '220px', background: '#f0f0f0', position: 'relative' }}>
+                      {foto
+                        ? <Image src={foto.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
+                        : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '56px' }}>🏍️</div>
+                      }
+                      {st && (
+                        <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.7)', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: st.color }}>{st.label}</div>
+                      )}
+                      {moto.destaque && (
+                        <div style={{ position: 'absolute', top: '10px', left: '10px', background: '#E2231A', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: '#fff' }}>⭐ Destaque</div>
+                      )}
+                    </div>
+                    <div style={{ padding: '18px' }}>
+                      <div style={{ color: '#E2231A', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
+                      <h2 style={{ color: '#111', fontSize: '18px', fontWeight: 700, margin: '4px 0 8px' }}>{moto.nome}</h2>
+                      <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                        {moto.ano && <span style={{ color: '#888', fontSize: '13px' }}>📅 {moto.ano}</span>}
+                        {moto.km !== null && moto.km !== undefined && (
+                          <span style={{ color: '#888', fontSize: '13px' }}>🛣️ {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}</span>
+                        )}
+                        {moto.cor && <span style={{ color: '#888', fontSize: '13px' }}>🎨 {moto.cor}</span>}
+                      </div>
+                      {moto.preco
+                        ? <div style={{ color: '#2ecc71', fontSize: '18px', fontWeight: 700 }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                        : <div style={{ color: '#888', fontSize: '14px' }}>Consulte o preço</div>
+                      }
+                    </div>
+                  </div>
                 </Link>
-                <MotoBody>
-                  <MotoMarca>{moto.marca}</MotoMarca>
-                  <Link href={`/motos/${moto.slug}`}>
-                    <MotoNome>{moto.nome}</MotoNome>
-                  </Link>
-                  <MotoFooter>
-                    <MotoPreco>R$ {moto.preco}</MotoPreco>
-                    <VerMaisButton href={`/motos/${moto.slug}`}>Ver detalhes →</VerMaisButton>
-                  </MotoFooter>
-                </MotoBody>
-              </MotoCard>
-            ))}
-            
-            {motosFiltradas.length === 0 && (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '4rem 0', color: '#6B7280' }}>
-                <p>Nenhuma moto encontrada com esses filtros.</p>
-                <button 
-                  onClick={() => { setMarcaAtiva('Todas'); setTipoAtivo('Todos'); }}
-                  style={{ color: '#E2231A', marginTop: '1rem', textDecoration: 'underline' }}
-                >
-                  Limpar filtros
-                </button>
-              </div>
-            )}
-          </Grid>
-        </MainContent>
-      </Layout>
-    </PageContainer>
+              );
+            })}
+          </div>
+        )}
+
+        {/* Pagination */}
+        {total > LIMIT && (
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
+            <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
+              style={{ padding: '10px 20px', background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px', cursor: 'pointer' }}>← Anterior</button>
+            <span style={{ padding: '10px 16px', color: '#888', fontSize: '14px' }}>{page} / {Math.ceil(total / LIMIT)}</span>
+            <button disabled={page >= Math.ceil(total / LIMIT)} onClick={() => setPage(p => p + 1)}
+              style={{ padding: '10px 20px', background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px', cursor: 'pointer' }}>Próxima →</button>
+          </div>
+        )}
+      </div>
+    </div>
   );
 }

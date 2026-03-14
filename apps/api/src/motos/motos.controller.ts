@@ -24,7 +24,16 @@ export class MotosController {
   @ApiOperation({ summary: 'Listar motos com filtros e paginação' })
   @Get('motos')
   findAll(@Query() query: any) {
-    return this.motosService.findAll(query);
+    return this.motosService.findAll({
+      ...query,
+      page: query.page ? parseInt(query.page, 10) : undefined,
+      limit: query.limit ? parseInt(query.limit, 10) : undefined,
+      destaque: query.destaque !== undefined
+        ? query.destaque === 'true' || query.destaque === true
+        : undefined,
+      precoMin: query.precoMin ? parseFloat(query.precoMin) : undefined,
+      precoMax: query.precoMax ? parseFloat(query.precoMax) : undefined,
+    });
   }
 
   @ApiOperation({ summary: 'Detalhe de uma moto por slug' })

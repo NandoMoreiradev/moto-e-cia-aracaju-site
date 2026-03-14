@@ -1,216 +1,176 @@
 'use client';
 
-import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import Image from 'next/image';
 import Link from 'next/link';
+import { motos as motosApi } from '@/lib/api';
+import type { MotoDto } from '@moto-e-cia/shared';
 
-// Mock datastore (mesmos do catálogo)
-const MOCK_MOTOS = {
-  'gsx-8s': { nome: 'GSX-8S', marca: 'SUZUKI', preco: '51.500,00', foto: '🏍️', motor: '776cc, 4 tempos', potencia: '83 cv a 8.500 rpm', torque: '7,95 kgf.m a 6.800 rpm', peso: '202 kg', tanque: '14L' },
-  'v-strom-650': { nome: 'V-Strom 650', marca: 'SUZUKI', preco: '58.900,00', foto: '🏔️', motor: '645cc, V-Twin', potencia: '71 cv', torque: '6,32 kgf.m', peso: '213 kg', tanque: '20L' },
-  'dk-160': { nome: 'DK 160', marca: 'HAOJUE', preco: '15.990,00', foto: '🛵', motor: '162cc, 1 cilindro', potencia: '15 cv', torque: '1,43 kgf.m', peso: '135 kg', tanque: '16,5L' },
-  't310': { nome: 'T310', marca: 'ZONTES', preco: '30.990,00', foto: '🏍️', motor: '312cc, 1 cilindro', potencia: '35 cv', torque: '3,06 kgf.m', peso: '193 kg', tanque: '19L' },
-  'hayabusa': { nome: 'Hayabusa GSX-1300R', marca: 'SUZUKI', preco: '130.000,00', foto: '🦅', motor: '1.340cc, 4 cilindros', potencia: '190 cv', torque: '15,3 kgf.m', peso: '264 kg', tanque: '20L' },
-  'dr-160': { nome: 'DR 160', marca: 'HAOJUE', preco: '18.590,00', foto: '🛵', motor: '162cc, 1 cilindro', potencia: '15 cv', torque: '1,43 kgf.m', peso: '148 kg', tanque: '12L' },
+const TRANSMISSAO_LABEL: Record<string, string> = {
+  MANUAL: 'Manual', AUTOMATICA: 'Automática', SEMI_AUTOMATICA: 'Semi-automática',
+};
+const COMBUSTIVEL_LABEL: Record<string, string> = {
+  GASOLINA: 'Gasolina', ETANOL: 'Etanol', FLEX: 'Flex', ELETRICO: 'Elétrico',
+};
+const STATUS_LABEL: Record<string, { label: string; color: string; bg: string }> = {
+  DISPONIVEL: { label: 'Disponível', color: '#1a7a3f', bg: '#dcffe4' },
+  RESERVADA: { label: 'Reservada', color: '#8a5a00', bg: '#fff3cd' },
+  VENDIDA: { label: 'Vendida', color: '#555', bg: '#eee' },
+  ALUGUEL: { label: 'Aluguel', color: '#1a4f8a', bg: '#dbeafe' },
 };
 
-const PageContainer = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${({ theme }) => `${theme.spacing['3xl']} ${theme.spacing.lg} ${theme.spacing['5xl']}`};
-`;
+export default function MotoDetalhePage() {
+  const { slug } = useParams<{ slug: string }>();
+  const [moto, setMoto] = useState<MotoDto | null>(null);
+  const [selectedFoto, setSelectedFoto] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
 
-const Breadcrumb = styled.div`
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  useEffect(() => {
+    motosApi.get(slug)
+      .then(m => { setMoto(m); setLoading(false); })
+      .catch(() => { setError(true); setLoading(false); });
+  }, [slug]);
 
-  a {
-    color: ${({ theme }) => theme.colors.primary};
-    &:hover { text-decoration: underline; }
-  }
-`;
+  if (loading) return (
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#999' }}>Carregando...</div>
+  );
+  if (error || !moto) return (
+    <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', color: '#999' }}>
+      <p style={{ fontSize: '48px' }}>🔍</p>
+      <p>Moto não encontrada.</p>
+      <Link href="/motos" style={{ color: '#E2231A', marginTop: '8px' }}>← Ver catálogo</Link>
+    </div>
+  );
 
-const Layout = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: ${({ theme }) => theme.spacing['4xl']};
+  const fotosOrdenadas = [...(moto.fotos || [])].sort((a, b) => (b.principal ? 1 : 0) - (a.principal ? 1 : 0));
+  const fotoAtual = fotosOrdenadas[selectedFoto];
+  const status = STATUS_LABEL[moto.status];
 
-  @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
-    grid-template-columns: 1fr;
-  }
-`;
+  const specs: { label: string; value: string }[] = [
+    ...(moto.ano ? [{ label: 'Ano', value: String(moto.ano) }] : []),
+    ...(moto.km !== null && moto.km !== undefined ? [{ label: 'Quilometragem', value: moto.km === 0 ? '0 km (zero km)' : `${moto.km.toLocaleString('pt-BR')} km` }] : []),
+    ...(moto.cor ? [{ label: 'Cor', value: moto.cor }] : []),
+    ...(moto.combustivel ? [{ label: 'Combustível', value: COMBUSTIVEL_LABEL[moto.combustivel] || moto.combustivel }] : []),
+    ...(moto.transmissao ? [{ label: 'Transmissão', value: TRANSMISSAO_LABEL[moto.transmissao] || moto.transmissao }] : []),
+    ...(moto.tipo ? [{ label: 'Categoria', value: moto.tipo }] : []),
+    ...(moto.vin ? [{ label: 'Chassi (VIN)', value: moto.vin }] : []),
+  ];
 
-const Gallery = styled(motion.div)`
-  background: ${({ theme }) => theme.colors.offWhite};
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
-  height: 500px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 8rem;
-  border: 1px solid ${({ theme }) => theme.colors.lightGray};
-`;
-
-const InfoPanel = styled(motion.div)`
-  display: flex;
-  flex-direction: column;
-`;
-
-const MotoMarca = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.primary};
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  margin-bottom: ${({ theme }) => theme.spacing.xs};
-`;
-
-const MotoNome = styled.h1`
-  font-size: clamp(2.5rem, 4vw, 3.5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  line-height: 1.1;
-  color: ${({ theme }) => theme.colors.dark};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-const MotoPreco = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes['3xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.secondary};
-  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
-`;
-
-const SpecsGrid = styled.div`
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing.xl};
-  margin-bottom: ${({ theme }) => theme.spacing['3xl']};
-  padding: ${({ theme }) => theme.spacing.xl};
-  background: ${({ theme }) => theme.colors.offWhite};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-`;
-
-const SpecItem = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
-const SpecLabel = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  margin-bottom: ${({ theme }) => theme.spacing.xs};
-`;
-
-const SpecValue = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  color: ${({ theme }) => theme.colors.textPrimary};
-`;
-
-const WhatsAppButton = styled.a`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing.md};
-  padding: ${({ theme }) => `${theme.spacing.lg} ${theme.spacing['2xl']}`};
-  background: ${({ theme }) => theme.colors.whatsapp};
-  color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.fontSizes.xl};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  border-radius: ${({ theme }) => theme.borderRadius.lg};
-  transition: all ${({ theme }) => theme.transitions.normal};
-  box-shadow: 0 4px 15px rgba(37, 211, 102, 0.3);
-
-  &:hover {
-    background: #1dad57;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4);
-  }
-`;
-
-const NotFound = styled.div`
-  text-align: center;
-  padding: 100px 0;
-  h1 { margin-bottom: 20px; }
-`;
-
-export default function MotoDetailPage({ params }: { params: { slug: string } }) {
-  const moto = MOCK_MOTOS[params.slug as keyof typeof MOCK_MOTOS];
-
-  if (!moto) {
-    return (
-      <PageContainer>
-        <NotFound>
-          <h1>Moto não encontrada</h1>
-          <Link href="/motos" style={{ color: '#E2231A' }}>← Voltar para o catálogo</Link>
-        </NotFound>
-      </PageContainer>
-    );
-  }
-
-  const wppText = encodeURIComponent(`Olá, estou interessado na moto ${moto.marca} ${moto.nome} que vi no site.`);
+  const whatsappMsg = encodeURIComponent(
+    `Olá! Tenho interesse na *${moto.nome}* (${moto.ano || ''}, ${moto.km === 0 ? '0 km' : `${(moto.km ?? 0).toLocaleString('pt-BR')} km`}). Pode me dar mais informações?`
+  );
 
   return (
-    <PageContainer>
-      <Breadcrumb>
-        <Link href="/">Início</Link> &gt; <Link href="/motos">Catálogo</Link> &gt; {moto.nome}
-      </Breadcrumb>
+    <div style={{ background: '#f8f8f8', minHeight: '100vh' }}>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '20px 24px 0' }}>
+        <nav style={{ fontSize: '13px', color: '#888' }}>
+          <Link href="/" style={{ color: '#888', textDecoration: 'none' }}>Home</Link>
+          {' → '}
+          <Link href="/motos" style={{ color: '#888', textDecoration: 'none' }}>Motos</Link>
+          {' → '}
+          <span style={{ color: '#333' }}>{moto.nome}</span>
+        </nav>
+      </div>
 
-      <Layout>
-        <Gallery
-          initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          {moto.foto}
-        </Gallery>
+      <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '24px', display: 'grid', gridTemplateColumns: '1fr 400px', gap: '32px', alignItems: 'start' }}>
+        {/* Gallery */}
+        <div>
+          <div style={{ borderRadius: '16px', overflow: 'hidden', background: '#fff', marginBottom: '12px', position: 'relative', height: '450px', boxShadow: '0 4px 16px rgba(0,0,0,0.08)' }}>
+            {fotoAtual
+              ? <Image src={fotoAtual.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
+              : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '80px' }}>🏍️</div>
+            }
+          </div>
+          {fotosOrdenadas.length > 1 && (
+            <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '4px' }}>
+              {fotosOrdenadas.map((foto, i) => (
+                <div key={foto.id} onClick={() => setSelectedFoto(i)} style={{
+                  flexShrink: 0, width: '80px', height: '60px', borderRadius: '8px', overflow: 'hidden',
+                  cursor: 'pointer', position: 'relative',
+                  border: i === selectedFoto ? '2px solid #E2231A' : '2px solid transparent',
+                  opacity: i === selectedFoto ? 1 : 0.6, transition: 'opacity 0.15s',
+                }}>
+                  <Image src={foto.url} alt={`Foto ${i+1}`} fill style={{ objectFit: 'cover' }} />
+                </div>
+              ))}
+            </div>
+          )}
+          {moto.descricao && (
+            <div style={{ background: '#fff', borderRadius: '12px', padding: '24px', marginTop: '20px', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <h3 style={{ fontSize: '16px', fontWeight: 700, margin: '0 0 12px' }}>Descrição</h3>
+              <p style={{ color: '#555', fontSize: '15px', lineHeight: 1.7, margin: 0 }}>{moto.descricao}</p>
+            </div>
+          )}
+        </div>
 
-        <InfoPanel
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <MotoMarca>{moto.marca}</MotoMarca>
-          <MotoNome>{moto.nome}</MotoNome>
-          <MotoPreco>R$ {moto.preco}</MotoPreco>
+        {/* Info panel */}
+        <div style={{ position: 'sticky', top: '24px' }}>
+          {status && (
+            <div style={{ display: 'inline-block', background: status.bg, color: status.color, fontSize: '12px', fontWeight: 700, padding: '4px 12px', borderRadius: '20px', marginBottom: '12px' }}>
+              {status.label}
+            </div>
+          )}
+          <div style={{ color: '#E2231A', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{moto.marca}</div>
+          <h1 style={{ fontSize: '28px', fontWeight: 800, color: '#111', margin: '4px 0 16px' }}>{moto.nome}</h1>
 
-          <SpecsGrid>
-            <SpecItem>
-              <SpecLabel>Motor</SpecLabel>
-              <SpecValue>{moto.motor}</SpecValue>
-            </SpecItem>
-            <SpecItem>
-              <SpecLabel>Potência</SpecLabel>
-              <SpecValue>{moto.potencia}</SpecValue>
-            </SpecItem>
-            <SpecItem>
-              <SpecLabel>Torque</SpecLabel>
-              <SpecValue>{moto.torque}</SpecValue>
-            </SpecItem>
-            <SpecItem>
-              <SpecLabel>Peso Seco</SpecLabel>
-              <SpecValue>{moto.peso}</SpecValue>
-            </SpecItem>
-            <SpecItem>
-              <SpecLabel>Tanque</SpecLabel>
-              <SpecValue>{moto.tanque}</SpecValue>
-            </SpecItem>
-          </SpecsGrid>
+          {/* Key stats */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', flexWrap: 'wrap' }}>
+            {moto.ano && (
+              <div style={{ background: '#fff', borderRadius: '8px', padding: '10px 16px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', minWidth: '70px' }}>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: '#111' }}>{moto.ano}</div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>Ano</div>
+              </div>
+            )}
+            {moto.km !== null && moto.km !== undefined && (
+              <div style={{ background: '#fff', borderRadius: '8px', padding: '10px 16px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.06)', minWidth: '80px' }}>
+                <div style={{ fontSize: '18px', fontWeight: 800, color: '#111' }}>{moto.km === 0 ? '0' : moto.km.toLocaleString('pt-BR')}</div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>km</div>
+              </div>
+            )}
+            {moto.cor && (
+              <div style={{ background: '#fff', borderRadius: '8px', padding: '10px 16px', textAlign: 'center', boxShadow: '0 1px 4px rgba(0,0,0,0.06)' }}>
+                <div style={{ fontSize: '14px', fontWeight: 700, color: '#111' }}>{moto.cor}</div>
+                <div style={{ fontSize: '11px', color: '#888', marginTop: '2px' }}>Cor</div>
+              </div>
+            )}
+          </div>
 
-          <WhatsAppButton
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${wppText}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            💬 Tenho interesse
-          </WhatsAppButton>
-          
-          <p style={{ textAlign: 'center', marginTop: '1rem', color: '#6B7280', fontSize: '14px' }}>
-            Fale com um consultor pelo WhatsApp
-          </p>
-        </InfoPanel>
-      </Layout>
-    </PageContainer>
+          {/* Price */}
+          <div style={{ marginBottom: '20px' }}>
+            {moto.preco
+              ? <div style={{ fontSize: '32px', fontWeight: 800, color: '#2ecc71' }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+              : <div style={{ color: '#888', fontSize: '18px' }}>Consulte o preço</div>
+            }
+          </div>
+
+          {/* CTAs */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginBottom: '24px' }}>
+            <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${whatsappMsg}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '16px', background: '#25D366', borderRadius: '10px', color: '#fff', fontWeight: 700, fontSize: '16px', textDecoration: 'none' }}>
+              💬 Falar no WhatsApp
+            </a>
+            <Link href="/motos" style={{ display: 'block', textAlign: 'center', padding: '12px', background: '#fff', border: '1px solid #e5e5e5', borderRadius: '10px', color: '#666', fontSize: '14px', textDecoration: 'none' }}>
+              ← Ver mais motos
+            </Link>
+          </div>
+
+          {/* Specs */}
+          {specs.length > 0 && (
+            <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.04)' }}>
+              <div style={{ padding: '16px 20px', borderBottom: '1px solid #f0f0f0', fontWeight: 700, fontSize: '14px' }}>Especificações</div>
+              {specs.map((spec, i) => (
+                <div key={spec.label} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 20px', background: i % 2 === 0 ? '#fff' : '#fafafa', borderBottom: i < specs.length - 1 ? '1px solid #f0f0f0' : 'none' }}>
+                  <span style={{ color: '#888', fontSize: '13px' }}>{spec.label}</span>
+                  <span style={{ color: '#111', fontSize: '13px', fontWeight: 600 }}>{spec.value}</span>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 }

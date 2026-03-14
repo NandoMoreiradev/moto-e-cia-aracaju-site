@@ -17,7 +17,7 @@ const CarouselContainer = styled.section`
 const Slide = styled(motion.div)<{ $bgImage: string }>`
   position: absolute;
   inset: 0;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${({ $bgImage }) => $bgImage});
+  background: ${({ $bgImage }) => ($bgImage.includes('gradient') ? $bgImage : `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${$bgImage})`)};
   background-size: cover;
   background-position: center;
   display: flex;
@@ -142,7 +142,7 @@ const slides: SlideData[] = [
     label: 'Performance Pura',
     title: 'Suzuki GSX-R1000R',
     subtitle: 'A lenda das pistas agora ao seu alcance. Tecnologia de ponta e potência inigualável.',
-    image: '/banners/suzuki-gsxr.jpg',
+    image: 'linear-gradient(45deg, #1a1a1a, #4a0e0e)', // Fallback gradient
     link: '/motos/suzuki-gsx-r1000r',
   },
   {
@@ -150,7 +150,7 @@ const slides: SlideData[] = [
     label: 'Estilo Urbano',
     title: 'Zontes 310V',
     subtitle: 'O futuro chegou às ruas. Design futurista e tecnologia que redefine o conceito de pilotagem.',
-    image: '/banners/zontes-urban.jpg',
+    image: 'linear-gradient(45deg, #0e1a4a, #1a1a1a)', // Fallback gradient
     link: '/motos/zontes-310v',
   },
   {
@@ -158,7 +158,7 @@ const slides: SlideData[] = [
     label: 'Versatilidade Total',
     title: 'Haojue NK 150',
     subtitle: 'Pronta para qualquer terreno. Conforto, economia e a robustez que você precisa no dia a dia.',
-    image: '/banners/haojue-nk150.jpg',
+    image: 'linear-gradient(45deg, #1a1a1a, #2a2a2a)', // Fallback gradient
     link: '/motos/haojue-nk150',
   },
 ];

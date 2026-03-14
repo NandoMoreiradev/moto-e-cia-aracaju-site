@@ -52,6 +52,14 @@ model Moto {
   status         StatusMoto @default(DISPONIVEL)
   metaProductId  String?    // ID do produto sincronizado com Meta Commerce
 
+  // Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0)
+  ano           Int?        // Ano de fabricação
+  km            Int?        // Quilometragem (0 = zero km)
+  cor           String?     // Cor principal
+  vin           String?     // Número de chassi / VIN (opcional mas recomendado)
+  combustivel   Combustivel @default(GASOLINA)
+  transmissao   Transmissao @default(MANUAL)
+
   fotos MotoFoto[]
 
   createdAt DateTime @default(now())
@@ -79,6 +87,7 @@ enum MarcaMoto {
   ZONTES
   KYMCO
   OUTRO
+  SEMINOVA
 }
 
 enum TipoMoto {
@@ -94,6 +103,19 @@ enum StatusMoto {
   VENDIDA
   RESERVADA
   ALUGUEL
+}
+
+enum Combustivel {
+  GASOLINA
+  ETANOL
+  FLEX
+  ELETRICO
+}
+
+enum Transmissao {
+  MANUAL
+  AUTOMATICA
+  SEMI_AUTOMATICA
 }
 
 // ==========================================

@@ -1,8 +1,7 @@
 import type { Metadata } from 'next';
 import StyledComponentsRegistry from '@/lib/styled-registry';
 import { Providers } from '@/lib/providers';
-import { Header } from '@/components/layout/Header';
-import { Footer } from '@/components/layout/Footer';
+import { Toaster } from 'react-hot-toast';
 
 export const metadata: Metadata = {
   title: {
@@ -22,14 +21,11 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="pt-BR">
-      <body>
+      <body style={{ margin: 0, padding: 0 }}>
         <StyledComponentsRegistry>
           <Providers>
-            <Header />
-            <main style={{ minHeight: 'calc(100vh - 80px)' }}>
-              {children}
-            </main>
-            <Footer />
+            <Toaster position="top-right" />
+            {children}
           </Providers>
         </StyledComponentsRegistry>
       </body>

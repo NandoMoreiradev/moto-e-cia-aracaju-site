@@ -1,7 +1,9 @@
 // Tipos de Motos
-export type MarcaMoto = 'SUZUKI' | 'HAOJUE' | 'ZONTES' | 'KYMCO' | 'OUTRO';
+export type MarcaMoto = 'SUZUKI' | 'HAOJUE' | 'ZONTES' | 'KYMCO' | 'OUTRO' | 'SEMINOVA';
 export type TipoMoto = 'SPORT' | 'NAKED' | 'ADVENTURE' | 'SCOOTER' | 'TRAIL';
 export type StatusMoto = 'DISPONIVEL' | 'VENDIDA' | 'RESERVADA' | 'ALUGUEL';
+export type Combustivel = 'GASOLINA' | 'ETANOL' | 'FLEX' | 'ELETRICO';
+export type Transmissao = 'MANUAL' | 'AUTOMATICA' | 'SEMI_AUTOMATICA';
 
 export interface MotoFotoDto {
   id: string;
@@ -25,6 +27,13 @@ export interface MotoDto {
   destaque: boolean;
   status: StatusMoto;
   metaProductId: string | null;
+  // Campos Meta Vehicle Catalog (Graph API v25.0)
+  ano: number | null;
+  km: number | null;
+  cor: string | null;
+  vin: string | null;
+  combustivel: Combustivel;
+  transmissao: Transmissao;
   createdAt: string;
   updatedAt: string;
 }
@@ -35,12 +44,9 @@ export interface MotoSpecs {
   torque?: string;
   peso?: string;
   tanque?: string;
-  transmissao?: string;
   freios?: string;
   pneuDianteiro?: string;
   pneuTraseiro?: string;
-  anoModelo?: string;
-  cor?: string[];
   [key: string]: string | string[] | undefined;
 }
 
@@ -54,6 +60,13 @@ export interface CreateMotoDto {
   specs?: MotoSpecs;
   destaque?: boolean;
   status?: StatusMoto;
+  // Campos Meta Vehicle Catalog
+  ano?: number;
+  km?: number;
+  cor?: string;
+  vin?: string;
+  combustivel?: Combustivel;
+  transmissao?: Transmissao;
 }
 
 export interface UpdateMotoDto extends Partial<CreateMotoDto> {}

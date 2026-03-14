@@ -1,144 +1,110 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { HeroCarousel } from '@/components/common/HeroCarousel';
 import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck } from 'lucide-react';
+import { motos as motosApi } from '@/lib/api';
+import type { MotoDto } from '@moto-e-cia/shared';
 
+/* ── Styled components ────────────────────────────────────────────────── */
 const BrandsSection = styled.section`
   padding: ${({ theme }) => `${theme.spacing['3xl']} 0`};
   background: ${({ theme }) => theme.colors.offWhite};
   border-top: 1px solid ${({ theme }) => theme.colors.lightGray};
 `;
-
 const BrandsWrapper = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: 1280px; margin: 0 auto;
   padding: 0 ${({ theme }) => theme.spacing.lg};
 `;
-
 const BrandsLabel = styled.p`
-  text-align: center;
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  text-align: center; font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
+  text-transform: uppercase; letter-spacing: 0.1em;
   color: ${({ theme }) => theme.colors.textSecondary};
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
-
 const BrandsGrid = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: ${({ theme }) => theme.spacing['3xl']};
-  flex-wrap: wrap;
+  display: flex; align-items: center; justify-content: center;
+  gap: ${({ theme }) => theme.spacing['3xl']}; flex-wrap: wrap;
 `;
-
 const BrandName = styled.span`
   font-size: ${({ theme }) => theme.fontSizes['2xl']};
   font-weight: ${({ theme }) => theme.fontWeights.extrabold};
   color: ${({ theme }) => theme.colors.lightGray};
-  letter-spacing: 0.05em;
-  transition: color ${({ theme }) => theme.transitions.fast};
+  letter-spacing: 0.05em; transition: color ${({ theme }) => theme.transitions.fast};
   cursor: default;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary};
-  }
+  &:hover { color: ${({ theme }) => theme.colors.primary}; }
 `;
-
 const SectionWrapper = styled.section`
   padding: ${({ theme }) => `${theme.spacing['5xl']} 0`};
 `;
-
 const SectionContent = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
+  max-width: 1280px; margin: 0 auto;
   padding: 0 ${({ theme }) => theme.spacing.lg};
 `;
-
 const SectionHeader = styled.div`
-  text-align: center;
-  margin-bottom: ${({ theme }) => theme.spacing['3xl']};
+  text-align: center; margin-bottom: ${({ theme }) => theme.spacing['3xl']};
 `;
-
 const SectionLabel = styled.span`
-  display: inline-block;
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.15em;
-  text-transform: uppercase;
-  color: ${({ theme }) => theme.colors.primary};
+  display: inline-block; font-size: ${({ theme }) => theme.fontSizes.xs};
+  font-weight: ${({ theme }) => theme.fontWeights.semibold}; letter-spacing: 0.15em;
+  text-transform: uppercase; color: ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
-
 const SectionTitle = styled.h2`
   font-size: clamp(1.75rem, 3vw, 2.5rem);
   font-weight: ${({ theme }) => theme.fontWeights.bold};
   color: ${({ theme }) => theme.colors.textPrimary};
 `;
-
 const MotosGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: ${({ theme }) => theme.spacing.xl};
 `;
-
 const MotoCard = styled(motion.div)`
   background: ${({ theme }) => theme.colors.white};
   border-radius: ${({ theme }) => theme.borderRadius.xl};
-  overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.card};
+  overflow: hidden; box-shadow: ${({ theme }) => theme.shadows.card};
   transition: transform ${({ theme }) => theme.transitions.normal};
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow: ${({ theme }) => theme.shadows.xl};
-  }
+  &:hover { transform: translateY(-6px); box-shadow: ${({ theme }) => theme.shadows.xl}; }
 `;
-
 const MotoCardImage = styled.div`
-  height: 220px;
-  background: ${({ theme }) => theme.colors.offWhite};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: ${({ theme }) => theme.colors.lightGray};
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  height: 220px; background: ${({ theme }) => theme.colors.offWhite};
+  display: flex; align-items: center; justify-content: center;
+  color: ${({ theme }) => theme.colors.lightGray}; font-size: ${({ theme }) => theme.fontSizes.sm};
+  position: relative;
 `;
-
 const MotoCardBody = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
 `;
-
 const MotoCardMarca = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: ${({ theme }) => theme.colors.primary};
+  font-size: ${({ theme }) => theme.fontSizes.xs}; font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  text-transform: uppercase; letter-spacing: 0.1em; color: ${({ theme }) => theme.colors.primary};
 `;
-
 const MotoCardNome = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes.xl};
   font-weight: ${({ theme }) => theme.fontWeights.bold};
-  margin: ${({ theme }) => `${theme.spacing.xs} 0 ${theme.spacing.md}`};
+  margin: ${({ theme }) => `${theme.spacing.xs} 0 ${theme.spacing.sm}`};
 `;
-
+const MotoCardMeta = styled.div`
+  display: flex; gap: 12px; margin-bottom: ${({ theme }) => theme.spacing.sm};
+`;
+const MotoCardMetaItem = styled.span`
+  font-size: ${({ theme }) => theme.fontSizes.xs};
+  color: ${({ theme }) => theme.colors.textSecondary};
+`;
 const MotoCardPreco = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.lg};
   font-weight: ${({ theme }) => theme.fontWeights.semibold};
   color: ${({ theme }) => theme.colors.secondary};
 `;
-
 const ServicosGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
   gap: ${({ theme }) => theme.spacing.xl};
 `;
-
 const ServicoCard = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
   background: ${({ theme }) => theme.colors.white};
@@ -146,83 +112,36 @@ const ServicoCard = styled.div`
   border: 1px solid ${({ theme }) => theme.colors.lightGray};
   text-align: center;
   transition: all ${({ theme }) => theme.transitions.normal};
-
-  &:hover {
-    border-color: ${({ theme }) => theme.colors.primary};
-    box-shadow: ${({ theme }) => theme.shadows.md};
-    transform: translateY(-4px);
-  }
+  &:hover { border-color: ${({ theme }) => theme.colors.primary}; box-shadow: ${({ theme }) => theme.shadows.md}; transform: translateY(-4px); }
 `;
-
-const ServicoIcon = styled.div`
-  font-size: 2.5rem;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
-`;
-
-const ServicoTitulo = styled.h3`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-`;
-
-const ServicoDesc = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  color: ${({ theme }) => theme.colors.textSecondary};
-  line-height: ${({ theme }) => theme.lineHeights.relaxed};
-`;
-
 const CTASection = styled.section`
   padding: ${({ theme }) => `${theme.spacing['5xl']} 0`};
-  background: ${({ theme }) => theme.colors.dark};
-  text-align: center;
+  background: ${({ theme }) => theme.colors.dark}; text-align: center;
 `;
-
 const CTAContent = styled.div`
-  max-width: 640px;
-  margin: 0 auto;
-  padding: 0 ${({ theme }) => theme.spacing.lg};
+  max-width: 640px; margin: 0 auto; padding: 0 ${({ theme }) => theme.spacing.lg};
 `;
-
 const WhatsAppButton = styled.a`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
+  display: inline-flex; align-items: center; gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['2xl']}`};
-  background: ${({ theme }) => theme.colors.whatsapp};
-  color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
+  background: ${({ theme }) => theme.colors.whatsapp}; color: ${({ theme }) => theme.colors.white};
+  font-size: ${({ theme }) => theme.fontSizes.lg}; font-weight: ${({ theme }) => theme.fontWeights.semibold};
   border-radius: ${({ theme }) => theme.borderRadius.full};
-  transition: all ${({ theme }) => theme.transitions.normal};
-  margin-top: ${({ theme }) => theme.spacing['2xl']};
-
-  &:hover {
-    background: #1dad57;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4);
-  }
+  transition: all ${({ theme }) => theme.transitions.normal}; margin-top: ${({ theme }) => theme.spacing['2xl']};
+  &:hover { background: #1dad57; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); }
 `;
-
 const PrimaryButton = styled(Link)`
-  display: inline-flex;
-  align-items: center;
-  gap: ${({ theme }) => theme.spacing.sm};
+  display: inline-flex; align-items: center; gap: ${({ theme }) => theme.spacing.sm};
   padding: ${props => `${props.theme.spacing.md} ${props.theme.spacing['2xl']}`};
-  background: ${props => props.theme.colors.primary};
-  color: ${props => props.theme.colors.white};
-  font-size: ${props => props.theme.fontSizes.md};
-  font-weight: ${props => props.theme.fontWeights.semibold};
+  background: ${props => props.theme.colors.primary}; color: ${props => props.theme.colors.white};
+  font-size: ${props => props.theme.fontSizes.md}; font-weight: ${props => props.theme.fontWeights.semibold};
   border-radius: ${props => props.theme.borderRadius.md};
   transition: all ${props => props.theme.transitions.normal};
   box-shadow: ${props => props.theme.shadows.button};
-
-  &:hover {
-    background: ${props => props.theme.colors.primaryDark};
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(226, 35, 26, 0.5);
-  }
+  &:hover { background: ${props => props.theme.colors.primaryDark}; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(226, 35, 26, 0.5); }
 `;
 
+/* ── Static data ────────────────────────────────────────────────── */
 const SERVICOS = [
   { icon: <Wrench size={32} />, titulo: 'Revisão Completa', desc: 'Manutenção preventiva e corretiva com técnicos certificados' },
   { icon: <Settings size={32} />, titulo: 'Mecânica em Geral', desc: 'Reparo e diagnóstico para todas as marcas e modelos' },
@@ -232,7 +151,18 @@ const SERVICOS = [
   { icon: <ShieldCheck size={32} />, titulo: 'Inspeção de Freio', desc: 'Garantia de segurança com revisão completa dos sistemas de freio' },
 ];
 
+/* ── Page ────────────────────────────────────────────────── */
 export default function HomePage() {
+  const [destaques, setDestaques] = useState<MotoDto[]>([]);
+  const [loadingMotos, setLoadingMotos] = useState(true);
+
+  useEffect(() => {
+    motosApi.list({ destaque: true, limit: 3 })
+      .then(res => setDestaques(res.data))
+      .catch(() => setDestaques([]))
+      .finally(() => setLoadingMotos(false));
+  }, []);
+
   return (
     <>
       <HeroCarousel />
@@ -256,18 +186,52 @@ export default function HomePage() {
             <SectionLabel>Destaques</SectionLabel>
             <SectionTitle>Motos em Destaque</SectionTitle>
           </SectionHeader>
-          <MotosGrid>
-            {[1, 2, 3].map((i) => (
-              <MotoCard key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
-                <MotoCardImage>📷 Foto da moto</MotoCardImage>
-                <MotoCardBody>
-                  <MotoCardMarca>Suzuki</MotoCardMarca>
-                  <MotoCardNome>GSX-8R 2024</MotoCardNome>
-                  <MotoCardPreco>R$ 49.900,00</MotoCardPreco>
-                </MotoCardBody>
-              </MotoCard>
-            ))}
-          </MotosGrid>
+
+          {loadingMotos ? (
+            <div style={{ textAlign: 'center', color: '#999', padding: '48px 0' }}>Carregando...</div>
+          ) : destaques.length > 0 ? (
+            <MotosGrid>
+              {destaques.map((moto) => {
+                const foto = moto.fotos?.find(f => f.principal) ?? moto.fotos?.[0];
+                return (
+                  <Link key={moto.id} href={`/motos/${moto.slug}`} style={{ textDecoration: 'none' }}>
+                    <MotoCard initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }}>
+                      <MotoCardImage>
+                        {foto
+                          ? <Image src={foto.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
+                          : <span style={{ fontSize: '48px' }}>🏍️</span>
+                        }
+                      </MotoCardImage>
+                      <MotoCardBody>
+                        <MotoCardMarca>{moto.marca}</MotoCardMarca>
+                        <MotoCardNome>{moto.nome}</MotoCardNome>
+                        <MotoCardMeta>
+                          {moto.ano && <MotoCardMetaItem>📅 {moto.ano}</MotoCardMetaItem>}
+                          {moto.km !== null && moto.km !== undefined && (
+                            <MotoCardMetaItem>
+                              🛣️ {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                            </MotoCardMetaItem>
+                          )}
+                          {moto.cor && <MotoCardMetaItem>🎨 {moto.cor}</MotoCardMetaItem>}
+                        </MotoCardMeta>
+                        {moto.preco && (
+                          <MotoCardPreco>
+                            R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
+                          </MotoCardPreco>
+                        )}
+                      </MotoCardBody>
+                    </MotoCard>
+                  </Link>
+                );
+              })}
+            </MotosGrid>
+          ) : (
+            /* Fallback quando não há destaques */
+            <p style={{ textAlign: 'center', color: '#999' }}>
+              Nenhuma moto em destaque no momento.
+            </p>
+          )}
+
           <div style={{ textAlign: 'center', marginTop: '2.5rem' }}>
             <PrimaryButton href="/motos">Ver todas as motos →</PrimaryButton>
           </div>
@@ -284,9 +248,9 @@ export default function HomePage() {
           <ServicosGrid>
             {SERVICOS.map((s) => (
               <ServicoCard key={s.titulo}>
-                <ServicoIcon>{s.icon}</ServicoIcon>
-                <ServicoTitulo>{s.titulo}</ServicoTitulo>
-                <ServicoDesc>{s.desc}</ServicoDesc>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{s.icon}</div>
+                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.5rem' }}>{s.titulo}</h3>
+                <p style={{ fontSize: '0.875rem', color: '#666', lineHeight: 1.6 }}>{s.desc}</p>
               </ServicoCard>
             ))}
           </ServicosGrid>

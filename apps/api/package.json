@@ -35,7 +35,7 @@
     "multer": "^1.4.5-lts.1",
     "uuid": "^11.0.5",
     "facebook-nodejs-business-sdk": "^22.0.0",
-    "@moto-e-cia/shared": "workspace:*"
+    "@moto-e-cia/shared": "*"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.9",

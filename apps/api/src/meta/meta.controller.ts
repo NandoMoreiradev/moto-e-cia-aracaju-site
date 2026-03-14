@@ -13,22 +13,34 @@ import { Roles } from '../auth/decorators/roles.decorator';
 export class MetaController {
   constructor(private readonly metaService: MetaService) {}
 
-  @ApiOperation({ summary: 'Status da integração com Meta' })
+  @ApiOperation({ summary: 'Status dos dois catálogos Meta (Veículos + Produtos)' })
   @Get('status')
   status() {
     return this.metaService.getStatus();
   }
 
-  @ApiOperation({ summary: 'Sincronizar todas as motos com Meta Catalog' })
+  @ApiOperation({ summary: 'Sincronizar todas as motos nos dois catálogos Meta' })
   @Post('sync')
   syncAll() {
     return this.metaService.syncAll();
   }
 
-  @ApiOperation({ summary: 'Sincronizar moto específica com Meta Catalog' })
+  @ApiOperation({ summary: 'Sincronizar moto nos dois catálogos (Veículos + Produtos)' })
   @Post('sync/:motoId')
   syncMoto(@Param('motoId') motoId: string) {
+    return this.metaService.syncAllBoth(motoId);
+  }
+
+  @ApiOperation({ summary: 'Sincronizar moto apenas no Catálogo de Veículos (retargeting)' })
+  @Post('sync/:motoId/vehicle')
+  syncVehicle(@Param('motoId') motoId: string) {
     return this.metaService.syncMoto(motoId);
+  }
+
+  @ApiOperation({ summary: 'Sincronizar moto apenas no Catálogo de Produtos (Instagram Shopping)' })
+  @Post('sync/:motoId/product')
+  syncProduct(@Param('motoId') motoId: string) {
+    return this.metaService.syncMotoAsProduct(motoId);
   }
 
   @ApiOperation({ summary: 'Remover produto do Meta Catalog' })

@@ -1,5 +1,3 @@
-const { withPayload } = require('@payloadcms/next/withPayload');
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   compiler: {
@@ -9,7 +7,7 @@ const nextConfig = {
     remotePatterns: [
       {
         protocol: 'https',
-        hostname: 'pub-xxxxxxxx.r2.dev', // Substituir pelo domínio público do R2
+        hostname: '*.r2.dev', // Cloudflare R2 público
       },
       {
         protocol: 'https',
@@ -20,13 +18,12 @@ const nextConfig = {
   async rewrites() {
     return [
       {
-        // Encaminha para o backend externo somente rotas que o Payload NÃO gerencia
-        // Payload gerencia: /api/users, /api/motos, /api/servicos, /api/media, /api/graphql, /api/payload
-        source: '/api/:path((?!graphql|users|motos|servicos|media|payload).*)',
+        // Encaminha todas as chamadas /api/* para o backend NestJS
+        source: '/api/:path*',
         destination: `${process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000'}/api/:path*`,
       },
     ];
   },
 };
 
-module.exports = withPayload(nextConfig);
+module.exports = nextConfig;
