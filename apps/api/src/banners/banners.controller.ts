@@ -72,7 +72,7 @@ export class BannersController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
-          new FileTypeValidator({ fileType: /^image\/(jpeg|png|webp)$/ }),
+          new FileTypeValidator({ fileType: '.(jpeg|jpg|png|webp|svg\\+xml|svg)$' }),
         ],
       }),
     )

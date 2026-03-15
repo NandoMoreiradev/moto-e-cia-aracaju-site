@@ -102,9 +102,25 @@ const MotoCardImage = styled.div`
 const MotoCardBody = styled.div`
   padding: ${({ theme }) => theme.spacing.lg};
 `;
-const MotoCardMarca = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.xs}; font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  text-transform: uppercase; letter-spacing: 0.1em; color: ${({ theme }) => theme.colors.primary};
+const MotoCardMarca = styled.div`
+  height: 24px;
+  margin-bottom: ${({ theme }) => theme.spacing.xs};
+  display: flex;
+  align-items: center;
+
+  img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+
+  span {
+    font-size: ${({ theme }) => theme.fontSizes.xs};
+    font-weight: ${({ theme }) => theme.fontWeights.semibold};
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: ${({ theme }) => theme.colors.primary};
+  }
 `;
 const MotoCardNome = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes.xl};
@@ -244,7 +260,16 @@ export default function HomePage() {
                         }
                       </MotoCardImage>
                       <MotoCardBody>
-                        <MotoCardMarca>{moto.marca}</MotoCardMarca>
+                        <MotoCardMarca>
+                          {marcas.find(m => m.nome.toUpperCase() === moto.marca.toUpperCase())?.logoUrl ? (
+                            <img 
+                              src={marcas.find(m => m.nome.toUpperCase() === moto.marca.toUpperCase())?.logoUrl || ''} 
+                              alt={moto.marca} 
+                            />
+                          ) : (
+                            <span>{moto.marca}</span>
+                          )}
+                        </MotoCardMarca>
                         <MotoCardNome>{moto.nome}</MotoCardNome>
                         <MotoCardMeta>
                           {moto.ano && (

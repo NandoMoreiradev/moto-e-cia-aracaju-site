@@ -19,7 +19,11 @@ const CarouselContainer = styled.section`
 const Slide = styled(motion.div)<{ $bgImage: string }>`
   position: absolute;
   inset: 0;
-  background: ${({ $bgImage }) => ($bgImage.includes('gradient') ? $bgImage : `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url(${$bgImage})`)};
+  background-image: ${({ $bgImage }) => 
+    $bgImage.includes('gradient') 
+      ? $bgImage 
+      : `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("${$bgImage}")`
+  };
   background-size: cover;
   background-position: center;
   display: flex;

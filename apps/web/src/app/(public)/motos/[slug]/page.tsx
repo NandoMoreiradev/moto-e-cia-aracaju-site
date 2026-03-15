@@ -1,9 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
+import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
 import { motos as motosApi } from '@/lib/api';
 import type { MotoDto } from '@moto-e-cia/shared';
 
@@ -21,6 +23,8 @@ export default function MotoDetalhePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [selectedFotoIndex, setSelectedFotoIndex] = useState(0);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalImageIndex, setModalImageIndex] = useState(0);
 
   // Estados para os acórdeons da Ficha Técnica (mock de grupos para simular o layout)
   const [openSpecs, setOpenSpecs] = useState<Record<string, boolean>>({
@@ -29,6 +33,16 @@ export default function MotoDetalhePage() {
   });
 
   const toggleSpec = (group: string) => setOpenSpecs(prev => ({ ...prev, [group]: !prev[group] }));
+  
+  const scrollRef = useRef<HTMLDivElement>(null);
+
+  const scroll = (direction: 'left' | 'right') => {
+    if (scrollRef.current) {
+      const { scrollLeft, clientWidth } = scrollRef.current;
+      const scrollTo = direction === 'left' ? scrollLeft - 340 : scrollLeft + 340;
+      scrollRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+    }
+  };
 
   useEffect(() => {
     motosApi.get(slug)
@@ -177,7 +191,7 @@ export default function MotoDetalhePage() {
               onMouseEnter={e => e.currentTarget.style.background = '#ff2028'}
               onMouseLeave={e => e.currentTarget.style.background = '#e31b23'}
             >
-              TENHO INTERESSE
+              FALE COM UM VENDEDOR
             </a>
             <a 
               href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${encodeURIComponent(`Olá, gostaria de simular um financiamento para a moto: ${moto.nome}.`)}`}
@@ -192,10 +206,23 @@ export default function MotoDetalhePage() {
             >
               FINANCIAMENTO
             </a>
+            <a 
+              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${encodeURIComponent(`Olá, gostaria de simular um consórcio para a moto: ${moto.nome}.`)}`}
+              target="_blank" rel="noopener noreferrer"
+              style={{
+                background: '#fff', color: '#e31b23', border: '2px solid #e31b23', 
+                borderRadius: '30px', padding: '16px 40px', fontSize: '14px', 
+                fontWeight: 800, textDecoration: 'none', transition: 'all 0.2s'
+              }}
+              onMouseEnter={e => { e.currentTarget.style.background = '#e31b23'; e.currentTarget.style.color = '#fff'; }}
+              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#e31b23'; }}
+            >
+              CONSÓRCIO
+            </a>
         </div>
       </section>
 
-      {/* 3. GALERIA DE FOTOS */}
+      {/* 3. GALERIA DE FOTOS (Carrossel Horizontal) */}
       {fotosOrdenadas.length > 0 && (
         <section style={{ maxWidth: '1200px', margin: '0 auto 100px', padding: '0 5%' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
@@ -203,19 +230,205 @@ export default function MotoDetalhePage() {
             <div style={{ width: '40px', height: '4px', background: '#e31b23', margin: '16px auto 0' }} />
           </div>
           
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
-            {fotosOrdenadas.map((foto, i) => (
-              <div 
-                key={foto.id} 
-                onClick={() => setSelectedFotoIndex(i)}
-                style={{ position: 'relative', height: '220px', borderRadius: '8px', overflow: 'hidden', border: '1px solid #eaeaea', cursor: 'pointer', background: '#fff' }}
-              >
-                <Image src={foto.url} alt={`Galeria ${i+1}`} fill style={{ objectFit: 'contain', padding: '16px', transition: 'transform 0.3s' }} onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.05)'} onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'} />
-              </div>
-            ))}
+          <div style={{ position: 'relative', width: '100%' }}>
+            {/* Nav Arrows (Desktop Only) */}
+            <button 
+              onClick={() => scroll('left')}
+              style={{
+                position: 'absolute', left: '-20px', top: '50%', transform: 'translateY(-50%)',
+                zIndex: 2, background: '#fff', border: '1px solid #eaeaea', borderRadius: '50%',
+                width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', color: '#e31b23'
+              }}
+              className="desktop-only-btn"
+            >
+              <ChevronLeft size={24} />
+            </button>
+
+            <button 
+              onClick={() => scroll('right')}
+              style={{
+                position: 'absolute', right: '-20px', top: '50%', transform: 'translateY(-50%)',
+                zIndex: 2, background: '#fff', border: '1px solid #eaeaea', borderRadius: '50%',
+                width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', color: '#e31b23'
+              }}
+              className="desktop-only-btn"
+            >
+              <ChevronRight size={24} />
+            </button>
+
+            {/* Scroll Container */}
+            <div 
+              ref={scrollRef}
+              style={{ 
+                display: 'flex', 
+                overflowX: 'auto', 
+                gap: '16px', 
+                paddingBottom: '20px',
+                scrollbarWidth: 'none', // Firefox
+                msOverflowStyle: 'none', // IE/Edge
+                scrollSnapType: 'x mandatory',
+                cursor: 'grab'
+              }} 
+              className="hide-scrollbar"
+              onMouseDown={(e) => {
+                const el = scrollRef.current;
+                if (!el) return;
+                el.style.cursor = 'grabbing';
+                el.style.userSelect = 'none';
+                el.style.scrollBehavior = 'auto'; // Disable smooth for drag
+                
+                const startX = e.pageX - el.offsetLeft;
+                const scrollLeft = el.scrollLeft;
+                
+                const onMouseMove = (e: MouseEvent) => {
+                  const x = e.pageX - el.offsetLeft;
+                  const walk = (x - startX) * 2;
+                  el.scrollLeft = scrollLeft - walk;
+                };
+                
+                const onMouseUp = () => {
+                  el.style.cursor = 'grab';
+                  el.style.userSelect = 'auto';
+                  el.style.scrollBehavior = 'smooth';
+                  window.removeEventListener('mousemove', onMouseMove);
+                  window.removeEventListener('mouseup', onMouseUp);
+                };
+                
+                window.addEventListener('mousemove', onMouseMove);
+                window.addEventListener('mouseup', onMouseUp);
+              }}
+            >
+              <style dangerouslySetInnerHTML={{ __html: `
+                .hide-scrollbar::-webkit-scrollbar { display: none; }
+                @media (max-width: 1250px) {
+                  .desktop-only-btn { display: none !important; }
+                }
+              `}} />
+              
+              {fotosOrdenadas.map((foto, i) => (
+                <motion.div 
+                  key={foto.id} 
+                  whileHover={{ y: -5 }}
+                  onClick={() => {
+                    setModalImageIndex(i);
+                    setIsModalOpen(true);
+                  }}
+                  style={{ 
+                    flex: '0 0 320px', 
+                    position: 'relative', 
+                    height: '240px', 
+                    borderRadius: '12px', 
+                    overflow: 'hidden', 
+                    border: '1px solid #eaeaea', 
+                    cursor: 'pointer', 
+                    background: '#fff',
+                    boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
+                    scrollSnapAlign: 'start'
+                  }}
+                >
+                  <Image 
+                    src={foto.url} 
+                    alt={`Galeria ${i+1}`} 
+                    fill 
+                    style={{ objectFit: 'contain', padding: '16px' }} 
+                  />
+                  <div style={{ 
+                    position: 'absolute', bottom: '12px', right: '12px', 
+                    background: 'rgba(0,0,0,0.4)', color: '#fff', 
+                    padding: '6px', borderRadius: '50%',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center'
+                  }}>
+                    <Maximize2 size={16} />
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+            
+            <p style={{ textAlign: 'center', color: '#999', fontSize: '12px', marginTop: '10px' }}>
+              ‹ deslize para ver mais ›
+            </p>
           </div>
         </section>
       )}
+
+      {/* 3.1 IMAGE VIEWER MODAL */}
+      <AnimatePresence>
+        {isModalOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 10000,
+              background: 'rgba(0,0,0,0.95)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(8px)'
+            }}
+            onClick={() => setIsModalOpen(false)}
+          >
+            {/* Close button */}
+            <button 
+              onClick={(e) => { e.stopPropagation(); setIsModalOpen(false); }}
+              style={{
+                position: 'absolute', top: '30px', right: '30px',
+                background: 'none', border: 'none', color: '#fff',
+                cursor: 'pointer', padding: '10px'
+              }}
+            >
+              <X size={32} />
+            </button>
+
+            {/* Nav Buttons */}
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalImageIndex(prev => (prev === 0 ? fotosOrdenadas.length - 1 : prev - 1));
+              }}
+              style={{
+                position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+                width: '50px', height: '50px', borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+            >
+              <ChevronLeft size={32} />
+            </button>
+
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setModalImageIndex(prev => (prev === fotosOrdenadas.length - 1 ? 0 : prev + 1));
+              }}
+              style={{
+                position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
+                width: '50px', height: '50px', borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              }}
+            >
+              <ChevronRight size={32} />
+            </button>
+
+            {/* Modal Image */}
+            <div style={{ position: 'relative', width: '90%', height: '80%', userSelect: 'none' }} onClick={(e) => e.stopPropagation()}>
+              <Image 
+                src={fotosOrdenadas[modalImageIndex].url} 
+                alt="Visualização" 
+                fill 
+                style={{ objectFit: 'contain' }}
+              />
+              <div style={{ 
+                position: 'absolute', bottom: '-40px', left: 0, right: 0, 
+                textAlign: 'center', color: '#fff', fontSize: '14px' 
+              }}>
+                {modalImageIndex + 1} / {fotosOrdenadas.length} {fotosOrdenadas[modalImageIndex].corNome ? `— ${fotosOrdenadas[modalImageIndex].corNome}` : ''}
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* 4. DESCRIÇÃO E ESPECIFICAÇÕES TÉCNICAS */}
       <section style={{ maxWidth: '1000px', margin: '0 auto 120px', padding: '0 5%' }}>
@@ -304,13 +517,20 @@ export default function MotoDetalhePage() {
           position: 'fixed', bottom: '32px', right: '32px', zIndex: 999,
           background: '#25D366', color: '#fff', width: '64px', height: '64px', 
           borderRadius: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(37, 211, 102, 0.4)', textDecoration: 'none', fontSize: '28px',
+          boxShadow: '0 8px 24px rgba(37, 211, 102, 0.4)', textDecoration: 'none',
           transition: 'transform 0.2s'
         }}
         onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}
       >
-        <i style={{ fontFamily: 'sans-serif', fontStyle: 'normal' }}>💬</i>
+        <svg 
+          viewBox="0 0 24 24" 
+          width="32" 
+          height="32" 
+          fill="currentColor"
+        >
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.411.002 12.048c0 2.12.54 4.19 1.566 6.02L0 24l6.135-1.61a11.81 11.81 0 005.911 1.586h.005c6.637 0 12.048-5.411 12.05-12.048a11.82 11.82 0 00-3.418-8.521z"/>
+        </svg>
       </a>
 
     </div>

@@ -88,37 +88,31 @@ export default function MotosPage() {
       </div>
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
-        {/* Brand Logo Filter */}
         {marcas.length > 0 && (
-          <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '20px', scrollbarWidth: 'none' }}>
-            <button 
-              onClick={() => { setMarca(''); setPage(1); }}
-              style={{
-                flex: '0 0 auto', padding: '10px 20px', borderRadius: '12px', background: !marca ? '#E2231A' : '#fff',
-                color: !marca ? '#fff' : '#888', border: '1px solid', borderColor: !marca ? '#E2231A' : '#e5e5e5',
-                fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
-              }}
-            >
-              TODAS
-            </button>
+          <div style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '20px', scrollbarWidth: 'none' }}>
             {marcas.map(m => (
               <button 
                 key={m.id}
-                onClick={() => { setMarca(m.nome as any); setPage(1); }}
+                onClick={() => { 
+                  // Toggle filter: if same brand clicked, reset to empty
+                  setMarca(marca === m.nome ? '' : m.nome as any); 
+                  setPage(1); 
+                }}
                 style={{
-                  flex: '0 0 auto', width: '90px', height: '54px', borderRadius: '12px',
-                  background: marca === m.nome ? '#fff' : '#fff',
+                  flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '12px',
+                  background: '#fff',
                   border: '2px solid', borderColor: marca === m.nome ? '#E2231A' : '#e5e5e5',
                   cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '6px', opacity: marca && marca !== m.nome ? 0.6 : 1,
-                  filter: marca && marca !== m.nome ? 'grayscale(100%)' : 'none'
+                  padding: '10px', opacity: marca && marca !== m.nome ? 0.4 : 1,
+                  filter: marca && marca !== m.nome ? 'grayscale(100%)' : 'none',
+                  boxShadow: marca === m.nome ? '0 4px 12px rgba(226, 35, 26, 0.15)' : 'none'
                 }}
                 title={m.nome}
               >
                 {m.logoUrl ? (
                   <img src={m.logoUrl} alt={m.nome} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                 ) : (
-                  <span style={{ fontSize: '11px', fontWeight: 700, color: marca === m.nome ? '#E2231A' : '#888' }}>{m.nome}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 700, color: marca === m.nome ? '#E2231A' : '#888' }}>{m.nome}</span>
                 )}
               </button>
             ))}
