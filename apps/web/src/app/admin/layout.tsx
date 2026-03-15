@@ -4,11 +4,17 @@ import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { getToken, clearToken, auth } from '@/lib/api';
+import { 
+  BarChart3, Bike, Image as ImageIcon, Tag, Facebook, 
+  LogOut, Globe, LayoutDashboard 
+} from 'lucide-react';
 
 const NAV_ITEMS = [
-  { href: '/admin', label: '📊 Dashboard', exact: true },
-  { href: '/admin/motos', label: '🏍️ Motos' },
-  { href: '/admin/meta', label: '📘 Meta / Instagram' },
+  { href: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={18} />, exact: true },
+  { href: '/admin/motos', label: 'Motos', icon: <Bike size={18} /> },
+  { href: '/admin/banners', label: 'Banners', icon: <ImageIcon size={18} /> },
+  { href: '/admin/marcas', label: 'Marcas', icon: <Tag size={18} /> },
+  { href: '/admin/meta', label: 'Meta / Instagram', icon: <Facebook size={18} /> },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -70,8 +76,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               background: '#E2231A',
               borderRadius: '8px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              fontSize: '18px',
-            }}>🏍️</div>
+              color: '#fff'
+            }}>
+              <Bike size={20} />
+            </div>
             <div>
               <div style={{ color: '#fff', fontWeight: 700, fontSize: '14px' }}>Moto e Cia</div>
               <div style={{ color: '#555', fontSize: '11px' }}>Painel Admin</div>
@@ -101,6 +109,9 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                   transition: 'all 0.15s',
                 }}
               >
+                <div style={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
+                  {item.icon}
+                </div>
                 {item.label}
               </Link>
             );

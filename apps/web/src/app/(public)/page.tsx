@@ -5,10 +5,10 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
+import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck, Calendar, Gauge, Palette, Fuel, MapPin, Star } from 'lucide-react';
 import { HeroCarousel } from '@/components/common/HeroCarousel';
-import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck } from 'lucide-react';
-import { motos as motosApi } from '@/lib/api';
-import type { MotoDto } from '@moto-e-cia/shared';
+import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
+import type { MotoDto, MarcaDto } from '@moto-e-cia/shared';
 
 /* ── Styled components ────────────────────────────────────────────────── */
 const BrandsSection = styled.section`
@@ -31,13 +31,35 @@ const BrandsGrid = styled.div`
   display: flex; align-items: center; justify-content: center;
   gap: ${({ theme }) => theme.spacing['3xl']}; flex-wrap: wrap;
 `;
-const BrandName = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes['2xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  color: ${({ theme }) => theme.colors.lightGray};
-  letter-spacing: 0.05em; transition: color ${({ theme }) => theme.transitions.fast};
-  cursor: default;
-  &:hover { color: ${({ theme }) => theme.colors.primary}; }
+const BrandLogo = styled(motion.div)`
+  height: 60px;
+  max-width: 150px;
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    height: 100%;
+    width: auto;
+    object-fit: contain;
+  }
+
+  span {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ccc;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  &:hover {
+    filter: grayscale(0);
+    opacity: 1;
+    transform: scale(1.1);
+  }
 `;
 const SectionWrapper = styled.section`
   padding: ${({ theme }) => `${theme.spacing['5xl']} 0`};
@@ -154,13 +176,20 @@ const SERVICOS = [
 /* ── Page ────────────────────────────────────────────────── */
 export default function HomePage() {
   const [destaques, setDestaques] = useState<MotoDto[]>([]);
+  const [marcas, setMarcas] = useState<MarcaDto[]>([]);
   const [loadingMotos, setLoadingMotos] = useState(true);
 
   useEffect(() => {
-    motosApi.list({ destaque: true, limit: 3 })
-      .then(res => setDestaques(res.data))
-      .catch(() => setDestaques([]))
-      .finally(() => setLoadingMotos(false));
+    Promise.all([
+      motosApi.list({ destaque: true, limit: 3 }),
+      marcasApi.list()
+    ]).then(([motosData, marcasData]) => {
+      setDestaques(motosData.data);
+      setMarcas(marcasData);
+    }).catch(err => {
+      console.error('Erro ao carregar dados:', err);
+      setDestaques([]);
+    }).finally(() => setLoadingMotos(false));
   }, []);
 
   return (
@@ -172,9 +201,21 @@ export default function HomePage() {
         <BrandsWrapper>
           <BrandsLabel>Marcas oficiais</BrandsLabel>
           <BrandsGrid>
-            {['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO'].map((marca) => (
-              <BrandName key={marca}>{marca}</BrandName>
-            ))}
+            {marcas.length > 0 ? (
+              marcas.map((marca) => (
+                <BrandLogo key={marca.id} whileHover={{ y: -5 }}>
+                  {marca.logoUrl ? (
+                    <img src={marca.logoUrl} alt={marca.nome} title={marca.nome} />
+                  ) : (
+                    <span>{marca.nome}</span>
+                  )}
+                </BrandLogo>
+              ))
+            ) : (
+              ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO'].map((name) => (
+                <BrandLogo key={name}><span>{name}</span></BrandLogo>
+              ))
+            )}
           </BrandsGrid>
         </BrandsWrapper>
       </BrandsSection>
@@ -206,13 +247,21 @@ export default function HomePage() {
                         <MotoCardMarca>{moto.marca}</MotoCardMarca>
                         <MotoCardNome>{moto.nome}</MotoCardNome>
                         <MotoCardMeta>
-                          {moto.ano && <MotoCardMetaItem>📅 {moto.ano}</MotoCardMetaItem>}
-                          {moto.km !== null && moto.km !== undefined && (
-                            <MotoCardMetaItem>
-                              🛣️ {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                          {moto.ano && (
+                            <MotoCardMetaItem title="Ano">
+                              <Calendar size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {moto.ano}
                             </MotoCardMetaItem>
                           )}
-                          {moto.cor && <MotoCardMetaItem>🎨 {moto.cor}</MotoCardMetaItem>}
+                          {moto.km !== null && moto.km !== undefined && (
+                            <MotoCardMetaItem title="Quilometragem">
+                              <Gauge size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                            </MotoCardMetaItem>
+                          )}
+                          {moto.cor && (
+                            <MotoCardMetaItem title="Cor">
+                              <Palette size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {moto.cor}
+                            </MotoCardMetaItem>
+                          )}
                         </MotoCardMeta>
                         {moto.preco && (
                           <MotoCardPreco>

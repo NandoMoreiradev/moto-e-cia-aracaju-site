@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { adminMotos, adminMeta } from '@/lib/api';
+import { Star, RefreshCw, Trash2, Camera, Check, ArrowLeft } from 'lucide-react';
 import type { MotoDto } from '@moto-e-cia/shared';
 
 const isNova = (id: string) => id === 'nova';
@@ -208,9 +209,9 @@ export default function AdminMotoEditPage() {
           <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, margin: 0 }}>
             {nova ? 'Nova Moto' : (moto.nome || 'Editar Moto')}
           </h1>
-          <button type="button" onClick={() => router.push('/admin/motos')} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '13px', padding: 0, marginTop: '4px' }}>
-            ← Voltar para Motos
-          </button>
+            <button type="button" onClick={() => router.push('/admin/motos')} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '13px', padding: 0, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <ArrowLeft size={14} /> Voltar para Motos
+            </button>
         </div>
         <div style={{ display: 'flex', gap: '10px' }}>
           {!nova && (
@@ -218,7 +219,11 @@ export default function AdminMotoEditPage() {
               padding: '10px 16px', background: '#1a3a6b', border: '1px solid #1e4d9a',
               borderRadius: '8px', color: '#6fa3f7', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
             }}>
-              {syncing ? 'Sincronizando...' : '📘 Sync Meta'}
+              {syncing ? 'Sincronizando...' : (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <RefreshCw size={14} /> Sync Meta
+                </span>
+              )}
             </button>
           )}
           <button type="submit" disabled={saving} style={{
@@ -375,7 +380,11 @@ export default function AdminMotoEditPage() {
 
           {/* Fotos */}
           {!nova && (
-            <Card title={`📷 Fotos (${fotos.length})`}>
+            <Card title={(
+              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Camera size={16} /> Fotos ({fotos.length})
+              </span>
+            )}>
               {/* Upload zone */}
               <div
                 onClick={() => fileRef.current?.click()}
@@ -416,10 +425,15 @@ export default function AdminMotoEditPage() {
                           <button type="button" onClick={() => handleSetPrincipal(foto.id)} title="Definir como principal" style={{
                             flex: 1, padding: '4px', background: '#1a1a1a', border: '1px solid #333',
                             borderRadius: '4px', color: '#888', fontSize: '11px', cursor: 'pointer',
-                          }}>⭐</button>
+                            display: 'flex', alignItems: 'center', justifyContent: 'center'
+                          }}>
+                            <Star size={12} />
+                          </button>
                         )}
                         {foto.principal && (
-                          <span style={{ flex: 1, textAlign: 'center', color: '#E2231A', fontSize: '11px', padding: '4px' }}>Principal</span>
+                          <span style={{ flex: 1, textAlign: 'center', color: '#E2231A', fontSize: '11px', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                            <Check size={12} /> Principal
+                          </span>
                         )}
                         <button type="button" onClick={() => handleDeleteFoto(foto.id)} style={{
                           padding: '4px 8px', background: 'transparent', border: '1px solid #330000',
@@ -449,8 +463,9 @@ export default function AdminMotoEditPage() {
             </div>
             <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
               <input type="checkbox" id="destaque" checked={!!moto.destaque} onChange={e => set('destaque', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#E2231A' }} />
-              <label htmlFor="destaque" style={{ color: '#aaa', fontSize: '14px', cursor: 'pointer' }}>
-                ⭐ Moto em Destaque
+              <label htmlFor="destaque" style={{ color: '#aaa', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Star size={16} fill={moto.destaque ? '#E2231A' : 'none'} color={moto.destaque ? '#E2231A' : '#aaa'} />
+                Moto em Destaque
               </label>
             </div>
             <p style={{ color: '#444', fontSize: '12px', marginTop: '6px' }}>Motos em destaque aparecem na homepage.</p>
@@ -482,7 +497,7 @@ export default function AdminMotoEditPage() {
   );
 }
 
-function Card({ title, children }: { title: string; children: React.ReactNode }) {
+function Card({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
   return (
     <div style={{ background: '#1a1a1a', border: '1px solid #222', borderRadius: '12px', padding: '20px' }}>
       <h3 style={{ color: '#fff', fontSize: '14px', fontWeight: 600, margin: '0 0 16px 0' }}>{title}</h3>

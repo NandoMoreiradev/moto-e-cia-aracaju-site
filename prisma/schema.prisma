@@ -182,3 +182,41 @@ model SiteConfig {
 
   @@map("site_configs")
 }
+// ==========================================
+// BANNERS (Hero Carousel)
+// ==========================================
+
+model Banner {
+  id          String   @id @default(cuid())
+  label       String?  // Ex: "Performance Pura"
+  titulo      String   // Ex: "Suzuki GSX-R1000R"
+  subtitulo   String?  @db.Text
+  imageUrl    String
+  imageR2Key  String
+  link        String?  // URL para onde o banner aponta
+  ordem       Int      @default(0)
+  ativo       Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("banners")
+}
+
+// ==========================================
+// MARCAS OFICIAIS
+// ==========================================
+
+model Marca {
+  id          String   @id @default(cuid())
+  nome        String   @unique // Ex: "SUZUKI"
+  logoUrl     String
+  logoR2Key   String
+  ordem       Int      @default(0)
+  ativa       Boolean  @default(true)
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("marcas")
+}

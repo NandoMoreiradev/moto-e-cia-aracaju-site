@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { adminMotos } from '@/lib/api';
+import { Star } from 'lucide-react';
 import type { MotoDto } from '@moto-e-cia/shared';
 
 const STATUS_LABEL: Record<string, { label: string; color: string }> = {
@@ -135,7 +136,10 @@ export default function AdminMotosPage() {
                       position: 'absolute', top: '8px', left: '8px',
                       background: '#E2231A', borderRadius: '20px',
                       padding: '3px 10px', fontSize: '11px', fontWeight: 600, color: '#fff',
-                    }}>⭐ Destaque</div>
+                      display: 'flex', alignItems: 'center', gap: '4px'
+                    }}>
+                      <Star size={11} fill="currentColor" /> Destaque
+                    </div>
                   )}
                 </div>
 

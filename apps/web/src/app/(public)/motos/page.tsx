@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { motos as motosApi } from '@/lib/api';
-import type { MotoDto, MarcaMoto, TipoMoto } from '@moto-e-cia/shared';
+import { useSearchParams, useRouter } from 'next/navigation';
+import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
+import type { MotoDto, MarcaMoto, TipoMoto, MarcaDto } from '@moto-e-cia/shared';
+import { Calendar, Gauge, Palette, Search, X, Star } from 'lucide-react';
 
 const MARCAS: { value: MarcaMoto | ''; label: string }[] = [
   { value: '', label: 'Todas as marcas' },
@@ -33,12 +35,17 @@ const STATUS_BADGE: Record<string, { label: string; color: string }> = {
 
 export default function MotosPage() {
   const [motos, setMotos] = useState<MotoDto[]>([]);
+  const [marcas, setMarcas] = useState<MarcaDto[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [marca, setMarca] = useState<MarcaMoto | ''>('');
   const [tipo, setTipo] = useState<TipoMoto | ''>('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    marcasApi.list().then(setMarcas).catch(() => setMarcas([]));
+  }, []);
 
   const LIMIT = 12;
 
@@ -81,16 +88,56 @@ export default function MotosPage() {
       </div>
 
       <div style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
+        {/* Brand Logo Filter */}
+        {marcas.length > 0 && (
+          <div style={{ display: 'flex', gap: '12px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '20px', scrollbarWidth: 'none' }}>
+            <button 
+              onClick={() => { setMarca(''); setPage(1); }}
+              style={{
+                flex: '0 0 auto', padding: '10px 20px', borderRadius: '12px', background: !marca ? '#E2231A' : '#fff',
+                color: !marca ? '#fff' : '#888', border: '1px solid', borderColor: !marca ? '#E2231A' : '#e5e5e5',
+                fontSize: '13px', fontWeight: 700, cursor: 'pointer', transition: 'all 0.2s'
+              }}
+            >
+              TODAS
+            </button>
+            {marcas.map(m => (
+              <button 
+                key={m.id}
+                onClick={() => { setMarca(m.nome as any); setPage(1); }}
+                style={{
+                  flex: '0 0 auto', width: '90px', height: '54px', borderRadius: '12px',
+                  background: marca === m.nome ? '#fff' : '#fff',
+                  border: '2px solid', borderColor: marca === m.nome ? '#E2231A' : '#e5e5e5',
+                  cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  padding: '6px', opacity: marca && marca !== m.nome ? 0.6 : 1,
+                  filter: marca && marca !== m.nome ? 'grayscale(100%)' : 'none'
+                }}
+                title={m.nome}
+              >
+                {m.logoUrl ? (
+                  <img src={m.logoUrl} alt={m.nome} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
+                ) : (
+                  <span style={{ fontSize: '11px', fontWeight: 700, color: marca === m.nome ? '#E2231A' : '#888' }}>{m.nome}</span>
+                )}
+              </button>
+            ))}
+          </div>
+        )}
+
         {/* Filters */}
         <div style={{
           background: '#fff', borderRadius: '12px', padding: '20px',
           display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center',
           marginBottom: '28px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         }}>
-          <input type="text" placeholder="🔍 Buscar moto..." value={search}
-            onChange={e => { setSearch(e.target.value); setPage(1); }}
-            style={{ flex: 1, minWidth: '180px', padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px' }}
-          />
+          <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
+            <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
+            <input type="text" placeholder="Buscar moto..." value={search}
+              onChange={e => { setSearch(e.target.value); setPage(1); }}
+              style={{ width: '100%', padding: '10px 14px 10px 36px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px' }}
+            />
+          </div>
           <select value={marca} onChange={e => { setMarca(e.target.value as any); setPage(1); }}
             style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
             {MARCAS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
@@ -100,8 +147,8 @@ export default function MotosPage() {
             {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
           {(marca || tipo || search) && (
-            <button onClick={resetFilters} style={{ padding: '10px 14px', background: 'transparent', border: '1px solid #e5e5e5', borderRadius: '8px', color: '#888', fontSize: '13px', cursor: 'pointer' }}>
-              ✕ Limpar
+            <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', background: 'transparent', border: '1px solid #e5e5e5', borderRadius: '8px', color: '#888', fontSize: '13px', cursor: 'pointer' }}>
+              <X size={14} /> Limpar
             </button>
           )}
         </div>
@@ -137,18 +184,35 @@ export default function MotosPage() {
                         <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.7)', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: st.color }}>{st.label}</div>
                       )}
                       {moto.destaque && (
-                        <div style={{ position: 'absolute', top: '10px', left: '10px', background: '#E2231A', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: '#fff' }}>⭐ Destaque</div>
+                        <div style={{ 
+                          position: 'absolute', top: '10px', left: '10px', 
+                          background: '#E2231A', borderRadius: '20px', 
+                          padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: '#fff',
+                          display: 'flex', alignItems: 'center', gap: '4px'
+                        }}>
+                          <Star size={12} fill="currentColor" /> Destaque
+                        </div>
                       )}
                     </div>
                     <div style={{ padding: '18px' }}>
                       <div style={{ color: '#E2231A', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
                       <h2 style={{ color: '#111', fontSize: '18px', fontWeight: 700, margin: '4px 0 8px' }}>{moto.nome}</h2>
                       <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                        {moto.ano && <span style={{ color: '#888', fontSize: '13px' }}>📅 {moto.ano}</span>}
-                        {moto.km !== null && moto.km !== undefined && (
-                          <span style={{ color: '#888', fontSize: '13px' }}>🛣️ {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}</span>
+                        {moto.ano && (
+                          <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Calendar size={13} /> {moto.ano}
+                          </span>
                         )}
-                        {moto.cor && <span style={{ color: '#888', fontSize: '13px' }}>🎨 {moto.cor}</span>}
+                        {moto.km !== null && moto.km !== undefined && (
+                          <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Gauge size={13} /> {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                          </span>
+                        )}
+                        {moto.cor && (
+                          <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Palette size={13} /> {moto.cor}
+                          </span>
+                        )}
                       </div>
                       {moto.preco
                         ? <div style={{ color: '#2ecc71', fontSize: '18px', fontWeight: 700 }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>

@@ -1,4 +1,7 @@
-import type { MotoDto, PaginatedResponse, MotoFiltersDto, LoginDto, AuthResponseDto } from '@moto-e-cia/shared';
+import type { 
+  MotoDto, PaginatedResponse, MotoFiltersDto, LoginDto, AuthResponseDto,
+  BannerDto, CreateBannerDto, MarcaDto, CreateMarcaDto
+} from '@moto-e-cia/shared';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
 
@@ -65,6 +68,16 @@ export const motos = {
   },
   get: (slug: string) => apiFetch<MotoDto>(`/motos/${slug}`),
   getById: (id: string) => apiFetch<MotoDto>(`/motos/id/${id}`),
+};
+
+// ─── Banners (público) ────────────────────────────────────────────────────────
+export const banners = {
+  list: () => apiFetch<BannerDto[]>('/banners'),
+};
+
+// ─── Marcas (público) ─────────────────────────────────────────────────────────
+export const marcas = {
+  list: () => apiFetch<MarcaDto[]>('/marcas'),
 };
 
 // ─── Admin — Motos ─────────────────────────────────────────────────────────────
@@ -145,4 +158,36 @@ export const adminLeads = {
   },
   markRead: (id: string) =>
     apiFetch<any>(`/admin/leads/${id}/lido`, { method: 'PUT' }),
+};
+
+// ─── Admin — Banners ──────────────────────────────────────────────────────────
+export const adminBanners = {
+  list: () => apiFetch<BannerDto[]>('/admin/banners'),
+  create: (dto: CreateBannerDto) => 
+    apiFetch<BannerDto>('/admin/banners', { method: 'POST', body: JSON.stringify(dto) }),
+  update: (id: string, dto: Partial<CreateBannerDto>) =>
+    apiFetch<BannerDto>(`/admin/banners/${id}`, { method: 'PATCH', body: JSON.stringify(dto) }),
+  delete: (id: string) =>
+    apiFetch<{ message: string }>(`/admin/banners/${id}`, { method: 'DELETE' }),
+  uploadImage: (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return apiFetchFormData<BannerDto>(`/admin/banners/${id}/image`, formData);
+  },
+};
+
+// ─── Admin — Marcas ───────────────────────────────────────────────────────────
+export const adminMarcas = {
+  list: () => apiFetch<MarcaDto[]>('/admin/marcas'),
+  create: (dto: CreateMarcaDto) =>
+    apiFetch<MarcaDto>('/admin/marcas', { method: 'POST', body: JSON.stringify(dto) }),
+  update: (id: string, dto: Partial<CreateMarcaDto>) =>
+    apiFetch<MarcaDto>(`/admin/marcas/${id}`, { method: 'PATCH', body: JSON.stringify(dto) }),
+  delete: (id: string) =>
+    apiFetch<{ message: string }>(`/admin/marcas/${id}`, { method: 'DELETE' }),
+  uploadLogo: (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append('logo', file);
+    return apiFetchFormData<MarcaDto>(`/admin/marcas/${id}/logo`, formData);
+  },
 };

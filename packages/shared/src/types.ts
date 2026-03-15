@@ -171,3 +171,45 @@ export interface MotoFiltersDto extends PaginationDto {
   precoMin?: number;
   precoMax?: number;
 }
+
+// Banners
+export interface BannerDto {
+  id: string;
+  label: string | null;
+  titulo: string;
+  subtitulo: string | null;
+  imageUrl: string;
+  imageR2Key: string;
+  link: string | null;
+  ordem: number;
+  ativo: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateBannerDto {
+  label?: string;
+  titulo: string;
+  subtitulo?: string;
+  link?: string;
+  ordem?: number;
+  ativo?: boolean;
+}
+
+// Marcas Oficiais
+export interface MarcaDto {
+  id: string;
+  nome: string;
+  logoUrl: string;
+  logoR2Key: string;
+  ordem: number;
+  ativa: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateMarcaDto {
+  nome: string;
+  ordem?: number;
+  ativa?: boolean;
+}

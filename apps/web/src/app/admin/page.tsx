@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { adminMotos, adminMeta } from '@/lib/api';
+import { Plus, Bike, RefreshCw, CheckCircle, AlertTriangle, Share2 } from 'lucide-react';
 
 interface Stats {
   total: number;
@@ -78,30 +79,35 @@ export default function AdminDashboardPage() {
           title="Adicionar Moto"
           desc="Cadastre uma nova moto no catálogo"
           href="/admin/motos/nova"
-          icon="➕"
+          icon={<Plus size={28} color="#E2231A" />}
         />
         <ActionCard
           title="Gerenciar Motos"
           desc="Edite, exclua e gerencie as fotos"
           href="/admin/motos"
-          icon="🏍️"
+          icon={<Bike size={28} color="#E2231A" />}
         />
         <ActionCard
           title="Sincronizar Meta"
           desc={
             metaStatus
-              ? `${metaStatus.productCatalog?.configurado ? '✅' : '⚠️'} Catálogo Instagram ${metaStatus.vehicleCatalog?.configurado ? '+ ✅ Veículos' : ''}`
+              ? (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                  {metaStatus.productCatalog?.configurado ? <CheckCircle size={12} color="#2ecc71" /> : <AlertTriangle size={12} color="#f39c12" />} 
+                  Shop Instagram {metaStatus.vehicleCatalog?.configurado ? '+ ✅' : ''}
+                </span>
+              )
               : 'Sincronizar com Instagram Shopping'
           }
           href="/admin/meta"
-          icon="📘"
+          icon={<Share2 size={28} color="#E2231A" />}
         />
       </div>
     </div>
   );
 }
 
-function ActionCard({ title, desc, href, icon }: { title: string; desc: string; href: string; icon: string }) {
+function ActionCard({ title, desc, href, icon }: { title: string; desc: React.ReactNode; href: string; icon: React.ReactNode }) {
   return (
     <Link href={href} style={{ textDecoration: 'none' }}>
       <div style={{

@@ -8,6 +8,8 @@ import { BlogModule } from './blog/blog.module';
 import { LeadsModule } from './leads/leads.module';
 import { R2Module } from './r2/r2.module';
 import { MetaModule } from './meta/meta.module';
+import { BannersModule } from './banners/banners.module';
+import { MarcasModule } from './marcas/marcas.module';
 
 @Module({
   imports: [
@@ -30,6 +32,8 @@ import { MetaModule } from './meta/meta.module';
     LeadsModule,
     R2Module,
     MetaModule,
+    BannersModule,
+    MarcasModule,
   ],
 })
 export class AppModule {}
