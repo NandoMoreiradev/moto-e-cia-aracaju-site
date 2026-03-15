@@ -16,13 +16,13 @@ const CarouselContainer = styled.section`
   background: ${({ theme }) => theme.colors.dark};
 `;
 
-const Slide = styled(motion.div)<{ $bgImage: string }>`
+const Slide = styled(motion.div)<{ $bgImage: string; $hasContent: boolean }>`
   position: absolute;
   inset: 0;
-  background-image: ${({ $bgImage }) => 
+  background-image: ${({ $bgImage, $hasContent }) => 
     $bgImage.includes('gradient') 
       ? $bgImage 
-      : `linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), url("${$bgImage}")`
+      : `${$hasContent ? 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), ' : ''}url("${$bgImage}")`
   };
   background-size: cover;
   background-position: center;
@@ -166,6 +166,7 @@ export const HeroCarousel = () => {
   }
 
   const activeSlide = slides[current];
+  const hasContent = !!(activeSlide.label || activeSlide.titulo || activeSlide.subtitulo || activeSlide.link);
 
   return (
     <CarouselContainer>
@@ -173,47 +174,52 @@ export const HeroCarousel = () => {
         <Slide
           key={activeSlide.id}
           $bgImage={activeSlide.imageUrl}
+          $hasContent={hasContent}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 1.2, ease: 'easeInOut' }}
         >
-          <Content>
-            {activeSlide.label && (
-              <Label
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.3, duration: 0.8 }}
-              >
-                {activeSlide.label}
-              </Label>
-            )}
-            <Title
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5, duration: 0.8 }}
-            >
-              {activeSlide.titulo}
-            </Title>
-            {activeSlide.subtitulo && (
-              <Subtitle
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.7, duration: 0.8 }}
-              >
-                {activeSlide.subtitulo}
-              </Subtitle>
-            )}
-            {activeSlide.link && (
-              <ButtonGroup
-                initial={{ opacity: 0, y: 30 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.9, duration: 0.8 }}
-              >
-                <PrimaryButton href={activeSlide.link}>Conhecer Modelo</PrimaryButton>
-              </ButtonGroup>
-            )}
-          </Content>
+          {hasContent && (
+            <Content>
+              {activeSlide.label && (
+                <Label
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.3, duration: 0.8 }}
+                >
+                  {activeSlide.label}
+                </Label>
+              )}
+              {activeSlide.titulo && (
+                <Title
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                >
+                  {activeSlide.titulo}
+                </Title>
+              )}
+              {activeSlide.subtitulo && (
+                <Subtitle
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.7, duration: 0.8 }}
+                >
+                  {activeSlide.subtitulo}
+                </Subtitle>
+              )}
+              {activeSlide.link && (
+                <ButtonGroup
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.9, duration: 0.8 }}
+                >
+                  <PrimaryButton href={activeSlide.link}>Conhecer Modelo</PrimaryButton>
+                </ButtonGroup>
+              )}
+            </Content>
+          )}
         </Slide>
       </AnimatePresence>
 

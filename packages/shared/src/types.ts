@@ -176,7 +176,7 @@ export interface MotoFiltersDto extends PaginationDto {
 export interface BannerDto {
   id: string;
   label: string | null;
-  titulo: string;
+  titulo: string | null;
   subtitulo: string | null;
   imageUrl: string;
   imageR2Key: string;
@@ -189,7 +189,7 @@ export interface BannerDto {
 
 export interface CreateBannerDto {
   label?: string;
-  titulo: string;
+  titulo?: string;
   subtitulo?: string;
   link?: string;
   ordem?: number;

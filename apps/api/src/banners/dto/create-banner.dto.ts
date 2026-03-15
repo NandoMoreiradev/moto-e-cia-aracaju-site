@@ -7,9 +7,10 @@ export class CreateBannerDto {
   @IsOptional()
   label?: string;
 
-  @ApiProperty({ example: 'Suzuki GSX-R1000R' })
+  @ApiProperty({ example: 'Suzuki GSX-R1000R', required: false })
   @IsString()
-  titulo: string;
+  @IsOptional()
+  titulo?: string;
 
   @ApiProperty({ example: 'A lenda das pistas agora ao seu alcance.', required: false })
   @IsString()

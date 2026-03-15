@@ -189,7 +189,7 @@ model SiteConfig {
 model Banner {
   id          String   @id @default(cuid())
   label       String?  // Ex: "Performance Pura"
-  titulo      String   // Ex: "Suzuki GSX-R1000R"
+  titulo      String?  // Ex: "Suzuki GSX-R1000R"
   subtitulo   String?  @db.Text
   imageUrl    String
   imageR2Key  String
