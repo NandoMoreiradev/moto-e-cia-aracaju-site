@@ -32,7 +32,7 @@ export default function AdminBannerDetailPage() {
           const banner = banners.find(b => b.id === id);
           if (banner) {
             setForm({
-              titulo: banner.titulo,
+              titulo: banner.titulo || '',
               label: banner.label || '',
               subtitulo: banner.subtitulo || '',
               link: banner.link || '',
@@ -92,9 +92,8 @@ export default function AdminBannerDetailPage() {
           {/* Coluna 1 */}
           <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-              <label style={{ color: '#888', fontSize: '12px', fontWeight: 600 }}>Título principal (obrigatório)</label>
+              <label style={{ color: '#888', fontSize: '12px', fontWeight: 600 }}>Título principal</label>
               <input 
-                required
                 value={form.titulo} 
                 onChange={e => setForm({...form, titulo: e.target.value})}
                 style={{ padding: '10px', background: '#1a1a1a', border: '1px solid #333', borderRadius: '8px', color: '#fff' }} 

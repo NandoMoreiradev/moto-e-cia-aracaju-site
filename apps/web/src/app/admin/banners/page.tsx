@@ -23,8 +23,8 @@ export default function AdminBannersPage() {
 
   useEffect(() => { load(); }, [load]);
 
-  async function handleDelete(id: string, titulo: string) {
-    if (!confirm(`Tem certeza que deseja excluir o banner "${titulo}"?`)) return;
+  async function handleDelete(id: string, titulo: string | null) {
+    if (!confirm(`Tem certeza que deseja excluir o banner "${titulo || 'Sem Título'}"?`)) return;
     setDeleting(id);
     try {
       await adminBanners.delete(id);
@@ -69,7 +69,7 @@ export default function AdminBannersPage() {
             }}>
               <div style={{ height: '160px', background: '#111', position: 'relative' }}>
                 {banner.imageUrl ? (
-                  <Image src={banner.imageUrl} alt={banner.titulo} fill style={{ objectFit: 'cover' }} />
+                  <Image src={banner.imageUrl} alt={banner.titulo || 'Banner'} fill style={{ objectFit: 'cover' }} />
                 ) : (
                   <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '48px' }}>
                     🖼️
@@ -91,7 +91,7 @@ export default function AdminBannersPage() {
                     {banner.label}
                   </div>
                 )}
-                <div style={{ color: '#fff', fontWeight: 700, fontSize: '18px' }}>{banner.titulo}</div>
+                <div style={{ color: '#fff', fontWeight: 700, fontSize: '18px' }}>{banner.titulo || 'Sem Título'}</div>
                 <p style={{ color: '#666', fontSize: '13px', marginTop: '6px', lineClamp: 2, overflow: 'hidden', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
                   {banner.subtitulo || 'Sem descrição'}
                 </p>
