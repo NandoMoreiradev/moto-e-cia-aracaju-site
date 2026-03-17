@@ -2,8 +2,7 @@ import { createGlobalStyle } from 'styled-components';
 import { Theme } from '@moto-e-cia/shared';
 
 export const GlobalStyles = createGlobalStyle`
-  /* Google Fonts */
-  @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;400;500;600;700&family=Roboto:wght@300;400;500;700;900&display=swap');
+  /* Google Fonts should be loaded via Next.js next/font or layout.tsx */
 
   *, *::before, *::after {
     box-sizing: border-box;

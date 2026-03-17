@@ -191,3 +191,13 @@ export const adminMarcas = {
     return apiFetchFormData<MarcaDto>(`/admin/marcas/${id}/logo`, formData);
   },
 };
+
+// ─── Admin — Generic R2 ────────────────────────────────────────────────────────
+export const adminR2 = {
+  uploadImage: (file: File) => {
+    const formData = new FormData();
+    formData.append('image', file);
+    return apiFetchFormData<{ url: string }>('/admin/r2/upload/image', formData);
+  },
+};
+

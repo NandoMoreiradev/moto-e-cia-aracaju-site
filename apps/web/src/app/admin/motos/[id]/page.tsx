@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { adminMotos, adminMeta } from '@/lib/api';
 import { Star, RefreshCw, Trash2, Camera, Check, ArrowLeft } from 'lucide-react';
 import type { MotoDto } from '@moto-e-cia/shared';
+import { RichTextEditor } from '@/components/common/RichTextEditor';
 
 const isNova = (id: string) => id === 'nova';
 
@@ -278,11 +279,11 @@ export default function AdminMotoEditPage() {
               </div>
             </div>
             <div style={{ marginTop: '12px' }}>
-              <label style={labelStyle}>Descrição</label>
-              <textarea
-                style={{ ...inputStyle, minHeight: '100px', resize: 'vertical' }}
+              <label style={labelStyle}>Descrição Rico (Formatação, Imagens, etc)</label>
+              <RichTextEditor
                 value={moto.descricao || ''}
-                onChange={e => set('descricao', e.target.value)}
+                onChange={(html: string) => set('descricao', html)}
+                placeholder="Descreva a moto com detalhes, fotos e formatação..."
               />
             </div>
           </Card>

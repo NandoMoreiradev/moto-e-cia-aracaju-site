@@ -7,6 +7,7 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Wrench, Settings, Plus, RotateCcw, Droplets, ShieldCheck, Calendar, Gauge, Palette, Fuel, MapPin, Star } from 'lucide-react';
 import { HeroCarousel } from '@/components/common/HeroCarousel';
+import { PaymentOptions } from '@/components/common/PaymentOptions';
 import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
 import type { MotoDto, MarcaDto } from '@moto-e-cia/shared';
 
@@ -311,6 +312,9 @@ export default function HomePage() {
           </div>
         </SectionContent>
       </SectionWrapper>
+
+      {/* Opções de Pagamento (Consórcio e Financiamento) */}
+      <PaymentOptions />
 
       {/* Serviços */}
       <SectionWrapper style={{ background: '#F8F8F8' }}>

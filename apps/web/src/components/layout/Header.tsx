@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
 
+import Image from 'next/image';
+
 const HeaderContainer = styled.header`
   position: sticky;
   top: 0;
@@ -24,13 +26,12 @@ const Nav = styled.nav`
 `;
 
 const Logo = styled(Link)`
-  font-size: ${({ theme }) => theme.fontSizes['2xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  color: ${({ theme }) => theme.colors.primary};
-  letter-spacing: -0.05em;
+  display: flex;
+  align-items: center;
+  transition: opacity ${({ theme }) => theme.transitions.fast};
 
-  span {
-    color: ${({ theme }) => theme.colors.dark};
+  &:hover {
+    opacity: 0.8;
   }
 `;
 
@@ -148,7 +149,15 @@ export function Header() {
     <HeaderContainer>
       <Nav>
         <Logo href="/">
-          Moto<span>&</span>Cia
+          {/* Supondo que a logo seja um PNG, mas o Next aceita JPG, WebP e SVG também */}
+          <Image 
+            src="/logo_moto_e_cia.png" 
+            alt="Moto e Cia Aracaju" 
+            width={120} 
+            height={60} 
+            style={{ objectFit: 'contain' }}
+            priority
+          />
         </Logo>
 
         <HamburgerButton onClick={toggleMenu} aria-label="Menu">

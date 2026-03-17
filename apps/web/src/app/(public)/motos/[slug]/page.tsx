@@ -434,12 +434,29 @@ export default function MotoDetalhePage() {
       <section style={{ maxWidth: '1000px', margin: '0 auto 120px', padding: '0 5%' }}>
         
         {moto.descricao && (
-          <div style={{ marginBottom: '80px', textAlign: 'center' }}>
-            <div style={{ color: '#444', fontSize: '16px', lineHeight: 1.8, fontWeight: 400 }}>
-              {moto.descricao.split('\n').map((line, i) => (
-                <span key={i}>{line}<br/></span>
-              ))}
-            </div>
+          <div style={{ marginBottom: '80px' }}>
+            <style dangerouslySetInnerHTML={{ __html: `
+              .rich-content {
+                color: #444;
+                font-size: 16px;
+                line-height: 1.8;
+                font-weight: 400;
+                text-align: left;
+              }
+              .rich-content p { margin-bottom: 1.5rem; }
+              .rich-content h1 { font-size: 2rem; margin: 2rem 0 1rem; color: #111; }
+              .rich-content h2 { font-size: 1.5rem; margin: 1.5rem 0 1rem; color: #111; }
+              .rich-content ul, .rich-content ol { padding-left: 1.5rem; margin-bottom: 1.5rem; }
+              .rich-content ul { list-style-type: disc; }
+              .rich-content ol { list-style-type: decimal; }
+              .rich-content img { max-width: 100%; height: auto; border-radius: 12px; margin: 2rem 0; display: block; }
+              .rich-content blockquote { border-left: 4px solid #e31b23; padding-left: 1.5rem; color: #666; font-style: italic; margin: 2rem 0; }
+              .rich-content a { color: #e31b23; text-decoration: underline; }
+            `}} />
+            <div 
+              className="rich-content"
+              dangerouslySetInnerHTML={{ __html: moto.descricao }} 
+            />
           </div>
         )}
 
