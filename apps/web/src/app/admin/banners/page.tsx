@@ -1,10 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import Link from 'next/link';
 import Image from 'next/image';
 import { adminBanners } from '@/lib/api';
 import type { BannerDto } from '@moto-e-cia/shared';
+import { Plus, Edit2, Trash2, Image as ImageIcon, ExternalLink, Sliders } from 'lucide-react';
+import { AdminCard } from '@/components/admin/AdminCard';
+import { AdminButton } from '@/components/admin/AdminButton';
+import { AdminBadge } from '@/components/admin/AdminBadge';
 
 export default function AdminBannersPage() {
   const [banners, setBanners] = useState<BannerDto[]>([]);
@@ -37,90 +40,103 @@ export default function AdminBannersPage() {
   }
 
   return (
-    <div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '24px' }}>
+    <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
         <div>
-          <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: 0 }}>Banners</h1>
-          <p style={{ color: '#555', fontSize: '14px', marginTop: '4px' }}>Gerencie os slides do banner principal</p>
+          <h1 style={{ color: '#111', fontSize: '28px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>Banners</h1>
+          <p style={{ color: '#666', fontSize: '14px', marginTop: '4px' }}>Gerencie os slides do banner principal na homepage</p>
         </div>
-        <Link href="/admin/banners/novo" style={{
-          background: '#E2231A', color: '#fff',
-          padding: '10px 20px', borderRadius: '8px',
-          textDecoration: 'none', fontWeight: 600, fontSize: '14px',
-        }}>
-          + Novo Banner
-        </Link>
+        <AdminButton onClick={() => window.location.href = '/admin/banners/novo'}>
+          <Plus size={18} /> Novo Banner
+        </AdminButton>
       </div>
 
       {loading ? (
-        <div style={{ color: '#555', textAlign: 'center', padding: '48px' }}>Carregando...</div>
-      ) : banners.length === 0 ? (
-        <div style={{ color: '#555', textAlign: 'center', padding: '48px' }}>
-          Nenhum banner cadastrado.{' '}
-          <Link href="/admin/banners/novo" style={{ color: '#E2231A' }}>Cadastrar agora</Link>
+        <div style={{ color: '#999', textAlign: 'center', padding: '100px 0' }}>
+          <div className="animate-spin mb-4" style={{ display: 'inline-block' }}>⌛</div>
+          <div>Carregando banners...</div>
         </div>
+      ) : banners.length === 0 ? (
+        <AdminCard style={{ padding: '80px 20px', textAlign: 'center' }}>
+          <div style={{ background: '#f8f9fa', width: '64px', height: '64px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <ImageIcon size={32} color="#ccc" />
+          </div>
+          <h3 style={{ color: '#111', fontSize: '18px', fontWeight: 700, marginBottom: '8px' }}>Nenhum banner encontrado</h3>
+          <p style={{ color: '#666', fontSize: '14px', marginBottom: '24px' }}>Comece criando o primeiro slide para o topo do seu site.</p>
+          <AdminButton onClick={() => window.location.href = '/admin/banners/novo'} variant="secondary">
+            Criar meu primeiro banner
+          </AdminButton>
+        </AdminCard>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '20px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: '24px' }}>
           {banners.map(banner => (
-            <div key={banner.id} style={{
-              background: '#1a1a1a', border: '1px solid #222',
-              borderRadius: '12px', overflow: 'hidden',
-              display: 'flex', flexDirection: 'column'
-            }}>
-              <div style={{ height: '160px', background: '#111', position: 'relative' }}>
+            <AdminCard key={banner.id} noPadding style={{ overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+              <div style={{ height: '180px', background: '#f5f5f5', position: 'relative' }}>
                 {banner.imageUrl ? (
                   <Image src={banner.imageUrl} alt={banner.titulo || 'Banner'} fill style={{ objectFit: 'cover' }} />
                 ) : (
-                  <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#333', fontSize: '48px' }}>
-                    🖼️
+                  <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}>
+                    <ImageIcon size={48} />
                   </div>
                 )}
-                <div style={{
-                  position: 'absolute', top: '8px', right: '8px',
-                  background: banner.ativo ? '#2ecc71' : '#888',
-                  borderRadius: '20px', padding: '3px 10px', fontSize: '10px',
-                  fontWeight: 700, color: '#fff', textTransform: 'uppercase'
-                }}>
-                  {banner.ativo ? 'Ativo' : 'Inativo'}
+                <div style={{ position: 'absolute', top: '12px', right: '12px' }}>
+                  <AdminBadge color={banner.ativo ? '#2ecc71' : '#888'}>
+                    {banner.ativo ? 'Ativo' : 'Inativo'}
+                  </AdminBadge>
                 </div>
               </div>
 
-              <div style={{ padding: '16px', flex: 1, display: 'flex', flexDirection: 'column' }}>
-                {banner.label && (
-                  <div style={{ color: '#E2231A', fontSize: '10px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '4px' }}>
-                    {banner.label}
+              <div style={{ padding: '20px', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '8px', gap: '12px' }}>
+                  <div>
+                    {banner.label && (
+                      <span style={{ color: '#E2231A', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: '4px', display: 'block' }}>
+                        {banner.label}
+                      </span>
+                    )}
+                    <h3 style={{ color: '#111', fontSize: '18px', fontWeight: 800, margin: 0, lineHeight: 1.2 }}>
+                      {banner.titulo || 'Sem Título'}
+                    </h3>
                   </div>
-                )}
-                <div style={{ color: '#fff', fontWeight: 700, fontSize: '18px' }}>{banner.titulo || 'Sem Título'}</div>
-                <p style={{ color: '#666', fontSize: '13px', marginTop: '6px', lineClamp: 2, overflow: 'hidden', display: '-webkit-box', WebkitBoxOrient: 'vertical', WebkitLineClamp: 2 }}>
-                  {banner.subtitulo || 'Sem descrição'}
-                </p>
-                <div style={{ color: '#444', fontSize: '11px', marginTop: '8px' }}>Ordem: {banner.ordem}</div>
-
-                <div style={{ display: 'flex', gap: '8px', marginTop: '16px' }}>
-                  <Link href={`/admin/banners/${banner.id}`} style={{
-                    flex: 1, textAlign: 'center',
-                    padding: '8px', background: '#222',
-                    border: '1px solid #333', borderRadius: '6px',
-                    color: '#aaa', fontSize: '13px', textDecoration: 'none',
+                  <div style={{ 
+                    background: '#f8f9fa', borderRadius: '8px', padding: '4px 8px', 
+                    fontSize: '12px', fontWeight: 700, color: '#999', border: '1px solid #eee',
+                    display: 'flex', alignItems: 'center', gap: '4px'
                   }}>
-                    ✏️ Editar
-                  </Link>
-                  <button
-                    onClick={() => handleDelete(banner.id, banner.titulo)}
-                    disabled={deleting === banner.id}
-                    style={{
-                      padding: '8px 12px',
-                      background: 'transparent', border: '1px solid #333',
-                      borderRadius: '6px', color: '#cc4444',
-                      fontSize: '13px', cursor: 'pointer',
-                    }}
+                    <Sliders size={12} /> #{banner.ordem}
+                  </div>
+                </div>
+
+                <p style={{ 
+                  color: '#666', fontSize: '14px', margin: '0 0 20px 0', 
+                  flex: 1, display: '-webkit-box', WebkitBoxOrient: 'vertical', 
+                  WebkitLineClamp: 2, overflow: 'hidden', lineHeight: 1.5 
+                }}>
+                  {banner.subtitulo || 'Sem descrição adicional para este slide.'}
+                </p>
+
+                <div style={{ display: 'flex', gap: '10px', paddingTop: '16px', borderTop: '1px solid #f8f9fa' }}>
+                  <AdminButton 
+                    variant="secondary" 
+                    size="sm" 
+                    style={{ flex: 1, background: '#fff' }}
+                    onClick={() => window.location.href = `/admin/banners/${banner.id}`}
                   >
-                    {deleting === banner.id ? '...' : '🗑️'}
-                  </button>
+                    <Edit2 size={14} /> Editar
+                  </AdminButton>
+                  <AdminButton 
+                    variant="danger" 
+                    size="sm" 
+                    type="button"
+                    loading={deleting === banner.id}
+                    onClick={() => handleDelete(banner.id, banner.titulo)}
+                    style={{ width: '42px' }}
+                  >
+                    {!deleting && <Trash2 size={14} />}
+                  </AdminButton>
                 </div>
               </div>
-            </div>
+            </AdminCard>
           ))}
         </div>
       )}

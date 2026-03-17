@@ -23,11 +23,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const [user, setUser] = useState<{ name: string; email: string } | null>(null);
   const [checking, setChecking] = useState(true);
 
-  // Se for a página de login, nem tentar checar autenticação ou mostrar o layout lateral
   const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
-    if (isLoginPage) return; // ignora a checagem no login
+    if (isLoginPage) return;
 
     const token = getToken();
     if (!token) {
@@ -37,7 +36,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     auth.me()
       .then(u => { setUser(u as any); setChecking(false); })
       .catch(() => { clearToken(); router.replace('/admin/login'); });
-  }, [router]);
+  }, [router, isLoginPage]);
 
   function handleLogout() {
     clearToken();
@@ -50,45 +49,68 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
   if (checking) {
     return (
-      <div style={{ minHeight: '100vh', background: '#111', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        <div style={{ color: '#666', fontSize: '15px' }}>Verificando acesso...</div>
+      <div style={{ 
+        minHeight: '100vh', 
+        background: '#fff', 
+        display: 'flex', 
+        flexDirection: 'column',
+        alignItems: 'center', 
+        justifyContent: 'center' 
+      }}>
+        <div style={{ 
+          width: '40px', height: '40px', 
+          border: '3px solid #f3f3f3', 
+          borderTop: '3px solid #E2231A', 
+          borderRadius: '50%',
+          animation: 'spin 1s linear infinite'
+        }} />
+        <style dangerouslySetInnerHTML={{ __html: `
+          @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        `}} />
+        <div style={{ color: '#999', fontSize: '13px', marginTop: '16px', fontWeight: 500 }}>
+          Moto e Cia Admin
+        </div>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', minHeight: '100vh', background: '#111', fontFamily: 'inherit' }}>
+    <div style={{ display: 'flex', minHeight: '100vh', background: '#f9fafb', fontFamily: 'inherit' }}>
       {/* Sidebar */}
       <aside style={{
-        width: '240px',
-        background: '#161616',
-        borderRight: '1px solid #222',
+        width: '260px',
+        background: '#fff',
+        borderRight: '1px solid #f0f0f0',
         display: 'flex',
         flexDirection: 'column',
-        padding: '24px 0',
+        padding: '32px 0',
         flexShrink: 0,
+        position: 'sticky',
+        top: 0,
+        height: '100vh'
       }}>
         {/* Brand */}
-        <div style={{ padding: '0 20px 24px', borderBottom: '1px solid #222' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+        <div style={{ padding: '0 24px 32px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             <div style={{
-              width: '36px', height: '36px',
+              width: '40px', height: '40px',
               background: '#E2231A',
-              borderRadius: '8px',
+              borderRadius: '12px',
               display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff'
+              color: '#fff',
+              boxShadow: '0 4px 12px rgba(226, 35, 26, 0.2)'
             }}>
-              <Bike size={20} />
+              <Bike size={22} />
             </div>
             <div>
-              <div style={{ color: '#fff', fontWeight: 700, fontSize: '14px' }}>Moto e Cia</div>
-              <div style={{ color: '#555', fontSize: '11px' }}>Painel Admin</div>
+              <div style={{ color: '#111', fontWeight: 800, fontSize: '16px', letterSpacing: '-0.02em' }}>Moto e Cia</div>
+              <div style={{ color: '#999', fontSize: '12px', fontWeight: 500 }}>Painel Gestor</div>
             </div>
           </div>
         </div>
 
         {/* Nav */}
-        <nav style={{ flex: 1, padding: '16px 12px' }}>
+        <nav style={{ flex: 1, padding: '0 16px' }}>
           {NAV_ITEMS.map(item => {
             const active = item.exact ? pathname === item.href : pathname.startsWith(item.href);
             return (
@@ -98,18 +120,31 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 style={{
                   display: 'flex',
                   alignItems: 'center',
-                  padding: '10px 12px',
-                  borderRadius: '8px',
-                  color: active ? '#fff' : '#888',
+                  padding: '12px 16px',
+                  borderRadius: '12px',
+                  color: active ? '#fff' : '#666',
                   background: active ? '#E2231A' : 'transparent',
-                  fontWeight: active ? 600 : 400,
+                  fontWeight: active ? 700 : 500,
                   fontSize: '14px',
                   textDecoration: 'none',
-                  marginBottom: '4px',
-                  transition: 'all 0.15s',
+                  marginBottom: '6px',
+                  transition: 'all 0.2s',
+                  boxShadow: active ? '0 4px 12px rgba(226, 35, 26, 0.2)' : 'none'
+                }}
+                onMouseEnter={e => {
+                  if (!active) {
+                    e.currentTarget.style.background = '#f5f5f5';
+                    e.currentTarget.style.color = '#111';
+                  }
+                }}
+                onMouseLeave={e => {
+                  if (!active) {
+                    e.currentTarget.style.background = 'transparent';
+                    e.currentTarget.style.color = '#666';
+                  }
                 }}
               >
-                <div style={{ marginRight: '10px', display: 'flex', alignItems: 'center' }}>
+                <div style={{ marginRight: '12px', display: 'flex', alignItems: 'center', opacity: active ? 1 : 0.7 }}>
                   {item.icon}
                 </div>
                 {item.label}
@@ -119,42 +154,81 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </nav>
 
         {/* User & Logout */}
-        <div style={{ padding: '16px 12px', borderTop: '1px solid #222' }}>
-          <div style={{ color: '#666', fontSize: '12px', marginBottom: '4px' }}>{user?.email}</div>
-          <div style={{ color: '#999', fontSize: '13px', fontWeight: 600, marginBottom: '12px' }}>{user?.name}</div>
+        <div style={{ padding: '24px 16px 0', borderTop: '1px solid #f0f0f0', margin: '0 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '20px' }}>
+            <div style={{ 
+              width: '36px', height: '36px', borderRadius: '50%', 
+              background: '#f0f0f0', display: 'flex', alignItems: 'center', 
+              justifyContent: 'center', color: '#666', fontSize: '14px', fontWeight: 700 
+            }}>
+              {user?.name?.[0]?.toUpperCase()}
+            </div>
+            <div style={{ overflow: 'hidden' }}>
+              <div style={{ color: '#111', fontSize: '13px', fontWeight: 700, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {user?.name}
+              </div>
+              <div style={{ color: '#999', fontSize: '11px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {user?.email}
+              </div>
+            </div>
+          </div>
+
           <button
             onClick={handleLogout}
             style={{
               width: '100%',
-              padding: '8px',
-              background: 'transparent',
-              border: '1px solid #333',
-              borderRadius: '8px',
+              padding: '10px',
+              background: '#fff',
+              border: '1px solid #e5e5e5',
+              borderRadius: '10px',
               color: '#666',
               fontSize: '13px',
+              fontWeight: 600,
               cursor: 'pointer',
+              transition: 'all 0.2s',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={e => {
+              e.currentTarget.style.background = '#fff5f5';
+              e.currentTarget.style.color = '#E2231A';
+              e.currentTarget.style.borderColor = '#fee2e2';
+            }}
+            onMouseLeave={e => {
+              e.currentTarget.style.background = '#fff';
+              e.currentTarget.style.color = '#666';
+              e.currentTarget.style.borderColor = '#e5e5e5';
             }}
           >
-            Sair
+            <LogOut size={16} /> Sair do Painel
           </button>
+          
           <Link
             href="/"
             style={{
-              display: 'block',
-              textAlign: 'center',
-              marginTop: '8px',
-              color: '#555',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '6px',
+              marginTop: '16px',
+              color: '#999',
               fontSize: '12px',
+              fontWeight: 500,
               textDecoration: 'none',
+              transition: 'color 0.2s'
             }}
+            onMouseEnter={e => e.currentTarget.style.color = '#666'}
+            onMouseLeave={e => e.currentTarget.style.color = '#999'}
           >
-            ← Ver site
+            <Globe size={14} /> Ver site público
           </Link>
         </div>
       </aside>
 
       {/* Content */}
-      <main style={{ flex: 1, overflowY: 'auto', padding: '32px' }}>
+      <main style={{ flex: 1, overflowY: 'auto', padding: '40px 48px' }}>
         {children}
       </main>
     </div>

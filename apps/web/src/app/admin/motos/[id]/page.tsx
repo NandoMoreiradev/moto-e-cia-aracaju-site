@@ -4,9 +4,18 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Image from 'next/image';
 import { adminMotos, adminMeta } from '@/lib/api';
-import { Star, RefreshCw, Trash2, Camera, Check, ArrowLeft } from 'lucide-react';
 import type { MotoDto } from '@moto-e-cia/shared';
 import { RichTextEditor } from '@/components/common/RichTextEditor';
+import { 
+  Star, RefreshCw, Trash2, Camera, Check, ArrowLeft, 
+  Save, Info, Image as ImageIcon, LayoutIcon, Settings,
+  MapPin, Hash
+} from 'lucide-react';
+import { AdminCard } from '@/components/admin/AdminCard';
+import { AdminButton } from '@/components/admin/AdminButton';
+import { AdminInput } from '@/components/admin/AdminInput';
+import { AdminSelect } from '@/components/admin/AdminSelect';
+import { AdminBadge } from '@/components/admin/AdminBadge';
 
 const isNova = (id: string) => id === 'nova';
 
@@ -15,17 +24,6 @@ const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL'];
 const STATUS_OPTS = ['DISPONIVEL', 'RESERVADA', 'VENDIDA', 'ALUGUEL'];
 const COMBUSTIVEIS = ['GASOLINA', 'ETANOL', 'FLEX', 'ELETRICO'];
 const TRANSMISSOES = ['MANUAL', 'AUTOMATICA', 'SEMI_AUTOMATICA'];
-
-const inputStyle: React.CSSProperties = {
-  width: '100%', padding: '10px 12px',
-  background: '#1a1a1a', border: '1px solid #2a2a2a',
-  borderRadius: '8px', color: '#fff', fontSize: '14px',
-  boxSizing: 'border-box',
-};
-const labelStyle: React.CSSProperties = {
-  color: '#888', fontSize: '12px', display: 'block', marginBottom: '5px',
-};
-const fieldStyle: React.CSSProperties = { display: 'flex', flexDirection: 'column', gap: '0' };
 
 export default function AdminMotoEditPage() {
   const router = useRouter();
@@ -52,11 +50,15 @@ export default function AdminMotoEditPage() {
 
   const load = useCallback(async () => {
     if (nova) return;
-    const data = await adminMotos.list({ limit: 200 });
-    const found = data.data.find((m) => m.id === id);
-    if (found) {
-      setMoto(found);
-      setFotos(found.fotos || []);
+    try {
+      const data = await adminMotos.list({ limit: 1000 });
+      const found = data.data.find((m) => m.id === id);
+      if (found) {
+        setMoto(found);
+        setFotos(found.fotos || []);
+      }
+    } catch (e) {
+      console.error(e);
     }
   }, [id, nova]);
 
@@ -87,13 +89,14 @@ export default function AdminMotoEditPage() {
         router.replace(`/admin/motos/${created.id}`);
       } else {
         await adminMotos.update(id, dataToSave);
-        setMsg({ type: 'ok', text: 'Alterações salvas!' });
+        setMsg({ type: 'ok', text: 'Alterações salvas com sucesso!' });
         load();
       }
     } catch (err: any) {
       setMsg({ type: 'err', text: err.message });
     } finally {
       setSaving(false);
+      window.scrollTo(0, 0);
     }
   }
 
@@ -105,7 +108,7 @@ export default function AdminMotoEditPage() {
         const foto = await adminMotos.uploadFoto(id, file);
         setFotos((prev) => [...prev, foto]);
       }
-      setMsg({ type: 'ok', text: 'Foto(s) enviada(s)!' });
+      setMsg({ type: 'ok', text: 'Fotos enviadas com sucesso!' });
     } catch (err: any) {
       setMsg({ type: 'err', text: err.message });
     } finally {
@@ -114,7 +117,7 @@ export default function AdminMotoEditPage() {
   }
 
   async function handleDeleteFoto(fotoId: string) {
-    if (!confirm('Remover esta foto?')) return;
+    if (!confirm('Deseja realmente excluir esta foto?')) return;
     try {
       await adminMotos.deleteFoto(id, fotoId);
       setFotos((prev) => prev.filter((f) => f.id !== fotoId));
@@ -137,11 +140,12 @@ export default function AdminMotoEditPage() {
     setMsg(null);
     try {
       const res = await adminMeta.syncMoto(id);
-      setMsg({ type: 'ok', text: `Meta sync: ${res.vehicle?.message} | ${res.product?.message}` });
+      setMsg({ type: 'ok', text: `Sincronização Meta concluída: ${res.vehicle?.message || 'OK'}` });
     } catch (err: any) {
       setMsg({ type: 'err', text: err.message });
     } finally {
       setSyncing(false);
+      window.scrollTo(0, 0);
     }
   }
 
@@ -151,7 +155,7 @@ export default function AdminMotoEditPage() {
     try {
       const updatedMoto = await adminMotos.uploadCapa(id, files[0]);
       setMoto((prev) => ({ ...prev, capaUrl: updatedMoto.capaUrl }));
-      setMsg({ type: 'ok', text: 'Capa enviada com sucesso!' });
+      setMsg({ type: 'ok', text: 'Imagem de capa atualizada!' });
     } catch (err: any) {
       setMsg({ type: 'err', text: err.message });
     } finally {
@@ -160,7 +164,7 @@ export default function AdminMotoEditPage() {
   }
 
   async function handleDeleteCapa() {
-    if (!confirm('Remover a imagem de capa?')) return;
+    if (!confirm('Deseja remover a imagem de capa?')) return;
     try {
       await adminMotos.deleteCapa(id);
       setMoto((prev) => ({ ...prev, capaUrl: null }));
@@ -175,7 +179,7 @@ export default function AdminMotoEditPage() {
     try {
       const updatedMoto = await adminMotos.uploadLogo(id, files[0]);
       setMoto((prev) => ({ ...prev, logoUrl: updatedMoto.logoUrl }));
-      setMsg({ type: 'ok', text: 'Logo enviada com sucesso!' });
+      setMsg({ type: 'ok', text: 'Logomarca atualizada!' });
     } catch (err: any) {
       setMsg({ type: 'err', text: err.message });
     } finally {
@@ -184,7 +188,7 @@ export default function AdminMotoEditPage() {
   }
 
   async function handleDeleteLogo() {
-    if (!confirm('Remover a logomarca da moto?')) return;
+    if (!confirm('Deseja remover a logomarca?')) return;
     try {
       await adminMotos.deleteLogo(id);
       setMoto((prev) => ({ ...prev, logoUrl: null }));
@@ -203,303 +207,300 @@ export default function AdminMotoEditPage() {
   }
 
   return (
-    <form onSubmit={handleSave}>
-      {/* Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px', flexWrap: 'wrap', gap: '12px' }}>
+    <form onSubmit={handleSave} style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      {/* Page Header */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', gap: '20px' }}>
         <div>
-          <h1 style={{ color: '#fff', fontSize: '22px', fontWeight: 700, margin: 0 }}>
-            {nova ? 'Nova Moto' : (moto.nome || 'Editar Moto')}
-          </h1>
-            <button type="button" onClick={() => router.push('/admin/motos')} style={{ background: 'none', border: 'none', color: '#555', cursor: 'pointer', fontSize: '13px', padding: 0, marginTop: '4px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <ArrowLeft size={14} /> Voltar para Motos
-            </button>
-        </div>
-        <div style={{ display: 'flex', gap: '10px' }}>
-          {!nova && (
-            <button type="button" onClick={handleSync} disabled={syncing} style={{
-              padding: '10px 16px', background: '#1a3a6b', border: '1px solid #1e4d9a',
-              borderRadius: '8px', color: '#6fa3f7', fontSize: '13px', fontWeight: 600, cursor: 'pointer',
-            }}>
-              {syncing ? 'Sincronizando...' : (
-                <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <RefreshCw size={14} /> Sync Meta
-                </span>
-              )}
-            </button>
-          )}
-          <button type="submit" disabled={saving} style={{
-            padding: '10px 24px', background: '#E2231A', border: 'none',
-            borderRadius: '8px', color: '#fff', fontSize: '14px', fontWeight: 600, cursor: 'pointer',
-          }}>
-            {saving ? 'Salvando...' : nova ? 'Criar Moto' : 'Salvar'}
+          <button 
+            type="button" 
+            onClick={() => router.push('/admin/motos')} 
+            style={{ 
+              background: 'none', border: 'none', color: '#999', 
+              cursor: 'pointer', fontSize: '13px', fontWeight: 600,
+              padding: 0, marginBottom: '8px', 
+              display: 'flex', alignItems: 'center', gap: '6px' 
+            }}
+          >
+            <ArrowLeft size={14} /> Voltar para a lista
           </button>
+          <h1 style={{ color: '#111', fontSize: '28px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>
+            {nova ? 'Nova Motocicleta' : (moto.nome || 'Editar Moto')}
+          </h1>
+        </div>
+        
+        <div style={{ display: 'flex', gap: '12px' }}>
+          {!nova && (
+             <AdminButton 
+               type="button" 
+               onClick={handleSync} 
+               disabled={syncing} 
+               variant="secondary"
+               style={{ background: '#fff' }}
+             >
+               {syncing ? <RefreshCw size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+               Sync Meta
+             </AdminButton>
+          )}
+          <AdminButton type="submit" loading={saving} style={{ minWidth: '140px' }}>
+            <Save size={18} /> {nova ? 'Criar Moto' : 'Salvar Alterações'}
+          </AdminButton>
         </div>
       </div>
 
-      {/* Feedback */}
+      {/* Notifications */}
       {msg && (
         <div style={{
-          background: msg.type === 'ok' ? 'rgba(46,204,113,0.12)' : 'rgba(226,35,26,0.12)',
-          border: `1px solid ${msg.type === 'ok' ? 'rgba(46,204,113,0.3)' : 'rgba(226,35,26,0.3)'}`,
-          borderRadius: '8px', padding: '12px 16px', color: msg.type === 'ok' ? '#2ecc71' : '#ff6b6b',
-          fontSize: '14px', marginBottom: '20px',
-        }}>{msg.text}</div>
+          background: msg.type === 'ok' ? '#ecfdf5' : '#fff1f2',
+          border: `1px solid ${msg.type === 'ok' ? '#10b98133' : '#e11d4833'}`,
+          borderRadius: '12px', padding: '16px 20px', 
+          color: msg.type === 'ok' ? '#059669' : '#e11d48',
+          fontSize: '14px', fontWeight: 600, marginBottom: '32px',
+          display: 'flex', alignItems: 'center', gap: '12px',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.02)'
+        }}>
+          {msg.type === 'ok' ? <Check size={18} /> : <Info size={18} />}
+          {msg.text}
+        </div>
       )}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px', alignItems: 'start' }}>
-        {/* Left column — main fields */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <Card title="Informações Básicas">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Nome / Modelo *</label>
-                <input style={inputStyle} value={moto.nome || ''} onChange={e => set('nome', e.target.value)} required />
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Slogan de destaque (Abaixo da logo)</label>
-                <input style={inputStyle} value={moto.slogan || ''} onChange={e => set('slogan', e.target.value)} placeholder="Ex: A NAKED DA SUA GARAGEM" />
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Marca *</label>
-                <select style={inputStyle} value={moto.marca || ''} onChange={e => set('marca', e.target.value)} required>
-                  {MARCAS.map(m => <option key={m}>{m}</option>)}
-                </select>
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Tipo *</label>
-                <select style={inputStyle} value={moto.tipo || ''} onChange={e => set('tipo', e.target.value)} required>
-                  {TIPOS.map(t => <option key={t}>{t}</option>)}
-                </select>
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Status</label>
-                <select style={inputStyle} value={moto.status || ''} onChange={e => set('status', e.target.value)}>
-                  {STATUS_OPTS.map(s => <option key={s}>{s}</option>)}
-                </select>
-              </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 360px', gap: '32px', alignItems: 'start' }}>
+        {/* Left: Main Content */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          
+          <AdminCard title="Informações do Modelo">
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+               <AdminInput label="Nome da Moto *" value={moto.nome || ''} onChange={e => set('nome', e.target.value)} placeholder="Ex: GSX-S1000" required />
+               <AdminInput label="Slogan curto (Opcional)" value={moto.slogan || ''} onChange={e => set('slogan', e.target.value)} placeholder="Ex: A força bruta na estrada" />
             </div>
-            <div style={{ marginTop: '12px' }}>
-              <label style={labelStyle}>Descrição Rica (Formatação, Imagens, etc)</label>
-              <RichTextEditor
-                value={moto.descricao || ''}
-                onChange={(html: string) => set('descricao', html)}
-                placeholder="Descreva a moto com detalhes, fotos e formatação..."
-              />
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
+               <AdminSelect label="Marca *" value={moto.marca || 'SUZUKI'} onChange={e => set('marca', e.target.value)} required>
+                  {MARCAS.map(m => <option key={m} value={m}>{m}</option>)}
+               </AdminSelect>
+               <AdminSelect label="Tipo / Categoria *" value={moto.tipo || 'NAKED'} onChange={e => set('tipo', e.target.value)} required>
+                  {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
+               </AdminSelect>
+               <AdminSelect label="Situação Atual" value={moto.status || 'DISPONIVEL'} onChange={e => set('status', e.target.value)}>
+                  {STATUS_OPTS.map(s => <option key={s} value={s}>{s}</option>)}
+               </AdminSelect>
+            </div>
+
+            <div style={{ marginTop: '8px' }}>
+               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#555', marginBottom: '8px' }}>
+                 Descrição Detalhada (Site)
+               </label>
+               <RichTextEditor
+                 value={moto.descricao || ''}
+                 onChange={(html: string) => set('descricao', html)}
+                 placeholder="Fale sobre a moto, performance, história..."
+               />
             </div>
 
             <div style={{ marginTop: '24px' }}>
-              <label style={labelStyle}>Diferenciais da Moto (Modal de Destaque)</label>
-              <RichTextEditor
-                value={moto.diferenciais || ''}
-                onChange={(html: string) => set('diferenciais', html)}
-                placeholder="Liste os diferenciais que aparecerão no modal (ex: Freios ABS, suspensão invertida...)"
-              />
+               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#555', marginBottom: '8px' }}>
+                 Diferenciais Técnicos (Modal)
+               </label>
+               <RichTextEditor
+                 value={moto.diferenciais || ''}
+                 onChange={(html: string) => set('diferenciais', html)}
+                 placeholder="Liste diferenciais rápidos: Freios ABS, Quickshifter, Controle de Tração..."
+               />
             </div>
-          </Card>
+          </AdminCard>
 
-          {/* Campos obrigatórios Meta */}
-          <Card title="📘 Dados para Instagram / Meta Catalog">
-            <p style={{ color: '#555', fontSize: '12px', marginTop: 0, marginBottom: '16px' }}>
-              Campos obrigatórios para sincronização com o Catálogo de Veículos e Catálogo de Produtos do Meta.
-            </p>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '12px' }}>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Ano de Fabricação *</label>
-                <input type="number" style={inputStyle} value={moto.ano ?? ''} onChange={e => set('ano', Number(e.target.value))} min={2000} max={2030} required />
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Quilometragem *</label>
-                <input type="number" style={inputStyle} value={moto.km ?? ''} onChange={e => set('km', Number(e.target.value))} min={0} placeholder="0 = zero km" required />
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Cor</label>
-                <input style={inputStyle} value={moto.cor || ''} onChange={e => set('cor', e.target.value)} placeholder="Ex: Vermelho Triton" />
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Combustível</label>
-                <select style={inputStyle} value={moto.combustivel || 'GASOLINA'} onChange={e => set('combustivel', e.target.value)}>
-                  {COMBUSTIVEIS.map(c => <option key={c}>{c}</option>)}
-                </select>
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Transmissão</label>
-                <select style={inputStyle} value={moto.transmissao || 'MANUAL'} onChange={e => set('transmissao', e.target.value)}>
-                  {TRANSMISSOES.map(t => <option key={t}>{t}</option>)}
-                </select>
-              </div>
-              <div style={fieldStyle}>
-                <label style={labelStyle}>VIN / Chassi</label>
-                <input style={inputStyle} value={moto.vin || ''} onChange={e => set('vin', e.target.value)} placeholder="Nº do chassi" />
-              </div>
-            </div>
-          </Card>
+          <AdminCard title="Especificações para Catálogos">
+             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+                <AdminInput label="Ano *" type="number" value={moto.ano || ''} onChange={e => set('ano', Number(e.target.value))} required />
+                <AdminInput label="Quilometragem (KM) *" type="number" value={moto.km ?? ''} onChange={e => set('km', Number(e.target.value))} required />
+                <AdminInput label="Cor Predominante" value={moto.cor || ''} onChange={e => set('cor', e.target.value)} placeholder="Ex: Azul Metálico" />
+             </div>
+             
+             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
+                <AdminSelect label="Combustível" value={moto.combustivel || 'GASOLINA'} onChange={e => set('combustivel', e.target.value)}>
+                   {COMBUSTIVEIS.map(c => <option key={c} value={c}>{c}</option>)}
+                </AdminSelect>
+                <AdminSelect label="Transmissão" value={moto.transmissao || 'MANUAL'} onChange={e => set('transmissao', e.target.value)}>
+                   {TRANSMISSOES.map(t => <option key={t} value={t}>{t}</option>)}
+                </AdminSelect>
+                <AdminInput label="Nº Chassi (Opcional)" value={moto.vin || ''} onChange={e => set('vin', e.target.value)} />
+             </div>
+          </AdminCard>
 
-          {/* CAPA DA MOTO (HERO) */}
+          {/* Media Section */}
           {!nova && (
-             <Card title="Hero Banner (Capa Principal)">
-               <p style={{ color: '#555', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}>
-                 Será mostrada grande no topo da página. Se não enviar, a página usa fundo sólido.
-               </p>
-               {moto.capaUrl ? (
-                 <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '2px solid #333' }}>
-                    <div style={{ height: '200px', position: 'relative' }}>
-                      <Image src={moto.capaUrl} alt="capa" fill style={{ objectFit: 'cover' }} />
-                    </div>
-                    <div style={{ padding: '8px', background: '#111', display: 'flex', justifyContent: 'flex-end' }}>
-                      <button type="button" onClick={handleDeleteCapa} style={{
-                        padding: '6px 12px', background: 'transparent', border: '1px solid #cc4444',
-                        borderRadius: '4px', color: '#cc4444', fontSize: '12px', cursor: 'pointer',
-                      }}>🗑️ Remover Capa</button>
-                    </div>
-                 </div>
-               ) : (
-                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <input type="file" accept="image/*" onChange={e => handleUploadCapa(e.target.files)} style={inputStyle} />
-                    {uploading && <span style={{ color: '#E2231A', fontSize: '13px' }}>Enviando imagem...</span>}
-                 </div>
-               )}
-             </Card>
-          )}
-
-          {/* LOGOMARCA */}
-          {!nova && (
-             <Card title="Logomarca da Moto">
-               <p style={{ color: '#555', fontSize: '13px', marginTop: 0, marginBottom: '16px' }}>
-                 Aparecerá sobreposta à Capa (em branco, de preferência SVG ou PNG transparente).
-               </p>
-               {moto.logoUrl ? (
-                 <div style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: '2px solid #333', background: '#333' }}>
-                    <div style={{ height: '100px', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <Image src={moto.logoUrl} alt="Logo da Moto" fill style={{ objectFit: 'contain', padding: '10px' }} />
-                    </div>
-                    <div style={{ padding: '8px', background: '#111', display: 'flex', justifyContent: 'flex-end' }}>
-                      <button type="button" onClick={handleDeleteLogo} style={{
-                        padding: '6px 12px', background: 'transparent', border: '1px solid #cc4444',
-                        borderRadius: '4px', color: '#cc4444', fontSize: '12px', cursor: 'pointer',
-                      }}>🗑️ Remover Logo</button>
-                    </div>
-                 </div>
-               ) : (
-                 <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                    <input type="file" accept="image/png, image/svg+xml, image/webp" onChange={e => handleUploadLogo(e.target.files)} style={inputStyle} />
-                    {uploading && <span style={{ color: '#E2231A', fontSize: '13px' }}>Enviando imagem...</span>}
-                 </div>
-               )}
-             </Card>
-          )}
-
-          {/* Fotos */}
-          {!nova && (
-            <Card title={(
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Camera size={16} /> Fotos ({fotos.length})
-              </span>
-            )}>
-              {/* Upload zone */}
-              <div
-                onClick={() => fileRef.current?.click()}
-                onDragOver={e => e.preventDefault()}
-                onDrop={e => { e.preventDefault(); handleUpload(e.dataTransfer.files); }}
-                style={{
-                  border: '2px dashed #2a2a2a', borderRadius: '8px',
-                  padding: '24px', textAlign: 'center', cursor: 'pointer',
-                  color: '#555', fontSize: '14px', marginBottom: '16px',
-                  transition: 'border-color 0.2s',
-                }}
-              >
-                {uploading ? '⏳ Enviando...' : '📁 Clique ou arraste fotos aqui'}
-              </div>
-              <input ref={fileRef} type="file" accept="image/*" multiple hidden onChange={e => handleUpload(e.target.files)} />
-
-              {/* Grid de fotos */}
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))', gap: '10px' }}>
-                {fotos.map(foto => (
-                  <div key={foto.id} style={{ position: 'relative', borderRadius: '8px', overflow: 'hidden', border: foto.principal ? '2px solid #E2231A' : '2px solid #222' }}>
-                    <div style={{ height: '120px', position: 'relative' }}>
-                      <Image src={foto.url} alt="foto" fill style={{ objectFit: 'cover' }} />
-                    </div>
-                    {/* Controles de Cor e Botões */}
-                    <div style={{ padding: '8px', background: '#111', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                         <label style={{ color: '#888', fontSize: '11px', flex: 1 }}>Cor / Dot:</label>
-                         <input 
-                           type="color" 
-                           value={foto.corHex || '#ffffff'} 
-                           onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
-                           style={{ width: '30px', height: '30px', padding: '0', border: 'none', cursor: 'pointer', background: 'transparent' }}
-                           title="Escolha a cor dessa moto para o seletor"
-                         />
+            <>
+              <AdminCard title="Imagens da Moto">
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
+                  {/* Capa */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#111', marginBottom: '10px' }}>Hero Banner (Topo da Página)</label>
+                    {moto.capaUrl ? (
+                      <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', border: '1px solid #f0f0f0' }}>
+                        <Image src={moto.capaUrl} alt="Capa" fill style={{ objectFit: 'cover' }} />
+                        <button type="button" onClick={handleDeleteCapa} style={{ 
+                          position: 'absolute', bottom: '10px', right: '10px', 
+                          padding: '6px 12px', background: 'rgba(225, 29, 72, 0.9)', color: '#fff', 
+                          border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' 
+                        }}>Remover</button>
                       </div>
-                      <div style={{ display: 'flex', gap: '4px' }}>
-                        {!foto.principal && (
-                          <button type="button" onClick={() => handleSetPrincipal(foto.id)} title="Definir como principal" style={{
-                            flex: 1, padding: '4px', background: '#1a1a1a', border: '1px solid #333',
-                            borderRadius: '4px', color: '#888', fontSize: '11px', cursor: 'pointer',
-                            display: 'flex', alignItems: 'center', justifyContent: 'center'
-                          }}>
-                            <Star size={12} />
-                          </button>
-                        )}
-                        {foto.principal && (
-                          <span style={{ flex: 1, textAlign: 'center', color: '#E2231A', fontSize: '11px', padding: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                            <Check size={12} /> Principal
-                          </span>
-                        )}
-                        <button type="button" onClick={() => handleDeleteFoto(foto.id)} style={{
-                          padding: '4px 8px', background: 'transparent', border: '1px solid #330000',
-                          borderRadius: '4px', color: '#cc4444', fontSize: '11px', cursor: 'pointer',
-                        }}>🗑️</button>
+                    ) : (
+                      <div style={{ 
+                        height: '160px', border: '2px dashed #f0f0f0', borderRadius: '12px', 
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' 
+                      }}>
+                        <ImageIcon size={24} color="#ccc" />
+                        <AdminButton variant="secondary" size="sm" type="button" onClick={() => (document.getElementById('capa-input') as any).click()}>
+                          Enviar Capa
+                        </AdminButton>
+                        <input id="capa-input" type="file" hidden accept="image/*" onChange={e => handleUploadCapa(e.target.files)} />
                       </div>
-                    </div>
+                    )}
                   </div>
-                ))}
-              </div>
-              {fotos.length === 0 && <p style={{ color: '#444', fontSize: '13px', marginTop: '8px' }}>Nenhuma foto ainda.</p>}
-            </Card>
-          )}
-          {nova && (
-            <div style={{ background: '#161616', borderRadius: '12px', padding: '16px', color: '#555', fontSize: '13px' }}>
-              💡 Salve a moto primeiro para depois adicionar as fotos.
-            </div>
+
+                  {/* Logo */}
+                  <div>
+                    <label style={{ display: 'block', fontSize: '13px', fontWeight: 700, color: '#111', marginBottom: '10px' }}>Logomarca / Modelo</label>
+                    {moto.logoUrl ? (
+                      <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', background: '#333', border: '1px solid #444' }}>
+                        <Image src={moto.logoUrl} alt="Logo" fill style={{ objectFit: 'contain', padding: '20px' }} />
+                        <button type="button" onClick={handleDeleteLogo} style={{ 
+                          position: 'absolute', bottom: '10px', right: '10px', 
+                          padding: '6px 12px', background: 'rgba(225, 29, 72, 0.9)', color: '#fff', 
+                          border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' 
+                        }}>Remover</button>
+                      </div>
+                    ) : (
+                      <div style={{ 
+                        height: '160px', border: '2px dashed #f0f0f0', borderRadius: '12px', 
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' 
+                      }}>
+                        <LayoutIcon size={24} color="#ccc" />
+                        <AdminButton variant="secondary" size="sm" type="button" onClick={() => (document.getElementById('logo-input') as any).click()}>
+                          Enviar Logo
+                        </AdminButton>
+                        <input id="logo-input" type="file" hidden accept="image/*" onChange={e => handleUploadLogo(e.target.files)} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Galeria */}
+                <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '24px' }}>
+                  <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#111', marginBottom: '16px' }}>Galeria de Fotos ({fotos.length})</label>
+                  
+                  <div 
+                    onClick={() => fileRef.current?.click()}
+                    onDragOver={e => e.preventDefault()}
+                    onDrop={e => { e.preventDefault(); handleUpload(e.dataTransfer.files); }}
+                    style={{ 
+                      height: '100px', border: '2px dashed #f0f0f0', borderRadius: '12px', 
+                      display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
+                      cursor: 'pointer', transition: 'all 0.2s', marginBottom: '24px'
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.borderColor = '#E2231A'}
+                    onMouseLeave={e => e.currentTarget.style.borderColor = '#f0f0f0'}
+                  >
+                    <Camera size={20} color="#999" />
+                    <span style={{ color: '#999', fontSize: '14px', fontWeight: 600 }}>Arraste fotos ou clique para enviar</span>
+                  </div>
+                  <input ref={fileRef} type="file" multiple hidden accept="image/*" onChange={e => handleUpload(e.target.files)} />
+
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
+                     {fotos.map(foto => (
+                       <div key={foto.id} style={{ 
+                         borderRadius: '12px', overflow: 'hidden', border: foto.principal ? '2px solid #E2231A' : '1px solid #eee',
+                         position: 'relative'
+                       }}>
+                         <div style={{ height: '120px', position: 'relative' }}>
+                            <Image src={foto.url} alt="foto" fill style={{ objectFit: 'cover' }} />
+                            {foto.principal && (
+                              <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#E2231A', color: '#fff', borderRadius: '6px', padding: '3px 6px', fontSize: '10px', fontWeight: 800 }}>CAPA</div>
+                            )}
+                         </div>
+                         <div style={{ padding: '8px', display: 'flex', gap: '4px' }}>
+                            <AdminButton variant="secondary" size="sm" type="button" title="Principal" onClick={() => handleSetPrincipal(foto.id)} style={{ flex: 1, padding: '6px' }}>
+                               <Star size={14} fill={foto.principal ? '#f39c12' : 'none'} color={foto.principal ? '#f39c12' : '#999'} />
+                            </AdminButton>
+                            <input 
+                               type="color" 
+                               value={foto.corHex || '#ffffff'} 
+                               onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
+                               style={{ width: '30px', height: '30px', padding: '0', border: '1px solid #eee', borderRadius: '6px', cursor: 'pointer' }}
+                            />
+                            <AdminButton variant="danger" size="sm" type="button" onClick={() => handleDeleteFoto(foto.id)} style={{ padding: '6px' }}>
+                               <Trash2 size={14} />
+                            </AdminButton>
+                         </div>
+                       </div>
+                     ))}
+                  </div>
+                </div>
+              </AdminCard>
+            </>
           )}
         </div>
 
-        {/* Right column — price, destaque, slug */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <Card title="Preço e Destaque">
-            <div style={fieldStyle}>
-              <label style={labelStyle}>Preço (R$)</label>
-              <input type="number" style={inputStyle} value={moto.preco ?? ''} onChange={e => set('preco', e.target.value ? Number(e.target.value) : null)} min={0} step={0.01} placeholder="Ex: 49900.00" />
+        {/* Right: Sidebar Actions */}
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '100px' }}>
+          
+          <AdminCard title="Visibilidade e Preço">
+            <AdminInput label="Preço de Venda (R$)" type="number" step="0.01" value={moto.preco ?? ''} onChange={e => set('preco', e.target.value ? Number(e.target.value) : null)} placeholder="0.00" />
+            
+            <div style={{ 
+              display: 'flex', alignItems: 'center', gap: '12px', 
+              padding: '16px', background: '#fcfcfc', border: '1px solid #f0f0f0', borderRadius: '12px',
+              marginTop: '8px'
+            }}>
+               <input 
+                 type="checkbox" 
+                 id="chk-destaque" 
+                 checked={!!moto.destaque} 
+                 onChange={e => set('destaque', e.target.checked)}
+                 style={{ width: '18px', height: '18px', accentColor: '#E2231A', cursor: 'pointer' }}
+               />
+               <label htmlFor="chk-destaque" style={{ color: '#111', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                 Destaque na Homepage
+               </label>
             </div>
-            <div style={{ marginTop: '14px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <input type="checkbox" id="destaque" checked={!!moto.destaque} onChange={e => set('destaque', e.target.checked)} style={{ width: '16px', height: '16px', accentColor: '#E2231A' }} />
-              <label htmlFor="destaque" style={{ color: '#aaa', fontSize: '14px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Star size={16} fill={moto.destaque ? '#E2231A' : 'none'} color={moto.destaque ? '#E2231A' : '#aaa'} />
-                Moto em Destaque
-              </label>
-            </div>
-            <p style={{ color: '#444', fontSize: '12px', marginTop: '6px' }}>Motos em destaque aparecem na homepage.</p>
-          </Card>
+            <p style={{ color: '#999', fontSize: '12px', marginTop: '10px', lineHeight: '1.4' }}>
+              Motos em destaque ganham prioridade na primeira página do site público.
+            </p>
+          </AdminCard>
 
           {!nova && (
-            <Card title="Slug / URL">
-              <div style={fieldStyle}>
-                <label style={labelStyle}>Slug</label>
-                <input style={{ ...inputStyle, color: '#555' }} value={moto.slug || ''} readOnly />
-              </div>
-              <p style={{ color: '#444', fontSize: '12px', marginTop: '6px' }}>
-                URL: /motos/<span style={{ color: '#666' }}>{moto.slug}</span>
-              </p>
-            </Card>
+             <AdminCard title="Sistema">
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                    <span style={{ color: '#999' }}>Status:</span>
+                    <AdminBadge color={STATUS_LABEL[moto.status!]?.color || '#888'}>
+                      {STATUS_LABEL[moto.status!]?.label || moto.status}
+                    </AdminBadge>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                    <span style={{ color: '#999', fontSize: '13px' }}>Slug / URL:</span>
+                    <code style={{ background: '#f5f5f5', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', color: '#666' }}>
+                      {moto.slug || '—'}
+                    </code>
+                  </div>
+                  {moto.metaProductId && (
+                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                       <span style={{ color: '#999', fontSize: '13px' }}>Meta Product ID:</span>
+                       <code style={{ background: '#f0f4ff', padding: '6px 10px', borderRadius: '8px', fontSize: '11px', color: '#4f8ef7' }}>
+                         {moto.metaProductId}
+                       </code>
+                     </div>
+                  )}
+                </div>
+             </AdminCard>
           )}
 
-          {!nova && moto.metaProductId && (
-            <Card title="Meta Commerce">
-              <p style={{ color: '#555', fontSize: '12px', margin: 0 }}>
-                ID no catálogo de veículos:<br />
-                <code style={{ color: '#6fa3f7', fontSize: '11px' }}>{moto.metaProductId}</code>
-              </p>
-            </Card>
+          {nova && (
+            <div style={{ 
+              padding: '20px', background: '#fff9db', border: '1px solid #ffec99', 
+              borderRadius: '16px', color: '#856404', fontSize: '13px', lineHeight: '1.5'
+            }}>
+              <strong>Dica:</strong> Salve as informações principais primeiro. Após a criação, você poderá enviar fotos e sincronizar com o Instagram.
+            </div>
           )}
         </div>
       </div>
@@ -507,11 +508,9 @@ export default function AdminMotoEditPage() {
   );
 }
 
-function Card({ title, children }: { title: React.ReactNode; children: React.ReactNode }) {
-  return (
-    <div style={{ background: '#1a1a1a', border: '1px solid #222', borderRadius: '12px', padding: '20px' }}>
-      <h3 style={{ color: '#fff', fontSize: '14px', fontWeight: 600, margin: '0 0 16px 0' }}>{title}</h3>
-      {children}
-    </div>
-  );
-}
+const STATUS_LABEL: Record<string, { label: string; color: string }> = {
+  DISPONIVEL: { label: 'Disponível', color: '#2ecc71' },
+  RESERVADA: { label: 'Reservada', color: '#f39c12' },
+  VENDIDA: { label: 'Vendida', color: '#888' },
+  ALUGUEL: { label: 'Aluguel', color: '#4f8ef7' },
+};

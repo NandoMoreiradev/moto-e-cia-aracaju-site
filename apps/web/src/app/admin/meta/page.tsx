@@ -1,8 +1,16 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { adminMeta, adminMotos } from '@/lib/api';
 import type { MotoDto } from '@moto-e-cia/shared';
+import { 
+  Instagram, Settings, RefreshCw, AlertCircle, 
+  CheckCircle2, ShoppingBag, Truck, Info,
+  ChevronRight, Globe
+} from 'lucide-react';
+import { AdminCard } from '@/components/admin/AdminCard';
+import { AdminButton } from '@/components/admin/AdminButton';
+import { AdminBadge } from '@/components/admin/AdminBadge';
 
 export default function AdminMetaPage() {
   const [status, setStatus] = useState<any>(null);
@@ -15,7 +23,7 @@ export default function AdminMetaPage() {
   useEffect(() => {
     Promise.all([
       adminMeta.status().catch(() => null),
-      adminMotos.list({ limit: 100, status: 'DISPONIVEL' }),
+      adminMotos.list({ limit: 1000, status: 'DISPONIVEL' }),
     ]).then(([s, m]) => {
       setStatus(s);
       setMotos(m.data);
@@ -45,134 +53,183 @@ export default function AdminMetaPage() {
     }
   }
 
-  if (loading) return <div style={{ color: '#555', padding: '48px', textAlign: 'center' }}>Carregando...</div>;
+  if (loading) return (
+    <div style={{ color: '#999', textAlign: 'center', padding: '100px 0' }}>
+      <div className="animate-spin mb-4" style={{ display: 'inline-block' }}>⌛</div>
+      <div>Carregando status do Meta...</div>
+    </div>
+  );
 
   return (
-    <div>
-      <div style={{ marginBottom: '28px' }}>
-        <h1 style={{ color: '#fff', fontSize: '24px', fontWeight: 700, margin: 0 }}>Meta / Instagram</h1>
-        <p style={{ color: '#555', fontSize: '14px', marginTop: '4px' }}>Gerenciar catálogos de produtos no Meta Commerce</p>
+    <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
+      <div style={{ marginBottom: '32px' }}>
+        <h1 style={{ color: '#111', fontSize: '28px', fontWeight: 800, margin: 0, letterSpacing: '-0.02em' }}>Meta & Instagram Shopping</h1>
+        <p style={{ color: '#666', fontSize: '14px', marginTop: '4px' }}>Sincronize seu estoque com o Facebook Catalog e Instagram Shopping</p>
       </div>
 
-      {/* Status dos catálogos */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '24px' }}>
+      {/* Catálogos Status */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '32px' }}>
         <StatusCard
-          title="🏍️ Catálogo de Veículos"
-          desc="Anúncios dinâmicos e retargeting no Facebook e Instagram"
+          title="Catálogo de Veículos"
+          icon={<Truck size={20} />}
+          desc="Anúncios dinâmicos e retargeting automáticos para motos."
           configured={status?.vehicleCatalog?.configurado}
           catalogId={status?.vehicleCatalog?.catalogId}
         />
         <StatusCard
-          title="🛍️ Catálogo de Produtos"
-          desc='Botão "Loja" no perfil do Instagram e marcação em posts'
+          title="Catálogo de Produtos"
+          icon={<ShoppingBag size={20} />}
+          desc='Habilita o botão "Loja" no Instagram e marcação em fotos.'
           configured={status?.productCatalog?.configurado}
           catalogId={status?.productCatalog?.catalogId}
         />
       </div>
 
-      {/* Config warning */}
+      {/* Missing Config Alert */}
       {(!status?.vehicleCatalog?.configurado || !status?.productCatalog?.configurado) && (
         <div style={{
-          background: 'rgba(243,156,18,0.1)', border: '1px solid rgba(243,156,18,0.3)',
-          borderRadius: '10px', padding: '16px 20px', color: '#f39c12', fontSize: '14px', marginBottom: '24px',
+          background: '#fff9db', border: '1px solid #ffec99',
+          borderRadius: '16px', padding: '20px 24px', color: '#856404', 
+          fontSize: '14px', marginBottom: '32px',
+          display: 'flex', gap: '16px'
         }}>
-          ⚠️ Configure as variáveis de ambiente no arquivo <code style={{ fontFamily: 'monospace' }}>apps/api/.env</code>:
-          <ul style={{ margin: '8px 0 0', paddingLeft: '20px', lineHeight: '1.8' }}>
-            <li><code>META_ACCESS_TOKEN</code> — Token de acesso permanente</li>
-            <li><code>META_CATALOG_ID</code> — ID do Catálogo de Veículos</li>
-            <li><code>META_PRODUCT_CATALOG_ID</code> — ID do Catálogo de Produtos</li>
-          </ul>
+          <AlertCircle size={24} style={{ flexShrink: 0 }} />
+          <div>
+            <h4 style={{ margin: '0 0 8px 0', fontSize: '15px', fontWeight: 700 }}>Configuração incompleta</h4>
+            <p style={{ margin: 0, lineHeight: 1.5 }}>
+              Para habilitar a sincronização, você precisa configurar as chaves do Meta no arquivo <code style={{ background: 'rgba(0,0,0,0.05)', padding: '2px 4px', borderRadius: '4px' }}>.env</code> da API.
+            </p>
+            <div style={{ marginTop: '12px', display: 'flex', gap: '24px', fontSize: '13px', fontWeight: 600 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <AdminBadge color={status?.vehicleCatalog?.configurado ? '#2ecc71' : '#ccc'}>TOKEN</AdminBadge>
+                {status?.vehicleCatalog?.configurado ? 'Conectado' : 'Pendente'}
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <AdminBadge color={status?.productCatalog?.configurado ? '#2ecc71' : '#ccc'}>CATÁLOGOS</AdminBadge>
+                {status?.productCatalog?.configurado ? 'Conectados' : 'Pendente'}
+              </div>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Sync All */}
-      <div style={{ background: '#1a1a1a', border: '1px solid #222', borderRadius: '12px', padding: '24px', marginBottom: '24px' }}>
-        <h2 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, margin: '0 0 8px' }}>Sincronizar Tudo</h2>
-        <p style={{ color: '#666', fontSize: '13px', margin: '0 0 16px' }}>
-          Sincroniza todas as motos DISPONÍVEIS nos dois catálogos simultaneamente.
-        </p>
-        <button
-          onClick={handleSyncAll}
-          disabled={syncing}
-          style={{
-            padding: '12px 24px', background: syncing ? '#333' : '#1a3a6b',
-            border: '1px solid #1e4d9a', borderRadius: '8px',
-            color: syncing ? '#555' : '#6fa3f7', fontSize: '14px', fontWeight: 600, cursor: syncing ? 'not-allowed' : 'pointer',
-          }}
-        >
-          {syncing ? '⏳ Sincronizando...' : '🔄 Sincronizar todos os catálogos'}
-        </button>
+      {/* Global Sync Action */}
+      <AdminCard title="Sincronização Geral" style={{ marginBottom: '32px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '32px' }}>
+          <div style={{ flex: 1 }}>
+            <p style={{ color: '#666', fontSize: '14px', margin: 0, lineHeight: 1.5 }}>
+              Esta ação enviará todas as motos com status <strong>DISPONÍVEL</strong> para o Meta simultaneamente. 
+              Ideal para atualizações em massa após muitas alterações no estoque.
+            </p>
+          </div>
+          <AdminButton onClick={handleSyncAll} loading={syncing} style={{ minWidth: '220px' }}>
+            {syncing ? <RefreshCw className="animate-spin" /> : <Instagram size={18} />}
+            Sincronizar Tudo Agora
+          </AdminButton>
+        </div>
 
         {result && (
           <div style={{
-            marginTop: '16px', background: result.error ? 'rgba(226,35,26,0.1)' : 'rgba(46,204,113,0.1)',
-            border: `1px solid ${result.error ? 'rgba(226,35,26,0.3)' : 'rgba(46,204,113,0.3)'}`,
-            borderRadius: '8px', padding: '14px 16px', fontSize: '13px',
-            color: result.error ? '#ff6b6b' : '#2ecc71',
+            marginTop: '24px', padding: '16px 20px', borderRadius: '12px',
+            background: result.error ? '#fff1f2' : '#f0fdf4',
+            border: `1px solid ${result.error ? '#e11d4833' : '#10b98133'}`,
+            display: 'flex', alignItems: 'center', gap: '12px',
+            color: result.error ? '#e11d48' : '#059669', fontSize: '14px', fontWeight: 600
           }}>
-            {result.error ? `❌ ${result.error}` :
-              `✅ ${result.total} motos processadas — ` +
-              `Veículos: ${result.veiculosSincronizados} | ` +
-              `Produtos: ${result.produtosSincronizados} | ` +
-              `Erros: ${result.erros}`
-            }
+            {result.error ? <AlertCircle size={18} /> : <CheckCircle2 size={18} />}
+            <div>
+              {result.error ? `Erro: ${result.error}` :
+                `Sucesso: ${result.total} motos processadas (${result.veiculosSincronizados} veículos, ${result.produtosSincronizados} produtos). ${result.erros > 0 ? `Falhas: ${result.erros}` : ''}`
+              }
+            </div>
           </div>
         )}
-      </div>
+      </AdminCard>
 
-      {/* Individual sync */}
-      <div style={{ background: '#1a1a1a', border: '1px solid #222', borderRadius: '12px', padding: '24px' }}>
-        <h2 style={{ color: '#fff', fontSize: '16px', fontWeight: 600, margin: '0 0 16px' }}>
-          Motos Disponíveis ({motos.length})
-        </h2>
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          {motos.map(moto => (
+      {/* Individual Inventory List */}
+      <AdminCard title={`Motos Prontas para Sincronizar (${motos.length})`}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '2px', margin: '0 -24px -24px -24px' }}>
+          {motos.map((moto, idx) => (
             <div key={moto.id} style={{
-              display: 'flex', alignItems: 'center', gap: '12px',
-              padding: '12px 14px', background: '#111', borderRadius: '8px',
+              display: 'flex', alignItems: 'center', gap: '16px',
+              padding: '16px 24px',
+              borderTop: idx === 0 ? 'none' : '1px solid #f8f9fa',
+              transition: 'background 0.2s'
             }}>
               <div style={{ flex: 1 }}>
-                <div style={{ color: '#fff', fontWeight: 600, fontSize: '14px' }}>{moto.nome}</div>
-                <div style={{ color: '#555', fontSize: '12px' }}>
-                  {moto.marca} • {moto.ano ?? '—'} • {moto.km !== null && moto.km !== undefined ? (moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`) : '—'}
-                  {moto.metaProductId && <span style={{ color: '#4f8ef7', marginLeft: '8px' }}>✓ Catálogo Veículos</span>}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <span style={{ color: '#111', fontWeight: 700, fontSize: '15px' }}>{moto.nome}</span>
+                  {moto.metaProductId && (
+                    <AdminBadge color="#4f8ef7">
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <CheckCircle2 size={10} /> Online
+                      </div>
+                    </AdminBadge>
+                  )}
+                </div>
+                <div style={{ color: '#999', fontSize: '13px', marginTop: '2px' }}>
+                  {moto.marca} • {moto.ano} • {moto.km === 0 ? 'Zero KM' : `${moto.km?.toLocaleString()} km`}
+                  {moto.metaProductId && <span style={{ marginLeft: '12px', color: '#ccc' }}>ID: {moto.metaProductId}</span>}
                 </div>
               </div>
-              <button
+              <AdminButton 
+                variant="secondary" 
+                size="sm" 
                 onClick={() => handleSyncOne(moto.id)}
-                disabled={syncingId === moto.id}
-                style={{
-                  padding: '6px 14px', background: 'transparent',
-                  border: '1px solid #2a2a2a', borderRadius: '6px',
-                  color: '#888', fontSize: '12px', cursor: 'pointer', whiteSpace: 'nowrap',
-                }}
+                loading={syncingId === moto.id}
               >
-                {syncingId === moto.id ? '⏳' : '🔄 Sync'}
-              </button>
+                {syncingId !== moto.id && <RefreshCw size={14} />}
+                Sync
+              </AdminButton>
             </div>
           ))}
           {motos.length === 0 && (
-            <p style={{ color: '#555', fontSize: '14px' }}>Nenhuma moto disponível para sincronizar.</p>
+            <div style={{ padding: '40px', textAlign: 'center', color: '#999' }}>
+               <Info size={32} style={{ marginBottom: '12px', opacity: 0.3 }} />
+               <p style={{ margin: 0 }}>Nenhuma moto disponível para sincronizar no momento.</p>
+            </div>
           )}
         </div>
-      </div>
+      </AdminCard>
     </div>
   );
 }
 
-function StatusCard({ title, desc, configured, catalogId }: {
-  title: string; desc: string; configured: boolean; catalogId: string | null;
+function StatusCard({ title, icon, desc, configured, catalogId }: {
+  title: string; icon: React.ReactNode; desc: string; configured: boolean; catalogId: string | null;
 }) {
   return (
-    <div style={{ background: '#1a1a1a', border: '1px solid #222', borderRadius: '12px', padding: '20px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px' }}>
-        <span style={{ fontSize: '18px' }}>{configured ? '✅' : '⚠️'}</span>
-        <h3 style={{ color: '#fff', fontSize: '14px', fontWeight: 600, margin: 0 }}>{title}</h3>
+    <AdminCard noPadding style={{ overflow: 'hidden' }}>
+      <div style={{ padding: '20px 24px', background: configured ? '#f0fdf4' : '#fff9db', borderBottom: '1px solid rgba(0,0,0,0.03)', display: 'flex', alignItems: 'center', gap: '12px' }}>
+         <div style={{ 
+           width: '40px', height: '40px', borderRadius: '10px', 
+           background: configured ? '#10b981' : '#f59e0b', color: '#fff',
+           display: 'flex', alignItems: 'center', justifyContent: 'center'
+         }}>
+           {icon}
+         </div>
+         <div style={{ flex: 1 }}>
+           <h3 style={{ margin: 0, fontSize: '15px', fontWeight: 800, color: configured ? '#065f46' : '#92400e' }}>
+             {title}
+           </h3>
+           <div style={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.05em', color: configured ? '#10b981' : '#d97706' }}>
+             {configured ? 'Configurado' : 'Pendente'}
+           </div>
+         </div>
+         {configured ? <CheckCircle2 size={20} color="#10b981" /> : <AlertCircle size={20} color="#f59e0b" />}
       </div>
-      <p style={{ color: '#555', fontSize: '12px', margin: '0 0 10px' }}>{desc}</p>
-      <div style={{ fontFamily: 'monospace', fontSize: '11px', color: configured ? '#4f8ef7' : '#444' }}>
-        {catalogId || 'Não configurado'}
+      <div style={{ padding: '16px 24px' }}>
+        <p style={{ margin: '0 0 12px 0', fontSize: '13px', color: '#666', lineHeight: 1.4 }}>{desc}</p>
+        <div style={{ 
+          background: '#f8f9fa', padding: '10px 12px', borderRadius: '8px',
+          display: 'flex', alignItems: 'center', gap: '8px', border: '1px solid #eee'
+        }}>
+          <Settings size={12} color="#999" />
+          <code style={{ fontSize: '11px', color: configured ? '#666' : '#ccc', fontFamily: 'monospace' }}>
+            {catalogId || '—'}
+          </code>
+        </div>
       </div>
-    </div>
+    </AdminCard>
   );
 }
