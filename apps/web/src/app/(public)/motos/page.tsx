@@ -6,7 +6,8 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
 import type { MotoDto, MarcaMoto, TipoMoto, MarcaDto } from '@moto-e-cia/shared';
-import { Calendar, Gauge, Palette, Search, X, Star } from 'lucide-react';
+import { Calendar, Gauge, Palette, Search, X, Star, Eye } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 const MARCAS: { value: MarcaMoto | ''; label: string }[] = [
   { value: '', label: 'Todas as marcas' },
@@ -42,6 +43,7 @@ export default function MotosPage() {
   const [tipo, setTipo] = useState<TipoMoto | ''>('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
+  const [selectedMoto, setSelectedMoto] = useState<MotoDto | null>(null);
 
   useEffect(() => {
     marcasApi.list().then(setMarcas).catch(() => setMarcas([]));
@@ -71,6 +73,44 @@ export default function MotosPage() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
+      <style dangerouslySetInnerHTML={{ __html: `
+        .motos-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+          gap: 20px;
+        }
+
+        @media (max-width: 768px) {
+          .motos-grid {
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            padding: 2px;
+            background: #fff;
+          }
+          .desktop-card {
+            display: none;
+          }
+          .mobile-insta-item {
+            display: block;
+            aspect-ratio: 1 / 1;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+          }
+          .mobile-insta-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+          }
+        }
+
+        @media (min-width: 769px) {
+          .mobile-insta-item {
+            display: none;
+          }
+        }
+      `}} />
+
       {/* Header banner */}
       <div style={{
         background: 'linear-gradient(135deg, #111 0%, #1a0000 100%)',
@@ -94,7 +134,6 @@ export default function MotosPage() {
               <button 
                 key={m.id}
                 onClick={() => { 
-                  // Toggle filter: if same brand clicked, reset to empty
                   setMarca(marca === m.nome ? '' : m.nome as any); 
                   setPage(1); 
                 }}
@@ -122,7 +161,7 @@ export default function MotosPage() {
         {/* Filters */}
         <div style={{
           background: '#fff', borderRadius: '12px', padding: '20px',
-          display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center',
+          display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center',
           marginBottom: '28px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
         }}>
           <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
@@ -135,10 +174,6 @@ export default function MotosPage() {
           <select value={marca} onChange={e => { setMarca(e.target.value as any); setPage(1); }}
             style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
             {MARCAS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
-          </select>
-          <select value={tipo} onChange={e => { setTipo(e.target.value as any); setPage(1); }}
-            style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
-            {TIPOS.map(t => <option key={t.value} value={t.value}>{t.label}</option>)}
           </select>
           {(marca || tipo || search) && (
             <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', background: 'transparent', border: '1px solid #e5e5e5', borderRadius: '8px', color: '#888', fontSize: '13px', cursor: 'pointer' }}>
@@ -159,62 +194,77 @@ export default function MotosPage() {
             </button>
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '20px' }}>
+          <div className="motos-grid">
             {motos.map(moto => {
               const foto = moto.fotos?.find(f => f.principal) ?? moto.fotos?.[0];
               const st = STATUS_BADGE[moto.status];
               return (
-                <Link key={moto.id} href={`/motos/${moto.slug}`} style={{ textDecoration: 'none' }}>
-                  <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                    onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(0,0,0,0.1)'; }}
-                    onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; }}
-                  >
-                    <div style={{ height: '220px', background: '#f0f0f0', position: 'relative' }}>
-                      {foto
-                        ? <Image src={foto.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
-                        : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '56px' }}>🏍️</div>
-                      }
-                      {st && (
-                        <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.7)', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: st.color }}>{st.label}</div>
-                      )}
-                      {moto.destaque && (
-                        <div style={{ 
-                          position: 'absolute', top: '10px', left: '10px', 
-                          background: '#E2231A', borderRadius: '20px', 
-                          padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: '#fff',
-                          display: 'flex', alignItems: 'center', gap: '4px'
-                        }}>
-                          <Star size={12} fill="currentColor" /> Destaque
-                        </div>
-                      )}
-                    </div>
-                    <div style={{ padding: '18px' }}>
-                      <div style={{ color: '#E2231A', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
-                      <h2 style={{ color: '#111', fontSize: '18px', fontWeight: 700, margin: '4px 0 8px' }}>{moto.nome}</h2>
-                      <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
-                        {moto.ano && (
-                          <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <Calendar size={13} /> {moto.ano}
-                          </span>
+                <React.Fragment key={moto.id}>
+                  {/* Desktop Card */}
+                  <Link href={`/motos/${moto.slug}`} className="desktop-card" style={{ textDecoration: 'none' }}>
+                    <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(0,0,0,0.1)'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; }}
+                    >
+                      <div style={{ height: '220px', background: '#f0f0f0', position: 'relative' }}>
+                        {foto
+                          ? <Image src={foto.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
+                          : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '56px' }}>🏍️</div>
+                        }
+                        {st && (
+                          <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.7)', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: st.color }}>{st.label}</div>
                         )}
-                        {moto.km !== null && moto.km !== undefined && (
-                          <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <Gauge size={13} /> {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
-                          </span>
-                        )}
-                        {moto.cor && (
-                          <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <Palette size={13} /> {moto.cor}
-                          </span>
+                        {moto.destaque && (
+                          <div style={{ 
+                            position: 'absolute', top: '10px', left: '10px', 
+                            background: '#E2231A', borderRadius: '20px', 
+                            padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: '#fff',
+                            display: 'flex', alignItems: 'center', gap: '4px'
+                          }}>
+                            <Star size={12} fill="currentColor" /> Destaque
+                          </div>
                         )}
                       </div>
-                      {moto.preco
-                        ? <div style={{ color: '#2ecc71', fontSize: '18px', fontWeight: 700 }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                        : <div style={{ color: '#888', fontSize: '14px' }}>Consulte o preço</div>
-                      }
+                      <div style={{ padding: '18px' }}>
+                        <div style={{ color: '#E2231A', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
+                        <h2 style={{ color: '#111', fontSize: '18px', fontWeight: 700, margin: '4px 0 8px' }}>{moto.nome}</h2>
+                        <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                          {moto.ano && (
+                            <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Calendar size={13} /> {moto.ano}
+                            </span>
+                          )}
+                          {moto.km !== null && (
+                            <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Gauge size={13} /> {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                            </span>
+                          )}
+                        </div>
+                        {moto.preco
+                          ? <div style={{ color: '#2ecc71', fontSize: '18px', fontWeight: 700 }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          : <div style={{ color: '#888', fontSize: '14px' }}>Consulte o preço</div>
+                        }
+                      </div>
                     </div>
+                  </Link>
+
+                  {/* Mobile Insta Item */}
+                  <div 
+                    className="mobile-insta-item" 
+                    onClick={() => setSelectedMoto(moto)}
+                  >
+                    {foto ? (
+                      <img src={foto.url} alt={moto.nome} />
+                    ) : (
+                      <div style={{ width: '100%', height: '100%', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🏍️</div>
+                    )}
+                    {moto.destaque && (
+                      <div style={{ position: 'absolute', top: '5px', right: '5px', color: '#fff' }}>
+                        <Star size={12} fill="#E2231A" stroke="#E2231A" />
+                      </div>
+                    )}
                   </div>
-                </Link>
+                </React.Fragment>
               );
             })}
           </div>
@@ -231,6 +281,89 @@ export default function MotosPage() {
           </div>
         )}
       </div>
+
+      {/* Quick Preview Modal for Mobile */}
+      <AnimatePresence>
+        {selectedMoto && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 10000,
+              background: 'rgba(0,0,0,0.8)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center',
+              backdropFilter: 'blur(4px)', padding: '20px'
+            }}
+            onClick={() => setSelectedMoto(null)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.9, opacity: 0, y: 20 }}
+              style={{
+                background: '#fff',
+                width: '100%',
+                maxWidth: '400px',
+                borderRadius: '16px',
+                overflow: 'hidden',
+                position: 'relative'
+              }}
+              onClick={e => e.stopPropagation()}
+            >
+              <div style={{ position: 'relative', height: '250px', background: '#eee' }}>
+                {selectedMoto.fotos?.find(f => f.principal)?.url || selectedMoto.fotos?.[0]?.url ? (
+                  <Image 
+                    src={selectedMoto.fotos?.find(f => f.principal)?.url || selectedMoto.fotos?.[0]?.url || ''} 
+                    alt={selectedMoto.nome} 
+                    fill 
+                    style={{ objectFit: 'cover' }} 
+                  />
+                ) : (
+                  <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '64px' }}>🏍️</div>
+                )}
+                <button 
+                  onClick={() => setSelectedMoto(null)}
+                  style={{ position: 'absolute', top: '15px', right: '15px', background: 'rgba(255,255,255,0.7)', border: 'none', borderRadius: '50%', padding: '6px', cursor: 'pointer' }}
+                >
+                  <X size={20} />
+                </button>
+              </div>
+
+              <div style={{ padding: '24px' }}>
+                <div style={{ color: '#E2231A', fontSize: '12px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{selectedMoto.marca}</div>
+                <h3 style={{ fontSize: '24px', fontWeight: 800, color: '#111', margin: '4px 0 12px' }}>{selectedMoto.nome}</h3>
+                
+                <div style={{ display: 'flex', gap: '16px', marginBottom: '20px', color: '#666', fontSize: '14px' }}>
+                  {selectedMoto.ano && <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={16} /> {selectedMoto.ano}</span>}
+                  {selectedMoto.km !== null && <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Gauge size={16} /> {selectedMoto.km === 0 ? '0 km' : `${selectedMoto.km.toLocaleString('pt-BR')} km`}</span>}
+                </div>
+
+                <Link 
+                  href={`/motos/${selectedMoto.slug}`}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px',
+                    background: '#E2231A',
+                    color: '#fff',
+                    textDecoration: 'none',
+                    padding: '16px',
+                    borderRadius: '8px',
+                    fontWeight: 800,
+                    textTransform: 'uppercase',
+                    fontSize: '14px',
+                    letterSpacing: '1px'
+                  }}
+                >
+                  Ver todos os detalhes <Eye size={18} />
+                </Link>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

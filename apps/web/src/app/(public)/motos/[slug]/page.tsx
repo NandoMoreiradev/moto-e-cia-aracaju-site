@@ -25,6 +25,7 @@ export default function MotoDetalhePage() {
   const [selectedFotoIndex, setSelectedFotoIndex] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalImageIndex, setModalImageIndex] = useState(0);
+  const [isDiferenciaisOpen, setIsDiferenciaisOpen] = useState(false);
 
   // Estados para os acórdeons da Ficha Técnica (mock de grupos para simular o layout)
   const [openSpecs, setOpenSpecs] = useState<Record<string, boolean>>({
@@ -459,6 +460,115 @@ export default function MotoDetalhePage() {
             />
           </div>
         )}
+
+        {moto.diferenciais && (
+          <div style={{ marginBottom: '60px', textAlign: 'center' }}>
+            <button
+              onClick={() => setIsDiferenciaisOpen(true)}
+              style={{
+                background: 'transparent',
+                color: '#e31b23',
+                border: '1px solid #e31b23',
+                padding: '12px 24px',
+                borderRadius: '30px',
+                fontSize: '14px',
+                fontWeight: 700,
+                cursor: 'pointer',
+                transition: 'all 0.2s',
+                textTransform: 'uppercase',
+                letterSpacing: '1px'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = '#e31b23';
+                e.currentTarget.style.color = '#fff';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = 'transparent';
+                e.currentTarget.style.color = '#e31b23';
+              }}
+            >
+              Ver todos os diferenciais
+            </button>
+          </div>
+        )}
+
+        {/* Modal de Diferenciais */}
+        <AnimatePresence>
+          {isDiferenciaisOpen && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              style={{
+                position: 'fixed', inset: 0, zIndex: 10001,
+                background: 'rgba(0,0,0,0.8)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                backdropFilter: 'blur(4px)', padding: '20px'
+              }}
+              onClick={() => setIsDiferenciaisOpen(false)}
+            >
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                animate={{ scale: 1, opacity: 1, y: 0 }}
+                exit={{ scale: 0.9, opacity: 0, y: 20 }}
+                style={{
+                  background: '#fff',
+                  width: '100%',
+                  maxWidth: '700px',
+                  maxHeight: '80vh',
+                  borderRadius: '16px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  boxShadow: '0 20px 40px rgba(0,0,0,0.2)'
+                }}
+                onClick={e => e.stopPropagation()}
+              >
+                {/* Header Modal */}
+                <div style={{ 
+                  padding: '24px 32px', 
+                  borderBottom: '1px solid #eee', 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center' 
+                }}>
+                  <h3 style={{ margin: 0, fontSize: '20px', fontWeight: 800, color: '#111', textTransform: 'uppercase' }}>
+                    Diferenciais <span style={{ color: '#e31b23' }}>{moto.nome}</span>
+                  </h3>
+                  <button 
+                    onClick={() => setIsDiferenciaisOpen(false)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#666' }}
+                  >
+                    <X size={24} />
+                  </button>
+                </div>
+
+                {/* Content Modal */}
+                <div style={{ padding: '32px', overflowY: 'auto', flex: 1 }}>
+                  <div 
+                    className="rich-content"
+                    dangerouslySetInnerHTML={{ __html: moto.diferenciais || '' }} 
+                  />
+                </div>
+
+                {/* Footer Modal */}
+                <div style={{ padding: '20px 32px', borderTop: '1px solid #eee', textAlign: 'right' }}>
+                  <button 
+                    onClick={() => setIsDiferenciaisOpen(false)}
+                    style={{ 
+                      background: '#111', color: '#fff', border: 'none', 
+                      padding: '10px 24px', borderRadius: '4px', fontWeight: 700, 
+                      cursor: 'pointer', fontSize: '13px'
+                    }}
+                  >
+                    FECHAR
+                  </button>
+                </div>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Título Vermelho Centralizado */}
         <div style={{ textAlign: 'center', marginBottom: '60px' }}>

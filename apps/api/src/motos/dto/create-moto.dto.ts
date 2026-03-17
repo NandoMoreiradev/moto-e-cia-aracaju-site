@@ -37,6 +37,11 @@ export class CreateMotoDto {
   @IsString()
   @IsNotEmpty()
   descricao: string;
+  
+  @ApiPropertyOptional({ example: '<ul><li>Diferencial 1</li></ul>' })
+  @IsOptional()
+  @IsString()
+  diferenciais?: string;
 
   @ApiPropertyOptional()
   @IsOptional()

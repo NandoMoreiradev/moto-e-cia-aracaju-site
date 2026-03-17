@@ -29,6 +29,7 @@ export interface MotoDto {
   logoUrl: string | null;
   logoR2Key: string | null;
   slogan: string | null;
+  diferenciais: string | null;
   specs: MotoSpecs;
   fotos: MotoFotoDto[];
   destaque: boolean;
@@ -64,6 +65,7 @@ export interface CreateMotoDto {
   preco?: number;
   precoFormatado?: string;
   descricao: string;
+  diferenciais?: string;
   capaUrl?: string;
   capaR2Key?: string;
   specs?: MotoSpecs;

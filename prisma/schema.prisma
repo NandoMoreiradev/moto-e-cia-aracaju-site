@@ -60,6 +60,7 @@ model Moto {
   logoUrl        String?
   logoR2Key      String?
   slogan         String?
+  diferenciais   String?    @db.Text
 
   // Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0)
   ano           Int?        // Ano de fabricação

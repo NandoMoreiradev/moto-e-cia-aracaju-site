@@ -279,11 +279,20 @@ export default function AdminMotoEditPage() {
               </div>
             </div>
             <div style={{ marginTop: '12px' }}>
-              <label style={labelStyle}>Descrição Rico (Formatação, Imagens, etc)</label>
+              <label style={labelStyle}>Descrição Rica (Formatação, Imagens, etc)</label>
               <RichTextEditor
                 value={moto.descricao || ''}
                 onChange={(html: string) => set('descricao', html)}
                 placeholder="Descreva a moto com detalhes, fotos e formatação..."
+              />
+            </div>
+
+            <div style={{ marginTop: '24px' }}>
+              <label style={labelStyle}>Diferenciais da Moto (Modal de Destaque)</label>
+              <RichTextEditor
+                value={moto.diferenciais || ''}
+                onChange={(html: string) => set('diferenciais', html)}
+                placeholder="Liste os diferenciais que aparecerão no modal (ex: Freios ABS, suspensão invertida...)"
               />
             </div>
           </Card>
