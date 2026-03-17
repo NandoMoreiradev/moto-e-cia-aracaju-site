@@ -75,13 +75,13 @@ export default function AdminMotosPage() {
       {/* Filters Area */}
       <AdminCard style={{ padding: '16px 20px' }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
-          <div style={{ flex: 1, minWidth: '280px', position: 'relative' }}>
-            <Search size={18} style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: '#999', zIndex: 1 }} />
+          <div style={{ flex: 1, minWidth: '280px' }}>
             <AdminInput 
               placeholder="Buscar por nome, marca ou descrição..." 
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
-              style={{ marginBottom: 0, paddingLeft: '44px' }}
+              icon={<Search size={18} />}
+              style={{ marginBottom: 0 }}
             />
           </div>
           

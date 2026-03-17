@@ -425,7 +425,7 @@ export default function MotosPage() {
                     <div style={{ padding: '12px 16px' }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
                         {marcas.find(m => m.nome === moto.marca)?.logoUrl ? (
-                          <div style={{ height: '34px', width: '80px', position: 'relative' }}>
+                          <div style={{ height: '48px', width: '99px', position: 'relative' }}>
                             <img 
                               src={marcas.find(m => m.nome === moto.marca)?.logoUrl || ''} 
                               alt={moto.marca} 

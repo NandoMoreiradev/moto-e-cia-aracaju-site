@@ -1,7 +1,7 @@
 import React from 'react';
 
 interface AdminInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
-  label: string;
+  label?: string;
   icon?: React.ReactNode;
 }
 
