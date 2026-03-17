@@ -3,8 +3,8 @@ services:
   - type: web
     name: moto-e-cia-api
     runtime: node
-    buildCommand: npm install && npm run db:generate && npm run build --filter=@moto-e-cia/api
-    startCommand: node apps/api/dist/main
+    buildCommand: npm install && npm run db:generate -- --filter=@moto-e-cia/api && npm run build -- --filter=@moto-e-cia/api
+    startCommand: node apps/api/dist/main.js
     envVars:
       - key: NODE_ENV
         value: production
@@ -16,23 +16,38 @@ services:
         generateValue: true
       - key: PORT
         value: 4000
+      # Cloudflare R2 (Preencher no painel do Render após o deploy)
+      - key: R2_ACCOUNT_ID
+        sync: false
+      - key: R2_BUCKET_NAME
+        sync: false
+      - key: R2_ACCESS_KEY_ID
+        sync: false
+      - key: R2_SECRET_ACCESS_KEY
+        sync: false
+      - key: R2_PUBLIC_URL
+        sync: false
 
   # Frontend Web
   - type: web
     name: moto-e-cia-web
     runtime: node
-    buildCommand: npm install && npm run build --filter=@moto-e-cia/web
-    startCommand: npm run start --filter=@moto-e-cia/web
+    buildCommand: npm install && npm run build -- --filter=@moto-e-cia/web
+    startCommand: npm run start -- --filter=@moto-e-cia/web
     envVars:
       - key: NODE_ENV
         value: production
       - key: NEXT_PUBLIC_API_URL
-        fromService:
-          type: web
-          name: moto-e-cia-api
-          property: host
+        value: https://moto-e-cia-api.onrender.com
+
+      - key: NEXT_PUBLIC_SITE_URL
+        value: https://moto-e-cia.onrender.com # Ajuste conforme o domínio final
+      - key: NEXT_PUBLIC_WHATSAPP
+        value: "557999881122" # Substitua pelo número real
+
 
 databases:
   - name: moto-e-cia-db
     databaseName: moto_e_cia
     plan: free # Note: Render free tier expires after 90 days.
+
