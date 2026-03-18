@@ -19,9 +19,10 @@ import { AdminBadge } from '@/components/admin/AdminBadge';
 
 const isNova = (id: string) => id === 'nova';
 
-const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO', 'SEMINOVA'];
+const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO'];
 const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL'];
 const STATUS_OPTS = ['DISPONIVEL', 'RESERVADA', 'VENDIDA', 'ALUGUEL'];
+const CONDICOES = ['NOVA', 'SEMINOVA'];
 const COMBUSTIVEIS = ['GASOLINA', 'ETANOL', 'FLEX', 'ELETRICO'];
 const TRANSMISSOES = ['MANUAL', 'AUTOMATICA', 'SEMI_AUTOMATICA'];
 
@@ -273,12 +274,15 @@ export default function AdminMotoEditPage() {
                <AdminInput label="Slogan curto (Opcional)" value={moto.slogan || ''} onChange={e => set('slogan', e.target.value)} placeholder="Ex: A força bruta na estrada" />
             </div>
             
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
                <AdminSelect label="Marca *" value={moto.marca || 'SUZUKI'} onChange={e => set('marca', e.target.value)} required>
                   {MARCAS.map(m => <option key={m} value={m}>{m}</option>)}
                </AdminSelect>
                <AdminSelect label="Tipo / Categoria *" value={moto.tipo || 'NAKED'} onChange={e => set('tipo', e.target.value)} required>
                   {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
+               </AdminSelect>
+               <AdminSelect label="Condição *" value={(moto as any).condicao || 'NOVA'} onChange={e => set('condicao', e.target.value)}>
+                  {CONDICOES.map(c => <option key={c} value={c}>{c}</option>)}
                </AdminSelect>
                <AdminSelect label="Situação Atual" value={moto.status || 'DISPONIVEL'} onChange={e => set('status', e.target.value)}>
                   {STATUS_OPTS.map(s => <option key={s} value={s}>{s}</option>)}
@@ -324,6 +328,73 @@ export default function AdminMotoEditPage() {
                 </AdminSelect>
                 <AdminInput label="Nº Chassi (Opcional)" value={moto.vin || ''} onChange={e => set('vin', e.target.value)} />
              </div>
+          </AdminCard>
+
+          <AdminCard title="Especificações Técnicas">
+            <p style={{ fontSize: '13px', color: '#888', marginBottom: '20px', marginTop: 0 }}>
+              Preencha as especificações que serão exibidas na página da moto. Deixe em branco os campos não aplicáveis.
+            </p>
+
+            {/* Motor */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Motor</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <AdminInput label="Tipo de Motor" value={(moto.specs as any)?.motor || ''} onChange={e => set('specs', { ...moto.specs, motor: e.target.value })} placeholder="Ex: Monocilíndrico DOHC" />
+              <AdminInput label="Cilindrada" value={(moto.specs as any)?.cilindrada || ''} onChange={e => set('specs', { ...moto.specs, cilindrada: e.target.value })} placeholder="Ex: 776 cm³" />
+              <AdminInput label="Refrigeração" value={(moto.specs as any)?.refrigeracao || ''} onChange={e => set('specs', { ...moto.specs, refrigeracao: e.target.value })} placeholder="Ex: Refrigerada a líquido" />
+              <AdminInput label="Alimentação" value={(moto.specs as any)?.alimentacao || ''} onChange={e => set('specs', { ...moto.specs, alimentacao: e.target.value })} placeholder="Ex: Injeção eletrônica" />
+              <AdminInput label="Relação de Compressão" value={(moto.specs as any)?.relacaoCompressao || ''} onChange={e => set('specs', { ...moto.specs, relacaoCompressao: e.target.value })} placeholder="Ex: 12,5:1" />
+            </div>
+
+            {/* Desempenho */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Desempenho</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <AdminInput label="Potência Máxima" value={(moto.specs as any)?.potencia || ''} onChange={e => set('specs', { ...moto.specs, potencia: e.target.value })} placeholder="Ex: 83 cv" />
+              <AdminInput label="Rotação (Potência)" value={(moto.specs as any)?.potenciaRpm || ''} onChange={e => set('specs', { ...moto.specs, potenciaRpm: e.target.value })} placeholder="Ex: 8.500 rpm" />
+              <AdminInput label="Torque Máximo" value={(moto.specs as any)?.torque || ''} onChange={e => set('specs', { ...moto.specs, torque: e.target.value })} placeholder="Ex: 78 Nm" />
+              <AdminInput label="Rotação (Torque)" value={(moto.specs as any)?.torqueRpm || ''} onChange={e => set('specs', { ...moto.specs, torqueRpm: e.target.value })} placeholder="Ex: 6.500 rpm" />
+            </div>
+
+            {/* Trem de força */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Trem de Força</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <AdminInput label="Partida" value={(moto.specs as any)?.partida || ''} onChange={e => set('specs', { ...moto.specs, partida: e.target.value })} placeholder="Ex: Elétrica" />
+              <AdminInput label="Embreagem" value={(moto.specs as any)?.embreagem || ''} onChange={e => set('specs', { ...moto.specs, embreagem: e.target.value })} placeholder="Ex: Multidiscos em banho de óleo" />
+              <AdminInput label="Câmbio" value={(moto.specs as any)?.cambio || ''} onChange={e => set('specs', { ...moto.specs, cambio: e.target.value })} placeholder="Ex: 6 velocidades" />
+            </div>
+
+            {/* Dimensões */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Dimensões e Pesos</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <AdminInput label="Comprimento" value={(moto.specs as any)?.comprimento || ''} onChange={e => set('specs', { ...moto.specs, comprimento: e.target.value })} placeholder="Ex: 2.055 mm" />
+              <AdminInput label="Largura" value={(moto.specs as any)?.largura || ''} onChange={e => set('specs', { ...moto.specs, largura: e.target.value })} placeholder="Ex: 810 mm" />
+              <AdminInput label="Altura" value={(moto.specs as any)?.altura || ''} onChange={e => set('specs', { ...moto.specs, altura: e.target.value })} placeholder="Ex: 1.150 mm" />
+              <AdminInput label="Distância entre Eixos" value={(moto.specs as any)?.distanciaEntreEixos || ''} onChange={e => set('specs', { ...moto.specs, distanciaEntreEixos: e.target.value })} placeholder="Ex: 1.455 mm" />
+              <AdminInput label="Altura do Assento" value={(moto.specs as any)?.alturaAssento || ''} onChange={e => set('specs', { ...moto.specs, alturaAssento: e.target.value })} placeholder="Ex: 790 mm" />
+              <AdminInput label="Peso" value={(moto.specs as any)?.peso || ''} onChange={e => set('specs', { ...moto.specs, peso: e.target.value })} placeholder="Ex: 193 kg" />
+            </div>
+
+            {/* Fluidos */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Fluidos</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <AdminInput label="Capacidade do Tanque" value={(moto.specs as any)?.tanque || ''} onChange={e => set('specs', { ...moto.specs, tanque: e.target.value })} placeholder="Ex: 20 L" />
+              <AdminInput label="Capacidade de Óleo" value={(moto.specs as any)?.capacidadeOleo || ''} onChange={e => set('specs', { ...moto.specs, capacidadeOleo: e.target.value })} placeholder="Ex: 3,5 L" />
+            </div>
+
+            {/* Suspensão */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Suspensão</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+              <AdminInput label="Suspensão Dianteira" value={(moto.specs as any)?.suspensaoD || ''} onChange={e => set('specs', { ...moto.specs, suspensaoD: e.target.value })} placeholder="Ex: Telescópica invertida Ø 41 mm" />
+              <AdminInput label="Suspensão Traseira" value={(moto.specs as any)?.suspensaoT || ''} onChange={e => set('specs', { ...moto.specs, suspensaoT: e.target.value })} placeholder="Ex: Monoamortecedor, curso 130 mm" />
+            </div>
+
+            {/* Freios e Pneus */}
+            <p style={{ fontSize: '12px', fontWeight: 700, color: '#E2231A', textTransform: 'uppercase', letterSpacing: '0.08em', margin: '0 0 12px' }}>Freios e Pneus</p>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+              <AdminInput label="Freio Dianteiro" value={(moto.specs as any)?.freioD || ''} onChange={e => set('specs', { ...moto.specs, freioD: e.target.value })} placeholder="Ex: Disco duplo Ø 310 mm com ABS" />
+              <AdminInput label="Freio Traseiro" value={(moto.specs as any)?.freioT || ''} onChange={e => set('specs', { ...moto.specs, freioT: e.target.value })} placeholder="Ex: Disco Ø 240 mm com ABS" />
+              <AdminInput label="Pneu Dianteiro" value={(moto.specs as any)?.pneuDianteiro || ''} onChange={e => set('specs', { ...moto.specs, pneuDianteiro: e.target.value })} placeholder="Ex: 120/70-ZR17" />
+              <AdminInput label="Pneu Traseiro" value={(moto.specs as any)?.pneuTraseiro || ''} onChange={e => set('specs', { ...moto.specs, pneuTraseiro: e.target.value })} placeholder="Ex: 180/55-ZR17" />
+            </div>
           </AdminCard>
 
           {/* Media Section */}

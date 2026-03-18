@@ -2,6 +2,7 @@
 export type MarcaMoto = 'SUZUKI' | 'HAOJUE' | 'ZONTES' | 'KYMCO' | 'OUTRO';
 export type TipoMoto = 'SPORT' | 'NAKED' | 'ADVENTURE' | 'SCOOTER' | 'TRAIL';
 export type StatusMoto = 'DISPONIVEL' | 'VENDIDA' | 'RESERVADA' | 'ALUGUEL';
+export type CondicaoMoto = 'NOVA' | 'SEMINOVA';
 export type Combustivel = 'GASOLINA' | 'ETANOL' | 'FLEX' | 'ELETRICO';
 export type Transmissao = 'MANUAL' | 'AUTOMATICA' | 'SEMI_AUTOMATICA';
 
@@ -34,6 +35,7 @@ export interface MotoDto {
   fotos: MotoFotoDto[];
   destaque: boolean;
   status: StatusMoto;
+  condicao: CondicaoMoto;
   metaProductId: string | null;
   // Campos Meta Vehicle Catalog (Graph API v25.0)
   ano: number | null;
@@ -47,14 +49,50 @@ export interface MotoDto {
 }
 
 export interface MotoSpecs {
-  motor?: string;
-  potencia?: string;
-  torque?: string;
-  peso?: string;
-  tanque?: string;
+  // Motor
+  motor?: string;           // Ex: "Monocilíndrico, 4 tempos, DOHC"
+  cilindrada?: string;      // Ex: "776 cm³"
+  refrigeracao?: string;    // Ex: "Refrigerada a líquido"
+  alimentacao?: string;     // Ex: "Injeção eletrônica de combustível"
+  relacaoCompressao?: string; // Ex: "12,5:1"
+
+  // Desempenho
+  potencia?: string;        // Ex: "83 cv"
+  potenciaRpm?: string;     // Ex: "8.500 rpm"
+  torque?: string;          // Ex: "78 Nm"
+  torqueRpm?: string;       // Ex: "6.500 rpm"
+
+  // Transmissão e trem de força
+  partida?: string;         // Ex: "Elétrica"
+  embreagem?: string;       // Ex: "Multidiscos em banho de óleo, antideslizante"
+  cambio?: string;          // Ex: "6 velocidades"
+
+  // Dimensões e pesos
+  comprimento?: string;     // Ex: "2.055 mm"
+  largura?: string;         // Ex: "810 mm"
+  altura?: string;          // Ex: "1.150 mm"
+  distanciaEntreEixos?: string; // Ex: "1.455 mm"
+  alturaAssento?: string;   // Ex: "790 mm"
+  peso?: string;            // Ex: "193 kg (peso seco)"
+
+  // Fluidos
+  tanque?: string;          // Ex: "20 L"
+  capacidadeOleo?: string;  // Ex: "3,5 L"
+
+  // Suspensão
+  suspensaoD?: string;      // Ex: "Telescópica invertida Ø 41 mm, curso 120 mm"
+  suspensaoT?: string;      // Ex: "Monoamortecedor, curso 130 mm"
+
+  // Freios
+  freioD?: string;          // Ex: "Disco duplo Ø 310 mm, pinça radial 4 pistões com ABS"
+  freioT?: string;          // Ex: "Disco Ø 240 mm, pinça 1 pistão com ABS"
+
+  // Pneus
+  pneuDianteiro?: string;   // Ex: "120/70-ZR17"
+  pneuTraseiro?: string;    // Ex: "180/55-ZR17"
+
+  // Campo legado / genérico
   freios?: string;
-  pneuDianteiro?: string;
-  pneuTraseiro?: string;
   [key: string]: string | string[] | undefined;
 }
 
@@ -71,6 +109,7 @@ export interface CreateMotoDto {
   specs?: MotoSpecs;
   destaque?: boolean;
   status?: StatusMoto;
+  condicao?: CondicaoMoto;
   // Campos Meta Vehicle Catalog
   ano?: number;
   km?: number;
@@ -172,7 +211,7 @@ export interface MotoFiltersDto extends PaginationDto {
   search?: string;
   precoMin?: number;
   precoMax?: number;
-  condicao?: 'NOVA' | 'SEMINOVA';
+  condicao?: CondicaoMoto;
 }
 
 // Banners

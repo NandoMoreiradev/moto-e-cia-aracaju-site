@@ -62,6 +62,9 @@ model Moto {
   slogan         String?
   diferenciais   String?    @db.Text
 
+  // Condição da moto
+  condicao      CondicaoMoto @default(NOVA)
+
   // Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0)
   ano           Int?        // Ano de fabricação
   km            Int?        // Quilometragem (0 = zero km)
@@ -99,6 +102,10 @@ enum MarcaMoto {
   ZONTES
   KYMCO
   OUTRO
+}
+
+enum CondicaoMoto {
+  NOVA
   SEMINOVA
 }
 

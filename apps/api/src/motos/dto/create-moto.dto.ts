@@ -1,8 +1,9 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, Min } from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { MarcaMoto, TipoMoto, StatusMoto, Combustivel, Transmissao } from '@moto-e-cia/shared';
+import { MarcaMoto, TipoMoto, StatusMoto, CondicaoMoto, Combustivel, Transmissao } from '@moto-e-cia/shared';
 
-const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO', 'SEMINOVA'];
+const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO'];
+const CONDICOES = ['NOVA', 'SEMINOVA'];
 const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL'];
 const STATUS = ['DISPONIVEL', 'VENDIDA', 'RESERVADA', 'ALUGUEL'];
 const COMBUSTIVEIS = ['GASOLINA', 'ETANOL', 'FLEX', 'ELETRICO'];
@@ -113,4 +114,9 @@ export class CreateMotoDto {
   @IsOptional()
   @IsEnum(TRANSMISSOES)
   transmissao?: Transmissao;
+
+  @ApiPropertyOptional({ enum: CONDICOES, default: 'NOVA', description: 'Condição da moto: nova ou seminova' })
+  @IsOptional()
+  @IsEnum(CONDICOES)
+  condicao?: CondicaoMoto;
 }
