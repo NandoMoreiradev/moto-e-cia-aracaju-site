@@ -3,7 +3,7 @@ services:
   - type: web
     name: moto-e-cia-api
     runtime: node
-    buildCommand: npm install && npm run db:generate -- --filter=@moto-e-cia/api && npm run build -- --filter=@moto-e-cia/api
+    buildCommand: npm install && npm run db:generate -- --filter=@moto-e-cia/api && npx prisma migrate deploy --schema=prisma/schema.prisma && npm run build -- --filter=@moto-e-cia/api
     startCommand: node apps/api/dist/main.js
     envVars:
       - key: NODE_ENV
