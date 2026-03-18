@@ -15,7 +15,6 @@ const MARCAS: { value: MarcaMoto | ''; label: string }[] = [
   { value: 'HAOJUE', label: 'Haojue' },
   { value: 'ZONTES', label: 'Zontes' },
   { value: 'KYMCO', label: 'Kymco' },
-  { value: 'SEMINOVA', label: 'Seminovas' },
   { value: 'OUTRO', label: 'Outras' },
 ];
 const TIPOS: { value: TipoMoto | ''; label: string }[] = [
@@ -25,6 +24,12 @@ const TIPOS: { value: TipoMoto | ''; label: string }[] = [
   { value: 'ADVENTURE', label: 'Adventure' },
   { value: 'SCOOTER', label: 'Scooter' },
   { value: 'TRAIL', label: 'Trail' },
+];
+
+const CONDICOES: { value: 'NOVA' | 'SEMINOVA' | ''; label:string }[] = [
+  { value: '', label: 'Todas' },
+  { value: 'NOVA', label: 'Novas (0km)' },
+  { value: 'SEMINOVA', label: 'Seminovas' },
 ];
 
 const STATUS_BADGE: Record<string, { label: string; color: string }> = {
@@ -41,6 +46,7 @@ export default function MotosPage() {
   const [page, setPage] = useState(1);
   const [marca, setMarca] = useState<MarcaMoto | ''>('');
   const [tipo, setTipo] = useState<TipoMoto | ''>('');
+  const [condicao, setCondicao] = useState<'NOVA' | 'SEMINOVA' | ''>('');
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedMoto, setSelectedMoto] = useState<MotoDto | null>(null);
@@ -70,6 +76,7 @@ export default function MotosPage() {
         page, limit: LIMIT,
         marca: marca || undefined,
         tipo: tipo || undefined,
+        condicao: condicao || undefined,
         search: search || undefined,
         status: 'DISPONIVEL',
       });
@@ -78,10 +85,10 @@ export default function MotosPage() {
     } finally {
       setLoading(false);
     }
-  }, [page, marca, tipo, search]);
+  }, [page, marca, tipo, search, condicao]);
 
   useEffect(() => { load(); }, [load]);
-  function resetFilters() { setMarca(''); setTipo(''); setSearch(''); setPage(1); }
+  function resetFilters() { setMarca(''); setTipo(''); setSearch(''); setCondicao(''); setPage(1); }
 
   return (
     <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
@@ -212,6 +219,7 @@ export default function MotosPage() {
                 key={m.id}
                 onClick={() => { 
                   setMarca(marca === m.nome ? '' : m.nome as any); 
+                  setCondicao('');
                   setPage(1); 
                 }}
                 style={{
@@ -219,8 +227,8 @@ export default function MotosPage() {
                   background: '#fff',
                   border: '2px solid', borderColor: marca === m.nome ? '#E2231A' : '#e5e5e5',
                   cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  padding: '10px', opacity: marca && marca !== m.nome ? 0.4 : 1,
-                  filter: marca && marca !== m.nome ? 'grayscale(100%)' : 'none',
+                  padding: '10px', opacity: (marca && marca !== m.nome) || condicao === 'SEMINOVA' ? 0.4 : 1,
+                  filter: (marca && marca !== m.nome) || condicao === 'SEMINOVA' ? 'grayscale(100%)' : 'none',
                   boxShadow: marca === m.nome ? '0 4px 12px rgba(226, 35, 26, 0.15)' : 'none'
                 }}
                 title={m.nome}
@@ -232,6 +240,25 @@ export default function MotosPage() {
                 )}
               </button>
             ))}
+            <button
+              onClick={() => {
+                setCondicao(condicao === 'SEMINOVA' ? '' : 'SEMINOVA');
+                setMarca('');
+                setPage(1);
+              }}
+              style={{
+                flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '12px',
+                background: '#fff',
+                border: '2px solid', borderColor: condicao === 'SEMINOVA' ? '#E2231A' : '#e5e5e5',
+                cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                padding: '10px', opacity: marca ? 0.4 : 1,
+                filter: marca ? 'grayscale(100%)' : 'none',
+                boxShadow: condicao === 'SEMINOVA' ? '0 4px 12px rgba(226, 35, 26, 0.15)' : 'none'
+              }}
+              title="Motos Seminovas"
+            >
+              <span style={{ fontSize: '13px', fontWeight: 700, color: condicao === 'SEMINOVA' ? '#E2231A' : '#888' }}>Seminovas</span>
+            </button>
           </div>
         )}
 
@@ -252,7 +279,11 @@ export default function MotosPage() {
             style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
             {MARCAS.map(m => <option key={m.value} value={m.value}>{m.label}</option>)}
           </select>
-          {(marca || tipo || search) && (
+          <select value={condicao} onChange={e => { setCondicao(e.target.value as any); setPage(1); }}
+            style={{ padding: '10px 14px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px', background: '#fff' }}>
+            {CONDICOES.map(c => <option key={c.value} value={c.value}>{c.label}</option>)}
+          </select>
+          {(marca || tipo || search || condicao) && (
             <button onClick={resetFilters} style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '10px 14px', background: 'transparent', border: '1px solid #e5e5e5', borderRadius: '8px', color: '#888', fontSize: '13px', cursor: 'pointer' }}>
               <X size={14} /> Limpar
             </button>

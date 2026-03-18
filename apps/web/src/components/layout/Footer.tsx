@@ -1,5 +1,6 @@
 'use client';
 
+import { Clock, Mail, MapPin, Smartphone } from 'lucide-react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
@@ -66,11 +67,6 @@ const ContactInfo = styled.div`
   gap: ${({ theme }) => theme.spacing.sm};
   color: rgba(255, 255, 255, 0.7);
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  
-  i {
-    margin-top: 4px;
-    color: ${({ theme }) => theme.colors.primary};
-  }
 `;
 
 const Copyright = styled.div`
@@ -112,19 +108,19 @@ export function Footer() {
         <FooterCol>
           <ColTitle>Atendimento</ColTitle>
           <ContactInfo>
-            <i>📍</i>
-            <span>Av. Doutor José da Silva Ribeiro Filho, 192 - Siqueira Campos, Aracaju - SE</span>
+            <MapPin size={18} />
+            <span>Av. Pedro Calazans, nº 717, Centro, Aracaju - SE</span>
           </ContactInfo>
           <ContactInfo>
-            <i>📱</i>
+            <Smartphone size={18} />
             <span>(79) 99999-9999 (WhatsApp)</span>
           </ContactInfo>
           <ContactInfo>
-            <i>✉️</i>
+            <Mail size={18} />
             <span>contato@motoeciaaracaju.com.br</span>
           </ContactInfo>
           <ContactInfo>
-            <i>🕒</i>
+            <Clock size={18} />
             <span>Seg a Sex: 08h às 18h<br/>Sáb: 08h às 12h</span>
           </ContactInfo>
         </FooterCol>

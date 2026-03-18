@@ -183,7 +183,7 @@ export default function ContatoPage() {
             <i>📍</i>
             <div>
               <h4>Nosso Endereço</h4>
-              <p>Av. Doutor José da Silva Ribeiro Filho, 192<br/>Siqueira Campos - Aracaju/SE<br/>CEP: 49080-115</p>
+              <p>Av. Pedro Calazans, nº 717, <br/>Centro - Aracaju/SE<br/>CEP: 49080-115</p>
             </div>
           </InfoItem>
 

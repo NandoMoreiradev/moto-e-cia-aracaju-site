@@ -132,7 +132,7 @@ export default function ServicosPage() {
   return (
     <PageContainer>
       <Header>
-        <Title>Bem-vindo ao nosso <span>Centro de Serviços</span></Title>
+        <Title>Bem-vindo à Oficina da <span>Oficina Moto e Cia</span></Title>
         <Subtitle>
           Não vendemos apenas motos, entregamos tranquilidade e suporte contínuo para você e sua máquina.
         </Subtitle>

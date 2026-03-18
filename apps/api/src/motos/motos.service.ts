@@ -26,6 +26,7 @@ export class MotosService {
     search?: string;
     page?: number;
     limit?: number;
+    condicao?: 'NOVA' | 'SEMINOVA';
   }) {
     const page = filters.page || 1;
     const limit = filters.limit || 12;
@@ -41,6 +42,11 @@ export class MotosService {
         { nome: { contains: filters.search, mode: 'insensitive' } },
         { descricao: { contains: filters.search, mode: 'insensitive' } },
       ];
+    }
+    if (filters.condicao === 'NOVA') {
+      where.km = 0;
+    } else if (filters.condicao === 'SEMINOVA') {
+      where.km = { gt: 0 };
     }
 
     const [motos, total] = await Promise.all([

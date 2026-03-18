@@ -180,7 +180,7 @@ export function Header() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Fale com Especialista
+            Fale com um Vendedor
           </ContactButton>
         </MenuItems>
       </Nav>

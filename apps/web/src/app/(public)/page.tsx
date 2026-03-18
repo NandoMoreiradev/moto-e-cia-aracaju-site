@@ -350,7 +350,7 @@ export default function HomePage() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            💬 Chamar no WhatsApp
+            Chamar no WhatsApp
           </WhatsAppButton>
         </CTAContent>
       </CTASection>
