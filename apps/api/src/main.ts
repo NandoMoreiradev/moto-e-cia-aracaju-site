@@ -1,9 +1,25 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { execSync } from 'child_process';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
+  // Aplica migrations pendentes antes de iniciar a API
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      console.log('⏳ Aplicando migrations do banco de dados...');
+      execSync('npx prisma migrate deploy --schema=prisma/schema.prisma', {
+        stdio: 'inherit',
+        cwd: process.cwd(),
+      });
+      console.log('✅ Migrations aplicadas com sucesso.');
+    } catch (err) {
+      console.error('❌ Falha ao aplicar migrations:', err);
+      process.exit(1);
+    }
+  }
+
   const app = await NestFactory.create(AppModule);
 
   // CORS
