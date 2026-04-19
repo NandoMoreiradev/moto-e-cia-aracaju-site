@@ -80,4 +80,26 @@ export class BannersController {
   ) {
     return this.bannersService.uploadImage(id, file);
   }
+
+  @ApiOperation({ summary: '[Admin] Upload de imagem mobile do banner' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('ADMIN', 'EDITOR')
+  @Post('admin/banners/:id/mobile-image')
+  @UseInterceptors(FileInterceptor('image'))
+  uploadMobileImage(
+    @Param('id') id: string,
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
+          new FileTypeValidator({ fileType: '.(jpeg|jpg|png|webp|svg\\+xml|svg)$' }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return this.bannersService.uploadMobileImage(id, file);
+  }
 }

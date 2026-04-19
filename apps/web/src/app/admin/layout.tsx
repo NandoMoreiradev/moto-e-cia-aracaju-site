@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getToken, clearToken, auth } from '@/lib/api';
 import { 
   BarChart3, Bike, Image as ImageIcon, Tag, Facebook, 
@@ -91,21 +92,16 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       }}>
         {/* Brand */}
         <div style={{ padding: '0 24px 32px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{
-              width: '40px', height: '40px',
-              background: '#E2231A',
-              borderRadius: '12px',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#fff',
-              boxShadow: '0 4px 12px rgba(226, 35, 26, 0.2)'
-            }}>
-              <Bike size={22} />
-            </div>
-            <div>
-              <div style={{ color: '#111', fontWeight: 800, fontSize: '16px', letterSpacing: '-0.02em' }}>Moto e Cia</div>
-              <div style={{ color: '#999', fontSize: '12px', fontWeight: 500 }}>Painel Gestor</div>
-            </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <Image 
+              src="/logo_moto_e_cia.png" 
+              alt="Moto e Cia Aracaju" 
+              width={140} 
+              height={60} 
+              style={{ objectFit: 'contain', objectPosition: 'left' }}
+              priority
+            />
+            <div style={{ color: '#999', fontSize: '12px', fontWeight: 600, paddingLeft: '4px' }}>Painel Gestor</div>
           </div>
         </div>
 

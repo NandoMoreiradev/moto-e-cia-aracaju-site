@@ -26,6 +26,8 @@ export default function AdminBannerDetailPage() {
   });
   const [image, setImage] = useState<File | null>(null);
   const [preview, setPreview] = useState<string | null>(null);
+  const [mobileImage, setMobileImage] = useState<File | null>(null);
+  const [mobilePreview, setMobilePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(!isNew);
   const [saving, setSaving] = useState(false);
 
@@ -44,6 +46,7 @@ export default function AdminBannerDetailPage() {
               ativo: banner.ativo,
             });
             setPreview(banner.imageUrl);
+            setMobilePreview(banner.mobileImageUrl);
           } else {
             toast.error('Banner não encontrado');
             router.push('/admin/banners');
@@ -68,6 +71,9 @@ export default function AdminBannerDetailPage() {
 
       if (image) {
         await adminBanners.uploadImage(currentId, image);
+      }
+      if (mobileImage) {
+        await adminBanners.uploadMobileImage(currentId, mobileImage);
       }
 
       toast.success('Salvo com sucesso!');
@@ -189,6 +195,52 @@ export default function AdminBannerDetailPage() {
                       if (f) {
                         setImage(f);
                         setPreview(URL.createObjectURL(f));
+                      }
+                    }}
+                    style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}
+                  />
+                </div>
+
+                {/* Área para Imagem Mobile */}
+                <div style={{ 
+                  aspectRatio: '9/16', background: '#f8f9fa', border: '2px dashed #eee', borderRadius: '16px',
+                  position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                  overflow: 'hidden', boxShadow: 'inset 0 2px 10px rgba(0,0,0,0.02)',
+                  maxWidth: '240px', margin: '0 auto'
+                }}>
+                  {mobilePreview ? (
+                    <>
+                      <img src={mobilePreview} style={{ width: '100%', height: '100%', objectFit: 'cover' }} alt="Preview Mobile" />
+                      <button 
+                        type="button"
+                        onClick={() => { setMobileImage(null); setMobilePreview(null); }}
+                        style={{ 
+                          position: 'absolute', top: '12px', right: '12px',
+                          background: '#fff', border: '1px solid #eee', borderRadius: '50%',
+                          width: '32px', height: '32px', display: 'flex', alignItems: 'center', 
+                          justifyContent: 'center', cursor: 'pointer', color: '#e11d48',
+                          boxShadow: '0 2px 8px rgba(0,0,0,0.1)'
+                        }}
+                      >
+                        <X size={16} />
+                      </button>
+                    </>
+                  ) : (
+                    <div style={{ textAlign: 'center', color: '#ccc', padding: '16px' }}>
+                      <div style={{ background: '#fff', width: '56px', height: '56px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 12px', boxShadow: '0 2px 10px rgba(0,0,0,0.03)' }}>
+                        <ImageIcon size={24} color="#ddd" />
+                      </div>
+                      <span style={{ fontSize: '12px', fontWeight: 600 }}>Enviar imagem Mobile (Opcional)</span>
+                    </div>
+                  )}
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    onChange={e => {
+                      const f = e.target.files?.[0];
+                      if (f) {
+                        setMobileImage(f);
+                        setMobilePreview(URL.createObjectURL(f));
                       }
                     }}
                     style={{ position: 'absolute', inset: 0, opacity: 0, cursor: 'pointer' }}

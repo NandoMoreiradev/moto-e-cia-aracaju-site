@@ -222,6 +222,8 @@ export interface BannerDto {
   subtitulo: string | null;
   imageUrl: string;
   imageR2Key: string;
+  mobileImageUrl: string | null;
+  mobileImageR2Key: string | null;
   link: string | null;
   ordem: number;
   ativo: boolean;
@@ -233,6 +235,8 @@ export interface CreateBannerDto {
   label?: string;
   titulo?: string;
   subtitulo?: string;
+  mobileImageUrl?: string;
+  mobileImageR2Key?: string;
   link?: string;
   ordem?: number;
   ativo?: boolean;

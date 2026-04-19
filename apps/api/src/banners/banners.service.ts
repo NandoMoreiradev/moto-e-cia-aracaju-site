@@ -36,6 +36,8 @@ export class BannersService {
         ...dto,
         imageUrl: '', // Será atualizado no upload
         imageR2Key: '',
+        mobileImageUrl: null,
+        mobileImageR2Key: null,
       },
     });
   }
@@ -52,6 +54,9 @@ export class BannersService {
     const banner = await this.findOne(id);
     if (banner.imageR2Key) {
       await this.r2.deleteFile(banner.imageR2Key).catch(() => null);
+    }
+    if (banner.mobileImageR2Key) {
+      await this.r2.deleteFile(banner.mobileImageR2Key).catch(() => null);
     }
     await this.prisma.banner.delete({ where: { id } });
     return { message: 'Banner removido com sucesso' };
@@ -72,6 +77,25 @@ export class BannersService {
       data: {
         imageUrl: url,
         imageR2Key: r2Key,
+      },
+    });
+  }
+
+  async uploadMobileImage(id: string, file: Express.Multer.File) {
+    const banner = await this.findOne(id);
+
+    if (banner.mobileImageR2Key) {
+      await this.r2.deleteFile(banner.mobileImageR2Key).catch(() => null);
+    }
+
+    const r2Key = `banners/mobile-${id}-${Date.now()}-${file.originalname}`;
+    const url = await this.r2.uploadFile(r2Key, file.buffer, file.mimetype);
+
+    return this.prisma.banner.update({
+      where: { id },
+      data: {
+        mobileImageUrl: url,
+        mobileImageR2Key: r2Key,
       },
     });
   }

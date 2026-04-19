@@ -174,6 +174,12 @@ export const adminBanners = {
     formData.append('image', file);
     return apiFetchFormData<BannerDto>(`/admin/banners/${id}/image`, formData);
   },
+  uploadMobileImage: (id: string, file: File) => {
+    const formData = new FormData();
+    // Reutilizando o mesmo nome de campo 'image' esperado pelo FileInterceptor('image') do controller
+    formData.append('image', file);
+    return apiFetchFormData<BannerDto>(`/admin/banners/${id}/mobile-image`, formData);
+  },
 };
 
 // ─── Admin — Marcas ───────────────────────────────────────────────────────────

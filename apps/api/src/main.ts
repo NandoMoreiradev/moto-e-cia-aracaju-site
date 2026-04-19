@@ -9,9 +9,10 @@ async function bootstrap() {
   if (process.env.NODE_ENV === 'production') {
     try {
       console.log('⏳ Aplicando migrations do banco de dados...');
-      execSync('npx prisma migrate deploy --schema=prisma/schema.prisma', {
+      const path = require('path');
+      const schemaPath = path.resolve(__dirname, '../../../prisma/schema.prisma');
+      execSync(`npx prisma migrate deploy --schema=${schemaPath}`, {
         stdio: 'inherit',
-        cwd: process.cwd(),
       });
       console.log('✅ Migrations aplicadas com sucesso.');
     } catch (err) {

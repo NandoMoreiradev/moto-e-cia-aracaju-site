@@ -199,9 +199,11 @@ model Banner {
   label       String?  // Ex: "Performance Pura"
   titulo      String?  // Ex: "Suzuki GSX-R1000R"
   subtitulo   String?  @db.Text
-  imageUrl    String
-  imageR2Key  String
-  link        String?  // URL para onde o banner aponta
+  imageUrl         String
+  imageR2Key       String
+  mobileImageUrl   String?
+  mobileImageR2Key String?
+  link             String?  // URL para onde o banner aponta
   ordem       Int      @default(0)
   ativo       Boolean  @default(true)
 

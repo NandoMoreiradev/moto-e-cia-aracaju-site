@@ -83,6 +83,13 @@ export default function AdminBannersPage() {
                   <AdminBadge color={banner.ativo ? '#2ecc71' : '#888'}>
                     {banner.ativo ? 'Ativo' : 'Inativo'}
                   </AdminBadge>
+                  {banner.mobileImageUrl && (
+                    <div style={{ marginLeft: '8px' }}>
+                      <AdminBadge color="#3b82f6">
+                        Mobile
+                      </AdminBadge>
+                    </div>
+                  )}
                 </div>
               </div>
 

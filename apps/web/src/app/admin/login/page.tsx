@@ -6,6 +6,7 @@ import { auth, setToken } from '@/lib/api';
 import { AdminButton } from '@/components/admin/AdminButton';
 import { AdminInput } from '@/components/admin/AdminInput';
 import { Lock, Mail, ShieldAlert } from 'lucide-react';
+import Image from 'next/image';
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -49,31 +50,16 @@ export default function AdminLoginPage() {
         textAlign: 'center'
       }}>
         {/* Logo */}
-        <div style={{ 
-          display: 'inline-flex', 
-          alignItems: 'center', 
-          justifyContent: 'center',
-          width: '72px',
-          height: '72px',
-          background: '#E2231A',
-          borderRadius: '20px',
-          boxShadow: '0 8px 16px rgba(226, 35, 26, 0.2)',
-          marginBottom: '24px',
-          color: '#fff',
-          fontSize: '32px'
-        }}>
-          🏍️
+        <div style={{ marginBottom: '32px', display: 'flex', justifyContent: 'center' }}>
+          <Image 
+            src="/logo_moto_e_cia.png" 
+            alt="Moto e Cia Aracaju" 
+            width={180} 
+            height={90} 
+            style={{ objectFit: 'contain' }}
+            priority
+          />
         </div>
-
-        <h1 style={{ 
-          color: '#111', 
-          fontSize: '26px', 
-          fontWeight: 800, 
-          margin: '0 0 8px',
-          letterSpacing: '-0.02em'
-        }}>
-          Moto e Cia
-        </h1>
         <p style={{ 
           color: '#666', 
           fontSize: '15px', 

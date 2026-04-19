@@ -16,7 +16,7 @@ const CarouselContainer = styled.section`
   background: ${({ theme }) => theme.colors.dark};
 `;
 
-const Slide = styled(motion.div)<{ $bgImage: string; $hasContent: boolean }>`
+const Slide = styled(motion.div)<{ $bgImage: string; $mobileBgImage?: string | null; $hasContent: boolean }>`
   position: absolute;
   inset: 0;
   background-image: ${({ $bgImage, $hasContent }) => 
@@ -29,6 +29,16 @@ const Slide = styled(motion.div)<{ $bgImage: string; $hasContent: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
+
+  ${({ $mobileBgImage, $hasContent, theme }) => $mobileBgImage && `
+    @media (max-width: ${theme.breakpoints?.md || '768px'}) {
+      background-image: ${
+        $mobileBgImage.includes('gradient')
+          ? $mobileBgImage
+          : `${$hasContent ? 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), ' : ''}url("${$mobileBgImage}")`
+      };
+    }
+  `}
 `;
 
 const Content = styled.div`
@@ -174,6 +184,7 @@ export const HeroCarousel = () => {
         <Slide
           key={activeSlide.id}
           $bgImage={activeSlide.imageUrl}
+          $mobileBgImage={activeSlide.mobileImageUrl}
           $hasContent={hasContent}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
