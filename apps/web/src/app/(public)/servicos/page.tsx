@@ -2,26 +2,51 @@
 
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { Wrench, MessageCircle } from 'lucide-react';
 
 const PageContainer = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${({ theme }) => `${theme.spacing['4xl']} ${theme.spacing.lg}`};
+  /* Removes padding from container to allow full-width banner */
 `;
 
-const Header = styled.div`
+const HeroBanner = styled.div`
+  background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
+  position: relative;
+  overflow: hidden;
+  padding: ${({ theme }) => `${theme.spacing['6xl']} ${theme.spacing.lg}`};
   text-align: center;
+  border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+`;
+
+const HeaderContent = styled.div`
+  position: relative;
+  z-index: 2;
   max-width: 800px;
-  margin-left: auto;
-  margin-right: auto;
+  margin: 0 auto;
 `;
 
 const Title = styled.h1`
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  color: ${({ theme }) => theme.colors.dark};
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.white};
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  letter-spacing: 0.02em;
 
   span {
     color: ${({ theme }) => theme.colors.primary};
@@ -30,63 +55,162 @@ const Title = styled.h1`
 
 const Subtitle = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.xl};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: rgba(255, 255, 255, 0.7);
   line-height: ${({ theme }) => theme.lineHeights.relaxed};
+  font-weight: 500;
 `;
 
 const ServicesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: ${({ theme }) => theme.spacing['2xl']};
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 ${({ theme }) => theme.spacing.lg} ${({ theme }) => theme.spacing['4xl']};
 `;
 
 const ServiceCard = styled(motion.div)`
   background: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
-  box-shadow: ${({ theme }) => theme.shadows.lg};
-  border: 1px solid ${({ theme }) => theme.colors.lightGray};
+  border-radius: 0;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
   display: flex;
   flex-direction: column;
-  transition: transform ${({ theme }) => theme.transitions.normal};
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  overflow: hidden;
 
   &:hover {
     transform: translateY(-8px);
-    border-color: ${({ theme }) => theme.colors.primary};
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
   }
 `;
 
 const ImageWrapper = styled.div`
   width: 100%;
-  height: 200px;
+  height: 240px;
   background: ${({ theme }) => theme.colors.offWhite};
-  border-radius: ${({ theme }) => `${theme.borderRadius['2xl']} ${theme.borderRadius['2xl']} 0 0`};
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
   overflow: hidden;
-  margin-bottom: ${({ theme }) => theme.spacing.xl};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+  position: relative;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform ${({ theme }) => theme.transitions.slow};
+    transition: transform 0.5s ease;
   }
 
   ${ServiceCard}:hover & img {
-    transform: scale(1.05);
+    transform: scale(1.1);
+  }
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 50%);
+    pointer-events: none;
   }
 `;
 
 const ServiceTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSizes['2xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-weight: 800;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.colors.dark};
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+  line-height: 1.1;
 `;
 
 const ServiceDesc = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.md};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.gray};
   line-height: ${({ theme }) => theme.lineHeights.relaxed};
   flex-grow: 1;
+  font-weight: 500;
+`;
+
+const CTASection = styled.div`
+  margin-top: ${({ theme }) => theme.spacing['4xl']};
+  margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+  padding: ${({ theme }) => theme.spacing['2xl']} ${({ theme }) => theme.spacing.xl};
+  background: linear-gradient(135deg, ${({ theme }) => theme.colors.dark} 0%, #0a0a0a 100%);
+  text-align: center;
+  color: ${({ theme }) => theme.colors.white};
+  position: relative;
+  overflow: hidden;
+  border-left: 6px solid ${({ theme }) => theme.colors.primary};
+  border-right: 6px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 20px 0 20px 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+`;
+
+const CTAContentWrapper = styled.div`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`;
+
+const CTATitle = styled.h2`
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.white};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
+  line-height: 1.1;
+`;
+
+const CTADesc = styled.p`
+  font-size: ${({ theme }) => theme.fontSizes.lg};
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
+  font-weight: 500;
+`;
+
+const CTAButton = styled.a`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: #25D366;
+  color: white;
+  padding: 18px 40px;
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: uppercase;
+  text-decoration: none;
+  letter-spacing: 0.05em;
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+
+  &:hover {
+    background: #20b858;
+    transform: scale(1.05) translateX(5px);
+    box-shadow: 0 0 30px rgba(37, 211, 102, 0.5);
+  }
 `;
 
 const SERVICOS = [
@@ -131,12 +255,14 @@ const SERVICOS = [
 export default function ServicosPage() {
   return (
     <PageContainer>
-      <Header>
-        <Title>Bem-vindo à Oficina da <span>Oficina Moto e Cia</span></Title>
-        <Subtitle>
-          Não vendemos apenas motos, entregamos tranquilidade e suporte contínuo para você e sua máquina.
-        </Subtitle>
-      </Header>
+      <HeroBanner>
+        <HeaderContent>
+          <Title>Oficina Autorizada <span>Moto e Cia</span></Title>
+          <Subtitle>
+            Não vendemos apenas motos, entregamos tranquilidade e suporte contínuo para você e sua máquina.
+          </Subtitle>
+        </HeaderContent>
+      </HeroBanner>
 
       <ServicesGrid>
         {SERVICOS.map((servico, index) => (
@@ -157,6 +283,17 @@ export default function ServicosPage() {
           </ServiceCard>
         ))}
       </ServicesGrid>
+
+      <CTASection>
+        <CTAContentWrapper>
+          <Wrench size={48} color="#0055A4" style={{ marginBottom: '16px' }} />
+          <CTATitle>Precisa de manutenção?</CTATitle>
+          <CTADesc>Agende sua revisão ou tire dúvidas com nossos mecânicos especialistas direto pelo WhatsApp.</CTADesc>
+          <CTAButton href="https://wa.me/5579999999999?text=Olá,%20gostaria%20de%20agendar%20um%20serviço%20na%20oficina!" target="_blank" rel="noopener noreferrer">
+            <MessageCircle size={24} /> Falar com a Oficina
+          </CTAButton>
+        </CTAContentWrapper>
+      </CTASection>
     </PageContainer>
   );
 }

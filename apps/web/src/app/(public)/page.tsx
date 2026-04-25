@@ -74,15 +74,28 @@ const SectionHeader = styled.div`
   text-align: center; margin-bottom: ${({ theme }) => theme.spacing['3xl']};
 `;
 const SectionLabel = styled.span`
-  display: inline-block; font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold}; letter-spacing: 0.15em;
+  display: inline-block; font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 800; letter-spacing: 0.2em;
   text-transform: uppercase; color: ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 const SectionTitle = styled.h2`
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.colors.textPrimary};
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: ${({ theme }) => theme.colors.primary};
+    margin: ${({ theme }) => theme.spacing.md} auto 0;
+    transform: skewX(-20deg);
+  }
 `;
 const MotosGrid = styled.div`
   display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -90,19 +103,23 @@ const MotosGrid = styled.div`
 `;
 const MotoCard = styled(motion.div)`
   background: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  overflow: hidden; box-shadow: ${({ theme }) => theme.shadows.card};
-  transition: transform ${({ theme }) => theme.transitions.normal};
-  &:hover { transform: translateY(-6px); box-shadow: ${({ theme }) => theme.shadows.xl}; }
+  border-radius: 0;
+  overflow: hidden; 
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
+  display: flex; flex-direction: column; height: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  &:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
 `;
 const MotoCardImage = styled.div`
   height: 220px; background: ${({ theme }) => theme.colors.offWhite};
   display: flex; align-items: center; justify-content: center;
   color: ${({ theme }) => theme.colors.lightGray}; font-size: ${({ theme }) => theme.fontSizes.sm};
   position: relative;
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
 `;
 const MotoCardBody = styled.div`
-  padding: ${({ theme }) => theme.spacing.lg};
+  padding: ${({ theme }) => theme.spacing.xl};
 `;
 const MotoCardMarca = styled.div`
   height: 24px;
@@ -118,7 +135,7 @@ const MotoCardMarca = styled.div`
 
   span {
     font-size: ${({ theme }) => theme.fontSizes.xs};
-    font-weight: ${({ theme }) => theme.fontWeights.semibold};
+    font-weight: 800;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     color: ${({ theme }) => theme.colors.primary};
@@ -126,20 +143,26 @@ const MotoCardMarca = styled.div`
 `;
 const MotoCardNome = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes.xl};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-weight: 800;
+  text-transform: uppercase;
   margin: ${({ theme }) => `${theme.spacing.xs} 0 ${theme.spacing.sm}`};
+  color: #111;
+  line-height: 1.1;
 `;
 const MotoCardMeta = styled.div`
-  display: flex; gap: 12px; margin-bottom: ${({ theme }) => theme.spacing.sm};
+  display: flex; gap: 12px; margin-bottom: ${({ theme }) => theme.spacing.md};
+  flex-wrap: wrap;
 `;
 const MotoCardMetaItem = styled.span`
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  color: ${({ theme }) => theme.colors.gray};
+  font-weight: 600;
 `;
 const MotoCardPreco = styled.p`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  color: ${({ theme }) => theme.colors.secondary};
+  font-size: 24px;
+  font-weight: 800;
+  color: ${({ theme }) => theme.colors.primary};
+  margin-top: ${({ theme }) => theme.spacing.sm};
 `;
 const ServicosGrid = styled.div`
   display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
@@ -148,37 +171,67 @@ const ServicosGrid = styled.div`
 const ServicoCard = styled.div`
   padding: ${({ theme }) => theme.spacing.xl};
   background: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius.xl};
-  border: 1px solid ${({ theme }) => theme.colors.lightGray};
+  border-radius: 0;
+  border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
   text-align: center;
-  transition: all ${({ theme }) => theme.transitions.normal};
-  &:hover { border-color: ${({ theme }) => theme.colors.primary}; box-shadow: ${({ theme }) => theme.shadows.md}; transform: translateY(-4px); }
+  transition: all 0.3s ease;
+  &:hover { border-bottom-color: ${({ theme }) => theme.colors.primaryDark}; box-shadow: 0 15px 30px rgba(0,0,0,0.1); transform: translateY(-8px); }
 `;
 const CTASection = styled.section`
-  padding: ${({ theme }) => `${theme.spacing['5xl']} 0`};
-  background: ${({ theme }) => theme.colors.dark}; text-align: center;
+  margin: ${({ theme }) => theme.spacing['4xl']} auto ${({ theme }) => theme.spacing['6xl']};
+  padding: ${({ theme }) => theme.spacing['4xl']} ${({ theme }) => theme.spacing.xl};
+  background: linear-gradient(135deg, ${({ theme }) => theme.colors.dark} 0%, #0a0a0a 100%);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  border-left: 6px solid ${({ theme }) => theme.colors.primary};
+  border-right: 6px solid ${({ theme }) => theme.colors.primary};
+  border-radius: 20px 0 20px 0;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+  max-width: 1000px;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
 `;
 const CTAContent = styled.div`
   max-width: 640px; margin: 0 auto; padding: 0 ${({ theme }) => theme.spacing.lg};
+  position: relative;
+  z-index: 2;
 `;
 const WhatsAppButton = styled.a`
-  display: inline-flex; align-items: center; gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['2xl']}`};
-  background: ${({ theme }) => theme.colors.whatsapp}; color: ${({ theme }) => theme.colors.white};
-  font-size: ${({ theme }) => theme.fontSizes.lg}; font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.full};
-  transition: all ${({ theme }) => theme.transitions.normal}; margin-top: ${({ theme }) => theme.spacing['2xl']};
-  &:hover { background: #1dad57; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); }
+  display: inline-flex; align-items: center; justify-content: center; gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['3xl']}`};
+  background: #25D366; color: ${({ theme }) => theme.colors.white};
+  font-size: ${({ theme }) => theme.fontSizes.lg}; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  transition: all 0.3s ease; margin-top: ${({ theme }) => theme.spacing['2xl']};
+  &:hover { background: #20b858; transform: scale(1.05) translateX(5px); box-shadow: 0 0 30px rgba(37, 211, 102, 0.5); }
 `;
 const PrimaryButton = styled(Link)`
-  display: inline-flex; align-items: center; gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${props => `${props.theme.spacing.md} ${props.theme.spacing['2xl']}`};
+  display: inline-flex; align-items: center; justify-content: center; gap: ${({ theme }) => theme.spacing.sm};
+  padding: ${props => `${props.theme.spacing.md} ${props.theme.spacing['3xl']}`};
   background: ${props => props.theme.colors.primary}; color: ${props => props.theme.colors.white};
-  font-size: ${props => props.theme.fontSizes.md}; font-weight: ${props => props.theme.fontWeights.semibold};
-  border-radius: ${props => props.theme.borderRadius.md};
-  transition: all ${props => props.theme.transitions.normal};
-  box-shadow: ${props => props.theme.shadows.button};
-  &:hover { background: ${props => props.theme.colors.primaryDark}; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(226, 35, 26, 0.5); }
+  font-size: ${props => props.theme.fontSizes.md}; font-weight: 800;
+  text-transform: uppercase; letter-spacing: 0.05em;
+  border-radius: 0;
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  transition: all 0.3s ease;
+  width: fit-content;
+  &:hover { background: ${props => props.theme.colors.primaryLight}; transform: scale(1.05) translateX(5px); box-shadow: 0 0 25px rgba(0, 85, 164, 0.6); }
 `;
 
 /* ── Static data ────────────────────────────────────────────────── */
@@ -330,9 +383,9 @@ export default function HomePage() {
           <ServicosGrid>
             {SERVICOS.map((s) => (
               <ServicoCard key={s.titulo}>
-                <div style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>{s.icon}</div>
-                <h3 style={{ fontSize: '1.125rem', fontWeight: 600, marginBottom: '0.5rem' }}>{s.titulo}</h3>
-                <p style={{ fontSize: '0.875rem', color: '#666', lineHeight: 1.6 }}>{s.desc}</p>
+                <div style={{ fontSize: '2.5rem', marginBottom: '1rem', color: '#0055A4' }}>{s.icon}</div>
+                <h3 style={{ fontSize: '1.25rem', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0.5rem', color: '#111' }}>{s.titulo}</h3>
+                <p style={{ fontSize: '0.9rem', color: '#666', lineHeight: 1.6, fontWeight: 500 }}>{s.desc}</p>
               </ServicoCard>
             ))}
           </ServicosGrid>

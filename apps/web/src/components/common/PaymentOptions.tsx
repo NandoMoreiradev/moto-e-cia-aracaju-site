@@ -8,10 +8,26 @@ import { CheckCircle2, TrendingUp, Handshake, ShieldCheck } from 'lucide-react';
 
 /* ── Styled components ────────────────────────────────────────────────── */
 const SectionWrapper = styled.section`
-  padding: ${({ theme }) => `${theme.spacing['5xl']} 0`};
-  background: ${({ theme }) => theme.colors.white};
-  border-top: 1px solid ${({ theme }) => theme.colors.lightGray};
-  border-bottom: 1px solid ${({ theme }) => theme.colors.lightGray};
+  padding: ${({ theme }) => `${theme.spacing['6xl']} 0`};
+  background: linear-gradient(135deg, ${({ theme }) => theme.colors.dark} 0%, #0a0a0a 100%);
+  color: ${({ theme }) => theme.colors.white};
+  position: relative;
+  overflow: hidden;
+
+  /* Efeito de velocidade / fibra de carbono */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+  }
 `;
 
 const SectionContent = styled.div`
@@ -27,18 +43,20 @@ const SectionHeader = styled.div`
 
 const SectionLabel = styled.span`
   display: inline-block;
-  font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  letter-spacing: 0.15em;
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 800;
+  letter-spacing: 0.2em;
   text-transform: uppercase;
   color: ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
 const SectionTitle = styled.h2`
-  font-size: clamp(2rem, 4vw, 2.5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.white};
+  letter-spacing: 0.02em;
 `;
 
 const OptionRow = styled(motion.div)<{ reverse?: boolean }>`
@@ -63,9 +81,12 @@ const OptionImageWrapper = styled.div`
   width: 100%;
   position: relative;
   aspect-ratio: 4 / 3;
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
+  border-radius: 40px 0 40px 0;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.xl};
+  box-shadow: 0 25px 50px -12px rgba(0,0,0,0.6);
+  border-left: 6px solid ${({ theme }) => theme.colors.primary};
+  border-bottom: 6px solid ${({ theme }) => theme.colors.primaryDark};
+
 
   @media (max-width: 968px) {
     aspect-ratio: 16 / 9;
@@ -89,26 +110,41 @@ const OptionBadge = styled.div`
   align-items: center;
   gap: 8px;
   padding: ${({ theme }) => `${theme.spacing.xs} ${theme.spacing.md}`};
-  background: ${({ theme }) => theme.colors.offWhite};
-  color: ${({ theme }) => theme.colors.secondary};
+  background: rgba(255,255,255,0.05);
+  color: ${({ theme }) => theme.colors.primary};
   font-size: ${({ theme }) => theme.fontSizes.sm};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.full};
+  font-weight: 800;
+  border-radius: 4px;
+  border: 1px solid rgba(255,255,255,0.1);
+  backdrop-filter: blur(4px);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
   margin-bottom: ${({ theme }) => theme.spacing['4xl']};
   width: fit-content;
 `;
 
 const OptionTitle = styled.h3`
-  font-size: clamp(1.75rem, 3vw, 2.25rem);
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  color: ${({ theme }) => theme.colors.textPrimary};
+  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-weight: 800;
+  color: ${({ theme }) => theme.colors.white};
+  text-transform: uppercase;
   margin-bottom: ${({ theme }) => theme.spacing.md};
-  line-height: 1.2;
+  line-height: 1.1;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: ${({ theme }) => theme.colors.primary};
+    margin-top: ${({ theme }) => theme.spacing.sm};
+    transform: skewX(-20deg);
+  }
 `;
 
 const OptionDescription = styled.p`
   font-size: ${({ theme }) => theme.fontSizes.lg};
-  color: ${({ theme }) => theme.colors.textSecondary};
+  color: ${({ theme }) => theme.colors.lightGray};
   line-height: 1.6;
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 `;
@@ -131,8 +167,8 @@ const BenefitItem = styled.li`
   align-items: center;
   gap: ${({ theme }) => theme.spacing.sm};
   font-size: ${({ theme }) => theme.fontSizes.md};
-  color: ${({ theme }) => theme.colors.textPrimary};
-  font-weight: ${({ theme }) => theme.fontWeights.medium};
+  color: ${({ theme }) => theme.colors.white};
+  font-weight: 600;
 
   svg {
     color: ${({ theme }) => theme.colors.primary};
@@ -145,20 +181,22 @@ const PrimaryButton = styled(Link)`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['2xl']}`};
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['3xl']}`};
   background: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: all ${({ theme }) => theme.transitions.normal};
-  box-shadow: ${({ theme }) => theme.shadows.button};
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0;
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  transition: all 0.3s ease;
   width: fit-content;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.primaryDark};
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(226, 35, 26, 0.5);
+    background: ${({ theme }) => theme.colors.primaryLight};
+    transform: scale(1.05) translateX(5px);
+    box-shadow: 0 0 25px rgba(0, 85, 164, 0.6);
   }
 `;
 
@@ -167,20 +205,23 @@ const SecondaryButton = styled(Link)`
   align-items: center;
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.sm};
-  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['2xl']}`};
+  padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['3xl']}`};
   background: transparent;
-  color: ${({ theme }) => theme.colors.secondary};
+  color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes.md};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  border: 2px solid ${({ theme }) => theme.colors.secondary};
-  transition: all ${({ theme }) => theme.transitions.normal};
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0;
+  border: 2px solid ${({ theme }) => theme.colors.primary};
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  transition: all 0.3s ease;
   width: fit-content;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.secondary};
-    color: ${({ theme }) => theme.colors.white};
-    transform: translateY(-2px);
+    background: ${({ theme }) => theme.colors.primary};
+    transform: scale(1.05) translateX(5px);
+    box-shadow: 0 0 25px rgba(0, 85, 164, 0.4);
   }
 `;
 

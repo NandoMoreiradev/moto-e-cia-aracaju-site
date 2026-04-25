@@ -24,16 +24,29 @@ const SectionHeader = styled.div`
 `;
 
 const SectionLabel = styled.span`
-  display: inline-block; font-size: ${({ theme }) => theme.fontSizes.xs};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold}; letter-spacing: 0.15em;
+  display: inline-block; font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 800; letter-spacing: 0.2em;
   text-transform: uppercase; color: ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
 `;
 
 const SectionTitle = styled.h2`
-  font-size: clamp(1.75rem, 3vw, 2.5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-size: clamp(2.5rem, 5vw, 3.5rem);
+  font-weight: 800;
+  text-transform: uppercase;
   color: ${({ theme }) => theme.colors.textPrimary};
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: ${({ theme }) => theme.colors.primary};
+    margin: ${({ theme }) => theme.spacing.md} auto 0;
+    transform: skewX(-20deg);
+  }
 `;
 
 const StoresGrid = styled.div`
@@ -48,11 +61,19 @@ const StoresGrid = styled.div`
 
 const StoreCard = styled(motion.div)`
   background: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: ${({ theme }) => theme.shadows.card};
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
   display: flex;
   flex-direction: column;
+  position: relative;
+  border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+  }
 `;
 
 const CarouselContainer = styled.div`
@@ -61,6 +82,7 @@ const CarouselContainer = styled.div`
   height: 300px;
   background: ${({ theme }) => theme.colors.dark};
   overflow: hidden;
+  clip-path: polygon(0 0, 100% 0, 100% 90%, 0 100%);
 `;
 
 const Slide = styled(motion.div)`
@@ -104,9 +126,24 @@ const StoreBody = styled.div`
 
 const StoreName = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes['2xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
+  font-weight: 800;
   color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.sm};
+
+  &::before {
+    content: '';
+    display: inline-block;
+    width: 8px;
+    height: 24px;
+    background: ${({ theme }) => theme.colors.primary};
+    transform: skewX(-15deg);
+    border-radius: 2px;
+  }
 `;
 
 const InfoList = styled.ul`
@@ -124,6 +161,7 @@ const InfoItem = styled.li`
   margin-bottom: ${({ theme }) => theme.spacing.md};
   color: ${({ theme }) => theme.colors.textSecondary};
   line-height: 1.5;
+  font-weight: 500;
 
   svg {
     flex-shrink: 0;
@@ -145,34 +183,52 @@ const Button = styled.a<{ $variant?: 'whatsapp' | 'primary' | 'outline' }>`
   justify-content: center;
   gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => `${theme.spacing.sm} ${theme.spacing.md}`};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  font-weight: 800;
+  border-radius: 0;
   transition: all 0.3s ease;
   min-width: 140px;
   text-align: center;
   font-size: ${({ theme }) => theme.fontSizes.sm};
   text-decoration: none;
+  position: relative;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  clip-path: polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%);
 
   ${({ $variant, theme }) => {
     if ($variant === 'whatsapp') {
       return `
-        background: ${theme.colors.whatsapp};
+        background: ${theme.colors.whatsapp || '#25D366'};
         color: ${theme.colors.white};
-        &:hover { background: #1dad57; transform: translateY(-2px); }
+        border: none;
+        &:hover { 
+          background: #1dad57; 
+          transform: translateY(-2px); 
+          box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+        }
       `;
     }
     if ($variant === 'primary') {
       return `
         background: ${theme.colors.primary};
         color: ${theme.colors.white};
-        &:hover { background: ${theme.colors.primaryDark}; transform: translateY(-2px); }
+        border: none;
+        &:hover { 
+          background: ${theme.colors.primaryDark || '#cc5200'}; 
+          transform: translateY(-2px); 
+          box-shadow: 0 10px 20px rgba(255, 107, 0, 0.3);
+        }
       `;
     }
     return `
-      background: transparent;
-      border: 1px solid ${theme.colors.lightGray};
+      background: ${theme.colors.offWhite};
+      border: none;
       color: ${theme.colors.textPrimary};
-      &:hover { border-color: ${theme.colors.primary}; color: ${theme.colors.primary}; transform: translateY(-2px); }
+      &:hover { 
+        background: ${theme.colors.lightGray};
+        color: ${theme.colors.primary}; 
+        transform: translateY(-2px); 
+      }
     `;
   }}
 `;

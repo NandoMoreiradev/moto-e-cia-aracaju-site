@@ -2,6 +2,7 @@
 
 import styled from 'styled-components';
 import { FormEvent, useState } from 'react';
+import { MapPin, Smartphone, Clock } from 'lucide-react';
 
 const PageContainer = styled.div`
   max-width: 1280px;
@@ -15,20 +16,34 @@ const Header = styled.div`
 `;
 
 const Title = styled.h1`
-  font-size: clamp(2.5rem, 5vw, 3.5rem);
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
-  color: ${({ theme }) => theme.colors.dark};
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  color: ${({ theme }) => theme.colors.textPrimary};
   margin-bottom: ${({ theme }) => theme.spacing.md};
+  letter-spacing: 0.02em;
+
+  &::after {
+    content: '';
+    display: block;
+    width: 80px;
+    height: 4px;
+    background: ${({ theme }) => theme.colors.primary};
+    margin: ${({ theme }) => theme.spacing.md} auto 0;
+    transform: skewX(-20deg);
+  }
 `;
 
 const Layout = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: ${({ theme }) => theme.spacing['4xl']};
+  gap: 0;
   background: ${({ theme }) => theme.colors.white};
-  border-radius: ${({ theme }) => theme.borderRadius['2xl']};
-  box-shadow: ${({ theme }) => theme.shadows.xl};
+  border-radius: 0;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
   overflow: hidden;
+  border: 1px solid ${({ theme }) => theme.colors.lightGray};
+  border-bottom: 4px solid ${({ theme }) => theme.colors.primary};
 
   @media (max-width: ${({ theme }) => theme.breakpoints.lg}) {
     grid-template-columns: 1fr;
@@ -36,17 +51,40 @@ const Layout = styled.div`
 `;
 
 const ContactInfo = styled.div`
-  background: ${({ theme }) => theme.colors.dark};
+  background: linear-gradient(135deg, ${({ theme }) => theme.colors.dark} 0%, #0a0a0a 100%);
   color: ${({ theme }) => theme.colors.white};
   padding: ${({ theme }) => theme.spacing['4xl']};
   display: flex;
   flex-direction: column;
   justify-content: center;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+  }
+
+  > * {
+    position: relative;
+    z-index: 2;
+  }
 `;
 
 const InfoTitle = styled.h2`
   font-size: ${({ theme }) => theme.fontSizes['2xl']};
+  font-weight: 800;
+  text-transform: uppercase;
   margin-bottom: ${({ theme }) => theme.spacing['2xl']};
+  color: ${({ theme }) => theme.colors.white};
 `;
 
 const InfoItem = styled.div`
@@ -55,12 +93,16 @@ const InfoItem = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
   margin-bottom: ${({ theme }) => theme.spacing.xl};
 
-  i {
-    font-size: 1.5rem;
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+    flex-shrink: 0;
+    margin-top: 4px;
   }
 
   h4 {
     font-size: ${({ theme }) => theme.fontSizes.lg};
+    font-weight: 800;
+    text-transform: uppercase;
     margin-bottom: ${({ theme }) => theme.spacing.xs};
     color: ${({ theme }) => theme.colors.primary};
   }
@@ -68,6 +110,7 @@ const InfoItem = styled.div`
   p {
     color: rgba(255, 255, 255, 0.8);
     line-height: ${({ theme }) => theme.lineHeights.relaxed};
+    font-weight: 500;
   }
 `;
 
@@ -81,6 +124,8 @@ const FormContainer = styled.div`
 
 const FormTitle = styled.h3`
   font-size: ${({ theme }) => theme.fontSizes['2xl']};
+  font-weight: 800;
+  text-transform: uppercase;
   margin-bottom: ${({ theme }) => theme.spacing.xl};
   color: ${({ theme }) => theme.colors.dark};
 `;
@@ -101,7 +146,7 @@ const Input = styled.input`
   width: 100%;
   padding: ${({ theme }) => theme.spacing.md};
   border: 1px solid ${({ theme }) => theme.colors.lightGray};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border-radius: 0;
   font-size: ${({ theme }) => theme.fontSizes.md};
   transition: border-color ${({ theme }) => theme.transitions.fast};
 
@@ -116,7 +161,7 @@ const TextArea = styled.textarea`
   width: 100%;
   padding: ${({ theme }) => theme.spacing.md};
   border: 1px solid ${({ theme }) => theme.colors.lightGray};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
+  border-radius: 0;
   font-size: ${({ theme }) => theme.fontSizes.md};
   min-height: 150px;
   resize: vertical;
@@ -135,16 +180,24 @@ const SubmitButton = styled.button`
   background: ${({ theme }) => theme.colors.primary};
   color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.bold};
-  border-radius: ${({ theme }) => theme.borderRadius.md};
-  transition: all ${({ theme }) => theme.transitions.fast};
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border-radius: 0;
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  transition: all 0.3s ease;
+  border: none;
+  cursor: pointer;
 
-  &:hover {
+  &:hover:not(:disabled) {
     background: ${({ theme }) => theme.colors.primaryDark};
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(226, 35, 26, 0.3);
   }
   
   &:disabled {
-    opacity: 0.7;
+    background: ${({ theme }) => theme.colors.lightGray};
+    color: ${({ theme }) => theme.colors.textSecondary};
     cursor: not-allowed;
   }
 `;
@@ -180,15 +233,22 @@ export default function ContatoPage() {
           <InfoTitle>Informações de Contato</InfoTitle>
           
           <InfoItem>
-            <i>📍</i>
+            <MapPin size={24} />
             <div>
-              <h4>Nosso Endereço</h4>
-              <p>Av. Pedro Calazans, nº 717, <br/>Centro - Aracaju/SE<br/>CEP: 49080-115</p>
+              <h4>Nossas Lojas</h4>
+              <p style={{ marginBottom: '12px' }}>
+                <strong style={{ color: '#fff' }}>Aracaju - SE (Matriz)</strong><br/>
+                Av. Pedro Calazans, nº 717, Centro
+              </p>
+              <p>
+                <strong style={{ color: '#fff' }}>N. Sra. do Socorro - SE (Filial)</strong><br/>
+                Av. Moacir de Oliveira, 37, João Alves
+              </p>
             </div>
           </InfoItem>
 
           <InfoItem>
-            <i>📱</i>
+            <Smartphone size={24} />
             <div>
               <h4>Telefone e WhatsApp</h4>
               <p>(79) 99999-9999<br/>(79) 3211-0000</p>
@@ -196,7 +256,7 @@ export default function ContatoPage() {
           </InfoItem>
 
           <InfoItem>
-            <i>🕒</i>
+            <Clock size={24} />
             <div>
               <h4>Horário de Funcionamento</h4>
               <p>Segunda à Sexta: 08:00 às 18:00<br/>Sábados: 08:00 às 12:00</p>

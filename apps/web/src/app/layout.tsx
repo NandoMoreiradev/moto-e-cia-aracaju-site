@@ -2,6 +2,19 @@ import type { Metadata } from 'next';
 import StyledComponentsRegistry from '@/lib/styled-registry';
 import { Providers } from '@/lib/providers';
 import { Toaster } from 'react-hot-toast';
+import { Barlow, Barlow_Condensed } from 'next/font/google';
+
+const barlow = Barlow({ 
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-barlow',
+});
+
+const barlowCondensed = Barlow_Condensed({
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800'],
+  variable: '--font-barlow-condensed',
+});
 
 export const metadata: Metadata = {
   title: {
@@ -20,7 +33,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={`${barlow.variable} ${barlowCondensed.variable}`}>
       <body style={{ margin: 0, padding: 0 }}>
         <StyledComponentsRegistry>
           <Providers>

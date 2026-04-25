@@ -1,13 +1,31 @@
 'use client';
 
-import { Clock, Mail, MapPin, Smartphone } from 'lucide-react';
+import { Clock, Mail, MapPin, Smartphone, Facebook, Instagram } from 'lucide-react';
 import styled from 'styled-components';
 import Link from 'next/link';
 
 const FooterContainer = styled.footer`
-  background: ${({ theme }) => theme.colors.dark};
+  background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
+  position: relative;
+  overflow: hidden;
   color: ${({ theme }) => theme.colors.white};
-  padding: ${({ theme }) => `${theme.spacing['4xl']} 0 ${theme.spacing.lg}`};
+  padding: ${({ theme }) => `${theme.spacing['5xl']} 0 0`};
+  border-top: 4px solid ${({ theme }) => theme.colors.primary};
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
 `;
 
 const FooterContent = styled.div`
@@ -16,8 +34,10 @@ const FooterContent = styled.div`
   padding: 0 ${({ theme }) => theme.spacing.lg};
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: ${({ theme }) => theme.spacing['2xl']};
+  gap: ${({ theme }) => theme.spacing['4xl']};
   margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+  position: relative;
+  z-index: 2;
 `;
 
 const FooterCol = styled.div`
@@ -27,13 +47,41 @@ const FooterCol = styled.div`
 `;
 
 const Brand = styled.div`
-  font-size: ${({ theme }) => theme.fontSizes['2xl']};
-  font-weight: ${({ theme }) => theme.fontWeights.extrabold};
+  font-size: 2.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
   color: ${({ theme }) => theme.colors.primary};
   margin-bottom: ${({ theme }) => theme.spacing.sm};
+  line-height: 1;
 
   span {
     color: ${({ theme }) => theme.colors.white};
+  }
+`;
+
+const SocialGroup = styled.div`
+  display: flex;
+  align-items: center;
+  gap: ${({ theme }) => theme.spacing.md};
+  margin-top: ${({ theme }) => theme.spacing.lg};
+  
+  a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.05);
+    color: ${({ theme }) => theme.colors.white};
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    
+    &:hover {
+      background: ${({ theme }) => theme.colors.primary};
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0, 85, 164, 0.4);
+    }
   }
 `;
 
@@ -44,39 +92,63 @@ const Text = styled.p`
 `;
 
 const ColTitle = styled.h4`
-  font-size: ${({ theme }) => theme.fontSizes.lg};
-  font-weight: ${({ theme }) => theme.fontWeights.semibold};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
+  font-size: ${({ theme }) => theme.fontSizes.xl};
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: ${({ theme }) => theme.spacing.lg};
   color: ${({ theme }) => theme.colors.white};
+  position: relative;
+  padding-bottom: 8px;
+
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0;
+    width: 40px; height: 3px;
+    background: ${({ theme }) => theme.colors.primary};
+    transform: skewX(-20deg);
+  }
 `;
 
 const FooterLink = styled(Link)`
-  color: rgba(255, 255, 255, 0.7);
-  font-size: ${({ theme }) => theme.fontSizes.sm};
-  transition: color ${({ theme }) => theme.transitions.fast};
+  color: rgba(255, 255, 255, 0.6);
+  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-weight: 500;
+  transition: all 0.3s ease;
   display: inline-block;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
+    transform: translateX(5px);
   }
 `;
 
 const ContactInfo = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing.sm};
+  gap: ${({ theme }) => theme.spacing.md};
   color: rgba(255, 255, 255, 0.7);
   font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
+  line-height: 1.6;
+
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
 `;
 
 const Copyright = styled.div`
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: ${({ theme }) => theme.spacing.lg};
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 2;
+  background: #000;
+  padding: ${({ theme }) => theme.spacing.xl};
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
   text-align: center;
   color: rgba(255, 255, 255, 0.5);
   font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
 `;
 
 export function Footer() {
@@ -92,6 +164,14 @@ export function Footer() {
             Sua concessionária oficial Suzuki, Haojue e Zontes em Aracaju. 
             Paixão por duas rodas e excelência no atendimento.
           </Text>
+          <SocialGroup>
+            <a href="https://instagram.com/motoeciaaracaju" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+              <Instagram size={20} />
+            </a>
+            <a href="https://facebook.com/motoeciaaracaju" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+              <Facebook size={20} />
+            </a>
+          </SocialGroup>
         </FooterCol>
 
         {/* Links Rápidos */}
@@ -109,7 +189,17 @@ export function Footer() {
           <ColTitle>Atendimento</ColTitle>
           <ContactInfo>
             <MapPin size={18} />
-            <span>Av. Pedro Calazans, nº 717, Centro, Aracaju - SE</span>
+            <div>
+              <strong>Aracaju-SE (Matriz)</strong><br />
+              Av. Pedro Calazans, nº 717, Centro
+            </div>
+          </ContactInfo>
+          <ContactInfo>
+            <MapPin size={18} />
+            <div>
+              <strong>N. Sra. do Socorro-SE (Filial)</strong><br />
+              Av. Moacir de Oliveira, 37, João Alves
+            </div>
           </ContactInfo>
           <ContactInfo>
             <Smartphone size={18} />

@@ -149,18 +149,29 @@ export default function MotosPage() {
 
       {/* Header banner - hidden on mobile */}
       <div className="desktop-header" style={{
-        background: 'linear-gradient(135deg, #111 0%, #1a0000 100%)',
-        padding: '64px 24px 48px', textAlign: 'center',
+        background: 'linear-gradient(135deg, #151515 0%, #0a0a0a 100%)',
+        position: 'relative',
+        overflow: 'hidden',
+        padding: '80px 24px 80px', textAlign: 'center',
+        borderBottom: '4px solid #0055A4'
       }}>
-        <p style={{ color: '#E2231A', fontSize: '12px', fontWeight: 700, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 8px' }}>
-          Catálogo
-        </p>
-        <h1 style={{ color: '#fff', fontSize: 'clamp(2rem, 4vw, 3rem)', fontWeight: 800, margin: '0 0 12px' }}>
-          Nossas Motos
-        </h1>
-        <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '16px', margin: 0 }}>
-          {total > 0 ? `${total} moto${total !== 1 ? 's' : ''} disponíve${total !== 1 ? 'is' : 'l'}` : 'Carregando catálogo...'}
-        </p>
+        {/* Carbon fiber overlay */}
+        <div style={{
+          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+          background: 'repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.02) 2px, transparent 2px, transparent 8px)',
+          pointerEvents: 'none', zIndex: 1
+        }} />
+        <div style={{ position: 'relative', zIndex: 2 }}>
+          <p style={{ color: '#0055A4', fontSize: '14px', fontWeight: 800, letterSpacing: '0.2em', textTransform: 'uppercase', margin: '0 0 12px' }}>
+            Catálogo
+          </p>
+          <h1 style={{ color: '#fff', fontSize: 'clamp(3rem, 6vw, 4.5rem)', fontWeight: 800, textTransform: 'uppercase', margin: '0 0 16px', letterSpacing: '0.02em' }}>
+            Nossas Motos
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.6)', fontSize: '18px', margin: 0, fontWeight: 500 }}>
+            {total > 0 ? `${total} moto${total !== 1 ? 's' : ''} disponíve${total !== 1 ? 'is' : 'l'}` : 'Carregando catálogo...'}
+          </p>
+        </div>
       </div>
 
       {/* Instagram-style Bio Header - mobile only */}
@@ -223,20 +234,21 @@ export default function MotosPage() {
                   setPage(1); 
                 }}
                 style={{
-                  flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '12px',
+                  flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '4px',
                   background: '#fff',
-                  border: '2px solid', borderColor: marca === m.nome ? '#E2231A' : '#e5e5e5',
+                  border: '2px solid', borderColor: marca === m.nome ? '#0055A4' : '#e5e5e5',
                   cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   padding: '10px', opacity: (marca && marca !== m.nome) || condicao === 'SEMINOVA' ? 0.4 : 1,
                   filter: (marca && marca !== m.nome) || condicao === 'SEMINOVA' ? 'grayscale(100%)' : 'none',
-                  boxShadow: marca === m.nome ? '0 4px 12px rgba(226, 35, 26, 0.15)' : 'none'
+                  boxShadow: marca === m.nome ? '0 4px 15px rgba(0, 85, 164, 0.2)' : 'none',
+                  transform: marca === m.nome ? 'translateY(-2px)' : 'none'
                 }}
                 title={m.nome}
               >
                 {m.logoUrl ? (
                   <img src={m.logoUrl} alt={m.nome} style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
                 ) : (
-                  <span style={{ fontSize: '13px', fontWeight: 700, color: marca === m.nome ? '#E2231A' : '#888' }}>{m.nome}</span>
+                  <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: marca === m.nome ? '#0055A4' : '#888' }}>{m.nome}</span>
                 )}
               </button>
             ))}
@@ -247,32 +259,36 @@ export default function MotosPage() {
                 setPage(1);
               }}
               style={{
-                flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '12px',
+                flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '4px',
                 background: '#fff',
-                border: '2px solid', borderColor: condicao === 'SEMINOVA' ? '#E2231A' : '#e5e5e5',
+                border: '2px solid', borderColor: condicao === 'SEMINOVA' ? '#0055A4' : '#e5e5e5',
                 cursor: 'pointer', transition: 'all 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center',
                 padding: '10px', opacity: marca ? 0.4 : 1,
                 filter: marca ? 'grayscale(100%)' : 'none',
-                boxShadow: condicao === 'SEMINOVA' ? '0 4px 12px rgba(226, 35, 26, 0.15)' : 'none'
+                boxShadow: condicao === 'SEMINOVA' ? '0 4px 15px rgba(0, 85, 164, 0.2)' : 'none',
+                transform: condicao === 'SEMINOVA' ? 'translateY(-2px)' : 'none'
               }}
               title="Motos Seminovas"
             >
-              <span style={{ fontSize: '13px', fontWeight: 700, color: condicao === 'SEMINOVA' ? '#E2231A' : '#888' }}>Seminovas</span>
+              <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: condicao === 'SEMINOVA' ? '#0055A4' : '#888' }}>Seminovas</span>
             </button>
           </div>
         )}
 
         {/* Filters */}
         <div className="filters-container" style={{
-          background: '#fff', borderRadius: '12px', padding: '20px',
-          display: 'flex', gap: '8px', flexWrap: 'wrap', alignItems: 'center',
-          marginBottom: '28px', boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+          background: '#fff', borderRadius: '0', padding: '24px',
+          display: 'flex', gap: '12px', flexWrap: 'wrap', alignItems: 'center',
+          marginBottom: '32px', boxShadow: '0 10px 30px rgba(0,0,0,0.08)',
+          borderTop: '4px solid #0055A4',
+          position: 'relative', zIndex: 10,
+          marginTop: '-56px'
         }}>
           <div style={{ position: 'relative', flex: 1, minWidth: '180px' }}>
             <Search size={16} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: '#888' }} />
             <input type="text" placeholder="Buscar moto..." value={search}
               onChange={e => { setSearch(e.target.value); setPage(1); }}
-              style={{ width: '100%', padding: '10px 14px 10px 36px', border: '1px solid #e5e5e5', borderRadius: '8px', fontSize: '14px' }}
+              style={{ width: '100%', padding: '12px 14px 12px 36px', border: '1px solid #e5e5e5', borderRadius: '4px', fontSize: '14px', fontWeight: 600 }}
             />
           </div>
           <select value={marca} onChange={e => { setMarca(e.target.value as any); setPage(1); }}
@@ -295,9 +311,11 @@ export default function MotosPage() {
           <div style={{ textAlign: 'center', padding: '64px', color: '#999' }}>Carregando...</div>
         ) : motos.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '64px', color: '#999' }}>
-            <p style={{ fontSize: '48px', margin: '0 0 16px' }}>🔍</p>
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '16px', opacity: 0.5 }}>
+              <Search size={64} strokeWidth={1.5} color="#0055A4" />
+            </div>
             <p>Nenhuma moto encontrada com esses filtros.</p>
-            <button onClick={resetFilters} style={{ marginTop: '16px', padding: '10px 20px', background: '#E2231A', border: 'none', borderRadius: '8px', color: '#fff', cursor: 'pointer' }}>
+            <button onClick={resetFilters} style={{ marginTop: '16px', padding: '12px 24px', background: '#0055A4', border: 'none', borderRadius: '0', fontWeight: 800, textTransform: 'uppercase', color: '#fff', cursor: 'pointer', clipPath: 'polygon(10px 0, 100% 0, calc(100% - 10px) 100%, 0 100%)' }}>
               Ver todas
             </button>
           </div>
@@ -310,47 +328,47 @@ export default function MotosPage() {
                 <React.Fragment key={moto.id}>
                   {/* Desktop Card */}
                   <Link href={`/motos/${moto.slug}`} className="desktop-card" style={{ textDecoration: 'none' }}>
-                    <div style={{ background: '#fff', borderRadius: '12px', overflow: 'hidden', boxShadow: '0 2px 8px rgba(0,0,0,0.06)', transition: 'transform 0.2s, box-shadow 0.2s' }}
-                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-4px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 12px 24px rgba(0,0,0,0.1)'; }}
-                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)'; }}
+                    <div style={{ background: '#fff', borderRadius: '0', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.08)', transition: 'transform 0.3s ease, box-shadow 0.3s ease', borderBottom: '4px solid #0055A4', display: 'flex', flexDirection: 'column', height: '100%' }}
+                      onMouseEnter={e => { (e.currentTarget as HTMLElement).style.transform = 'translateY(-8px)'; (e.currentTarget as HTMLElement).style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)'; }}
+                      onMouseLeave={e => { (e.currentTarget as HTMLElement).style.transform = ''; (e.currentTarget as HTMLElement).style.boxShadow = '0 4px 20px rgba(0,0,0,0.08)'; }}
                     >
-                      <div style={{ height: '220px', background: '#f0f0f0', position: 'relative' }}>
+                      <div style={{ height: '220px', background: '#f0f0f0', position: 'relative', clipPath: 'polygon(0 0, 100% 0, 100% 90%, 0 100%)' }}>
                         {foto
                           ? <Image src={foto.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
                           : <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '56px' }}>🏍️</div>
                         }
                         {st && (
-                          <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.7)', borderRadius: '20px', padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: st.color }}>{st.label}</div>
+                          <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(0,0,0,0.8)', padding: '6px 12px', fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', color: st.color, borderLeft: `3px solid ${st.color}` }}>{st.label}</div>
                         )}
                         {moto.destaque && (
                           <div style={{ 
                             position: 'absolute', top: '10px', left: '10px', 
-                            background: '#E2231A', borderRadius: '20px', 
-                            padding: '4px 10px', fontSize: '11px', fontWeight: 600, color: '#fff',
-                            display: 'flex', alignItems: 'center', gap: '4px'
+                            background: '#0055A4', 
+                            padding: '6px 12px', fontSize: '11px', fontWeight: 800, color: '#fff', textTransform: 'uppercase',
+                            display: 'flex', alignItems: 'center', gap: '4px', borderRight: '3px solid #1A6FBC'
                           }}>
                             <Star size={12} fill="currentColor" /> Destaque
                           </div>
                         )}
                       </div>
-                      <div style={{ padding: '18px' }}>
-                        <div style={{ color: '#E2231A', fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
-                        <h2 style={{ color: '#111', fontSize: '18px', fontWeight: 700, margin: '4px 0 8px' }}>{moto.nome}</h2>
-                        <div style={{ display: 'flex', gap: '12px', marginBottom: '12px', flexWrap: 'wrap' }}>
+                      <div style={{ padding: '20px' }}>
+                        <div style={{ color: '#0055A4', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
+                        <h2 style={{ color: '#111', fontSize: '22px', fontWeight: 800, textTransform: 'uppercase', margin: '4px 0 12px', lineHeight: 1.1 }}>{moto.nome}</h2>
+                        <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
                           {moto.ano && (
-                            <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <Calendar size={13} /> {moto.ano}
+                            <span style={{ color: '#666', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Calendar size={14} /> {moto.ano}
                             </span>
                           )}
                           {moto.km !== null && (
-                            <span style={{ color: '#888', fontSize: '13px', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <Gauge size={13} /> {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                            <span style={{ color: '#666', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+                              <Gauge size={14} /> {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
                             </span>
                           )}
                         </div>
                         {moto.preco
-                          ? <div style={{ color: '#2ecc71', fontSize: '18px', fontWeight: 700 }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
-                          : <div style={{ color: '#888', fontSize: '14px' }}>Consulte o preço</div>
+                          ? <div style={{ color: '#0055A4', fontSize: '24px', fontWeight: 800 }}>R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}</div>
+                          : <div style={{ color: '#888', fontSize: '16px', fontWeight: 600 }}>Consulte o preço</div>
                         }
                       </div>
                     </div>
