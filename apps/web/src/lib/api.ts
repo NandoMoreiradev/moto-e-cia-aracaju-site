@@ -140,6 +140,12 @@ export const adminMotos = {
     apiFetch<{ message: string }>(`/admin/motos/${motoId}/fotos/${fotoId}/principal`, {
       method: 'PUT',
     }),
+
+  generateSpecs: (marca: string, nome: string) =>
+    apiFetch<{ data: any }>('/ai/moto-specs', { 
+      method: 'POST', 
+      body: JSON.stringify({ marca, nome }) 
+    }),
 };
 
 // ─── Admin — Meta Commerce ──────────────────────────────────────────────────────

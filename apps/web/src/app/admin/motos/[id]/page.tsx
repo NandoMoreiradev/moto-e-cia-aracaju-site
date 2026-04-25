@@ -9,7 +9,7 @@ import { RichTextEditor } from '@/components/common/RichTextEditor';
 import {
   Star, RefreshCw, Trash2, Camera, Check, ArrowLeft,
   Save, Info, Image as ImageIcon, LayoutIcon, Settings,
-  MapPin, Hash
+  MapPin, Hash, Sparkles
 } from 'lucide-react';
 import { AdminCard } from '@/components/admin/AdminCard';
 import { AdminButton } from '@/components/admin/AdminButton';
@@ -47,6 +47,7 @@ export default function AdminMotoEditPage() {
   const [uploading, setUploading] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [msg, setMsg] = useState<{ type: 'ok' | 'err'; text: string } | null>(null);
+  const [loadingAi, setLoadingAi] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const load = useCallback(async () => {
@@ -67,6 +68,33 @@ export default function AdminMotoEditPage() {
 
   function set(key: string, value: any) {
     setMoto((prev) => ({ ...prev, [key]: value }));
+  }
+
+  async function handleAiFill() {
+    if (!moto.marca || !moto.nome) {
+      setMsg({ type: 'err', text: 'Preencha a Marca e o Nome da moto primeiro.' });
+      return;
+    }
+    
+    setLoadingAi(true);
+    setMsg(null);
+    try {
+      const res = await adminMotos.generateSpecs(moto.marca, moto.nome);
+      if (res.data) {
+        setMoto(prev => ({
+          ...prev,
+          specs: {
+            ...(prev.specs as any || {}),
+            ...res.data
+          }
+        }));
+        setMsg({ type: 'ok', text: 'Especificações preenchidas com sucesso pela Inteligência Artificial!' });
+      }
+    } catch (err: any) {
+      setMsg({ type: 'err', text: err.message || 'Falha ao buscar dados na IA' });
+    } finally {
+      setLoadingAi(false);
+    }
   }
 
   async function handleSave(e: React.FormEvent) {
@@ -330,7 +358,33 @@ export default function AdminMotoEditPage() {
             </div>
           </AdminCard>
 
-          <AdminCard title="Especificações Técnicas">
+          <AdminCard title={
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <span>Especificações Técnicas</span>
+              <button 
+                type="button" 
+                onClick={handleAiFill} 
+                disabled={loadingAi || !moto.marca || !moto.nome}
+                style={{ 
+                  background: 'linear-gradient(135deg, #FFD700 0%, #FDB931 100%)',
+                  color: '#000',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '12px',
+                  fontWeight: 700,
+                  padding: '6px 12px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '6px',
+                  cursor: (loadingAi || !moto.marca || !moto.nome) ? 'not-allowed' : 'pointer',
+                  opacity: (loadingAi || !moto.marca || !moto.nome) ? 0.6 : 1
+                }}
+              >
+                {loadingAi ? <RefreshCw size={14} className="animate-spin" /> : <Sparkles size={14} />}
+                {loadingAi ? 'Buscando...' : 'Preencher com IA'}
+              </button>
+            </div>
+          }>
             <p style={{ fontSize: '13px', color: '#888', marginBottom: '20px', marginTop: 0 }}>
               Preencha as especificações que serão exibidas na página da moto. Deixe em branco os campos não aplicáveis.
             </p>

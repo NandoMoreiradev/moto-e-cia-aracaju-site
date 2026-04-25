@@ -10,6 +10,7 @@ import { R2Module } from './r2/r2.module';
 import { MetaModule } from './meta/meta.module';
 import { BannersModule } from './banners/banners.module';
 import { MarcasModule } from './marcas/marcas.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { MarcasModule } from './marcas/marcas.module';
     MetaModule,
     BannersModule,
     MarcasModule,
+    AiModule,
   ],
 })
 export class AppModule {}
