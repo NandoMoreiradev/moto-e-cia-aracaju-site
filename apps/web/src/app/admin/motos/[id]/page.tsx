@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { adminMotos, adminMeta } from '@/lib/api';
 import type { MotoDto } from '@moto-e-cia/shared';
 import { RichTextEditor } from '@/components/common/RichTextEditor';
-import { 
-  Star, RefreshCw, Trash2, Camera, Check, ArrowLeft, 
+import {
+  Star, RefreshCw, Trash2, Camera, Check, ArrowLeft,
   Save, Info, Image as ImageIcon, LayoutIcon, Settings,
   MapPin, Hash
 } from 'lucide-react';
@@ -212,14 +212,14 @@ export default function AdminMotoEditPage() {
       {/* Page Header */}
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px', gap: '20px' }}>
         <div>
-          <button 
-            type="button" 
-            onClick={() => router.push('/admin/motos')} 
-            style={{ 
-              background: 'none', border: 'none', color: '#999', 
+          <button
+            type="button"
+            onClick={() => router.push('/admin/motos')}
+            style={{
+              background: 'none', border: 'none', color: '#999',
               cursor: 'pointer', fontSize: '13px', fontWeight: 600,
-              padding: 0, marginBottom: '8px', 
-              display: 'flex', alignItems: 'center', gap: '6px' 
+              padding: 0, marginBottom: '8px',
+              display: 'flex', alignItems: 'center', gap: '6px'
             }}
           >
             <ArrowLeft size={14} /> Voltar para a lista
@@ -228,22 +228,22 @@ export default function AdminMotoEditPage() {
             {nova ? 'Nova Motocicleta' : (moto.nome || 'Editar Moto')}
           </h1>
         </div>
-        
+
         <div style={{ display: 'flex', gap: '12px' }}>
           {!nova && (
-             <AdminButton 
-               type="button" 
-               onClick={handleSync} 
-               disabled={syncing} 
-               variant="secondary"
-               style={{ background: '#fff' }}
-             >
-               {syncing ? <RefreshCw size={16} className="animate-spin" /> : <RefreshCw size={16} />}
-               Sync Meta
-             </AdminButton>
+            <AdminButton
+              type="button"
+              onClick={handleSync}
+              disabled={syncing}
+              variant="secondary"
+              style={{ background: '#fff' }}
+            >
+              {syncing ? <RefreshCw size={16} className="animate-spin" /> : <RefreshCw size={16} />}
+              Sync Meta
+            </AdminButton>
           )}
           <AdminButton type="submit" loading={saving} style={{ minWidth: '140px' }}>
-            <Save size={18} /> {nova ? 'Criar Moto' : 'Salvar Alterações'}
+            <Save size={18} /> {nova ? 'Adicionar Moto' : 'Salvar Alterações'}
           </AdminButton>
         </div>
       </div>
@@ -253,7 +253,7 @@ export default function AdminMotoEditPage() {
         <div style={{
           background: msg.type === 'ok' ? '#ecfdf5' : '#fff1f2',
           border: `1px solid ${msg.type === 'ok' ? '#10b98133' : '#e11d4833'}`,
-          borderRadius: '12px', padding: '16px 20px', 
+          borderRadius: '12px', padding: '16px 20px',
           color: msg.type === 'ok' ? '#059669' : '#e11d48',
           fontSize: '14px', fontWeight: 600, marginBottom: '32px',
           display: 'flex', alignItems: 'center', gap: '12px',
@@ -267,67 +267,67 @@ export default function AdminMotoEditPage() {
       <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) 360px', gap: '32px', alignItems: 'start' }}>
         {/* Left: Main Content */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          
+
           <AdminCard title="Informações do Modelo">
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-               <AdminInput label="Nome da Moto *" value={moto.nome || ''} onChange={e => set('nome', e.target.value)} placeholder="Ex: GSX-S1000" required />
-               <AdminInput label="Slogan curto (Opcional)" value={moto.slogan || ''} onChange={e => set('slogan', e.target.value)} placeholder="Ex: A força bruta na estrada" />
+              <AdminInput label="Nome da Moto *" value={moto.nome || ''} onChange={e => set('nome', e.target.value)} placeholder="Ex: GSX-S1000" required />
+              <AdminInput label="Slogan curto (Opcional)" value={moto.slogan || ''} onChange={e => set('slogan', e.target.value)} placeholder="Ex: A força bruta na estrada" />
             </div>
-            
+
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
-               <AdminSelect label="Marca *" value={moto.marca || 'SUZUKI'} onChange={e => set('marca', e.target.value)} required>
-                  {MARCAS.map(m => <option key={m} value={m}>{m}</option>)}
-               </AdminSelect>
-               <AdminSelect label="Tipo / Categoria *" value={moto.tipo || 'NAKED'} onChange={e => set('tipo', e.target.value)} required>
-                  {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
-               </AdminSelect>
-               <AdminSelect label="Condição *" value={(moto as any).condicao || 'NOVA'} onChange={e => set('condicao', e.target.value)}>
-                  {CONDICOES.map(c => <option key={c} value={c}>{c}</option>)}
-               </AdminSelect>
-               <AdminSelect label="Situação Atual" value={moto.status || 'DISPONIVEL'} onChange={e => set('status', e.target.value)}>
-                  {STATUS_OPTS.map(s => <option key={s} value={s}>{s}</option>)}
-               </AdminSelect>
+              <AdminSelect label="Marca *" value={moto.marca || 'SUZUKI'} onChange={e => set('marca', e.target.value)} required>
+                {MARCAS.map(m => <option key={m} value={m}>{m}</option>)}
+              </AdminSelect>
+              <AdminSelect label="Tipo / Categoria *" value={moto.tipo || 'NAKED'} onChange={e => set('tipo', e.target.value)} required>
+                {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
+              </AdminSelect>
+              <AdminSelect label="Condição *" value={(moto as any).condicao || 'NOVA'} onChange={e => set('condicao', e.target.value)}>
+                {CONDICOES.map(c => <option key={c} value={c}>{c}</option>)}
+              </AdminSelect>
+              <AdminSelect label="Situação Atual" value={moto.status || 'DISPONIVEL'} onChange={e => set('status', e.target.value)}>
+                {STATUS_OPTS.map(s => <option key={s} value={s}>{s}</option>)}
+              </AdminSelect>
             </div>
 
             <div style={{ marginTop: '8px' }}>
-               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#555', marginBottom: '8px' }}>
-                 Descrição Detalhada (Site)
-               </label>
-               <RichTextEditor
-                 value={moto.descricao || ''}
-                 onChange={(html: string) => set('descricao', html)}
-                 placeholder="Fale sobre a moto, performance, história..."
-               />
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#555', marginBottom: '8px' }}>
+                Descrição Detalhada (Site)
+              </label>
+              <RichTextEditor
+                value={moto.descricao || ''}
+                onChange={(html: string) => set('descricao', html)}
+                placeholder="Fale sobre a moto, performance, história..."
+              />
             </div>
 
             <div style={{ marginTop: '24px' }}>
-               <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#555', marginBottom: '8px' }}>
-                 Diferenciais Técnicos (Modal)
-               </label>
-               <RichTextEditor
-                 value={moto.diferenciais || ''}
-                 onChange={(html: string) => set('diferenciais', html)}
-                 placeholder="Liste diferenciais rápidos: Freios ABS, Quickshifter, Controle de Tração..."
-               />
+              <label style={{ display: 'block', fontSize: '13px', fontWeight: 600, color: '#555', marginBottom: '8px' }}>
+                Diferenciais Técnicos (Modal)
+              </label>
+              <RichTextEditor
+                value={moto.diferenciais || ''}
+                onChange={(html: string) => set('diferenciais', html)}
+                placeholder="Liste diferenciais rápidos: Freios ABS, Quickshifter, Controle de Tração..."
+              />
             </div>
           </AdminCard>
 
           <AdminCard title="Especificações para Catálogos">
-             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-                <AdminInput label="Ano *" type="number" value={moto.ano || ''} onChange={e => set('ano', Number(e.target.value))} required />
-                <AdminInput label="Quilometragem (KM) *" type="number" value={moto.km ?? ''} onChange={e => set('km', Number(e.target.value))} required />
-                <AdminInput label="Cor Predominante" value={moto.cor || ''} onChange={e => set('cor', e.target.value)} placeholder="Ex: Azul Metálico" />
-             </div>
-             
-             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
-                <AdminSelect label="Combustível" value={moto.combustivel || 'GASOLINA'} onChange={e => set('combustivel', e.target.value)}>
-                   {COMBUSTIVEIS.map(c => <option key={c} value={c}>{c}</option>)}
-                </AdminSelect>
-                <AdminSelect label="Transmissão" value={moto.transmissao || 'MANUAL'} onChange={e => set('transmissao', e.target.value)}>
-                   {TRANSMISSOES.map(t => <option key={t} value={t}>{t}</option>)}
-                </AdminSelect>
-                <AdminInput label="Nº Chassi (Opcional)" value={moto.vin || ''} onChange={e => set('vin', e.target.value)} />
-             </div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
+              <AdminInput label="Ano *" type="number" value={moto.ano || ''} onChange={e => set('ano', Number(e.target.value))} required />
+              <AdminInput label="Quilometragem (KM) *" type="number" value={moto.km ?? ''} onChange={e => set('km', Number(e.target.value))} required />
+              <AdminInput label="Cor Predominante" value={moto.cor || ''} onChange={e => set('cor', e.target.value)} placeholder="Ex: Azul Metálico" />
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginTop: '4px' }}>
+              <AdminSelect label="Combustível" value={moto.combustivel || 'GASOLINA'} onChange={e => set('combustivel', e.target.value)}>
+                {COMBUSTIVEIS.map(c => <option key={c} value={c}>{c}</option>)}
+              </AdminSelect>
+              <AdminSelect label="Transmissão" value={moto.transmissao || 'MANUAL'} onChange={e => set('transmissao', e.target.value)}>
+                {TRANSMISSOES.map(t => <option key={t} value={t}>{t}</option>)}
+              </AdminSelect>
+              <AdminInput label="Nº Chassi (Opcional)" value={moto.vin || ''} onChange={e => set('vin', e.target.value)} />
+            </div>
           </AdminCard>
 
           <AdminCard title="Especificações Técnicas">
@@ -408,16 +408,16 @@ export default function AdminMotoEditPage() {
                     {moto.capaUrl ? (
                       <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', border: '1px solid #f0f0f0' }}>
                         <Image src={moto.capaUrl} alt="Capa" fill style={{ objectFit: 'cover' }} />
-                        <button type="button" onClick={handleDeleteCapa} style={{ 
-                          position: 'absolute', bottom: '10px', right: '10px', 
-                          padding: '6px 12px', background: 'rgba(225, 29, 72, 0.9)', color: '#fff', 
-                          border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' 
+                        <button type="button" onClick={handleDeleteCapa} style={{
+                          position: 'absolute', bottom: '10px', right: '10px',
+                          padding: '6px 12px', background: 'rgba(225, 29, 72, 0.9)', color: '#fff',
+                          border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer'
                         }}>Remover</button>
                       </div>
                     ) : (
-                      <div style={{ 
-                        height: '160px', border: '2px dashed #f0f0f0', borderRadius: '12px', 
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' 
+                      <div style={{
+                        height: '160px', border: '2px dashed #f0f0f0', borderRadius: '12px',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px'
                       }}>
                         <ImageIcon size={24} color="#ccc" />
                         <AdminButton variant="secondary" size="sm" type="button" onClick={() => (document.getElementById('capa-input') as any).click()}>
@@ -434,16 +434,16 @@ export default function AdminMotoEditPage() {
                     {moto.logoUrl ? (
                       <div style={{ position: 'relative', borderRadius: '12px', overflow: 'hidden', height: '160px', background: '#333', border: '1px solid #444' }}>
                         <Image src={moto.logoUrl} alt="Logo" fill style={{ objectFit: 'contain', padding: '20px' }} />
-                        <button type="button" onClick={handleDeleteLogo} style={{ 
-                          position: 'absolute', bottom: '10px', right: '10px', 
-                          padding: '6px 12px', background: 'rgba(225, 29, 72, 0.9)', color: '#fff', 
-                          border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer' 
+                        <button type="button" onClick={handleDeleteLogo} style={{
+                          position: 'absolute', bottom: '10px', right: '10px',
+                          padding: '6px 12px', background: 'rgba(225, 29, 72, 0.9)', color: '#fff',
+                          border: 'none', borderRadius: '8px', fontSize: '11px', fontWeight: 700, cursor: 'pointer'
                         }}>Remover</button>
                       </div>
                     ) : (
-                      <div style={{ 
-                        height: '160px', border: '2px dashed #f0f0f0', borderRadius: '12px', 
-                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px' 
+                      <div style={{
+                        height: '160px', border: '2px dashed #f0f0f0', borderRadius: '12px',
+                        display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: '10px'
                       }}>
                         <LayoutIcon size={24} color="#ccc" />
                         <AdminButton variant="secondary" size="sm" type="button" onClick={() => (document.getElementById('logo-input') as any).click()}>
@@ -458,13 +458,13 @@ export default function AdminMotoEditPage() {
                 {/* Galeria */}
                 <div style={{ borderTop: '1px solid #f0f0f0', paddingTop: '24px' }}>
                   <label style={{ display: 'block', fontSize: '14px', fontWeight: 700, color: '#111', marginBottom: '16px' }}>Galeria de Fotos ({fotos.length})</label>
-                  
-                  <div 
+
+                  <div
                     onClick={() => fileRef.current?.click()}
                     onDragOver={e => e.preventDefault()}
                     onDrop={e => { e.preventDefault(); handleUpload(e.dataTransfer.files); }}
-                    style={{ 
-                      height: '100px', border: '2px dashed #f0f0f0', borderRadius: '12px', 
+                    style={{
+                      height: '100px', border: '2px dashed #f0f0f0', borderRadius: '12px',
                       display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '12px',
                       cursor: 'pointer', transition: 'all 0.2s', marginBottom: '24px'
                     }}
@@ -477,33 +477,33 @@ export default function AdminMotoEditPage() {
                   <input ref={fileRef} type="file" multiple hidden accept="image/*" onChange={e => handleUpload(e.target.files)} />
 
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))', gap: '16px' }}>
-                     {fotos.map(foto => (
-                       <div key={foto.id} style={{ 
-                         borderRadius: '12px', overflow: 'hidden', border: foto.principal ? '2px solid #E2231A' : '1px solid #eee',
-                         position: 'relative'
-                       }}>
-                         <div style={{ height: '120px', position: 'relative' }}>
-                            <Image src={foto.url} alt="foto" fill style={{ objectFit: 'cover' }} />
-                            {foto.principal && (
-                              <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#E2231A', color: '#fff', borderRadius: '6px', padding: '3px 6px', fontSize: '10px', fontWeight: 800 }}>CAPA</div>
-                            )}
-                         </div>
-                         <div style={{ padding: '8px', display: 'flex', gap: '4px' }}>
-                            <AdminButton variant="secondary" size="sm" type="button" title="Principal" onClick={() => handleSetPrincipal(foto.id)} style={{ flex: 1, padding: '6px' }}>
-                               <Star size={14} fill={foto.principal ? '#f39c12' : 'none'} color={foto.principal ? '#f39c12' : '#999'} />
-                            </AdminButton>
-                            <input 
-                               type="color" 
-                               value={foto.corHex || '#ffffff'} 
-                               onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
-                               style={{ width: '30px', height: '30px', padding: '0', border: '1px solid #eee', borderRadius: '6px', cursor: 'pointer' }}
-                            />
-                            <AdminButton variant="danger" size="sm" type="button" onClick={() => handleDeleteFoto(foto.id)} style={{ padding: '6px' }}>
-                               <Trash2 size={14} />
-                            </AdminButton>
-                         </div>
-                       </div>
-                     ))}
+                    {fotos.map(foto => (
+                      <div key={foto.id} style={{
+                        borderRadius: '12px', overflow: 'hidden', border: foto.principal ? '2px solid #E2231A' : '1px solid #eee',
+                        position: 'relative'
+                      }}>
+                        <div style={{ height: '120px', position: 'relative' }}>
+                          <Image src={foto.url} alt="foto" fill style={{ objectFit: 'cover' }} />
+                          {foto.principal && (
+                            <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#E2231A', color: '#fff', borderRadius: '6px', padding: '3px 6px', fontSize: '10px', fontWeight: 800 }}>CAPA</div>
+                          )}
+                        </div>
+                        <div style={{ padding: '8px', display: 'flex', gap: '4px' }}>
+                          <AdminButton variant="secondary" size="sm" type="button" title="Principal" onClick={() => handleSetPrincipal(foto.id)} style={{ flex: 1, padding: '6px' }}>
+                            <Star size={14} fill={foto.principal ? '#f39c12' : 'none'} color={foto.principal ? '#f39c12' : '#999'} />
+                          </AdminButton>
+                          <input
+                            type="color"
+                            value={foto.corHex || '#ffffff'}
+                            onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
+                            style={{ width: '30px', height: '30px', padding: '0', border: '1px solid #eee', borderRadius: '6px', cursor: 'pointer' }}
+                          />
+                          <AdminButton variant="danger" size="sm" type="button" onClick={() => handleDeleteFoto(foto.id)} style={{ padding: '6px' }}>
+                            <Trash2 size={14} />
+                          </AdminButton>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </AdminCard>
@@ -513,25 +513,25 @@ export default function AdminMotoEditPage() {
 
         {/* Right: Sidebar Actions */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px', position: 'sticky', top: '100px' }}>
-          
+
           <AdminCard title="Visibilidade e Preço">
             <AdminInput label="Preço de Venda (R$)" type="number" step="0.01" value={moto.preco ?? ''} onChange={e => set('preco', e.target.value ? Number(e.target.value) : null)} placeholder="0.00" />
-            
-            <div style={{ 
-              display: 'flex', alignItems: 'center', gap: '12px', 
+
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '12px',
               padding: '16px', background: '#fcfcfc', border: '1px solid #f0f0f0', borderRadius: '12px',
               marginTop: '8px'
             }}>
-               <input 
-                 type="checkbox" 
-                 id="chk-destaque" 
-                 checked={!!moto.destaque} 
-                 onChange={e => set('destaque', e.target.checked)}
-                 style={{ width: '18px', height: '18px', accentColor: '#E2231A', cursor: 'pointer' }}
-               />
-               <label htmlFor="chk-destaque" style={{ color: '#111', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
-                 Destaque na Homepage
-               </label>
+              <input
+                type="checkbox"
+                id="chk-destaque"
+                checked={!!moto.destaque}
+                onChange={e => set('destaque', e.target.checked)}
+                style={{ width: '18px', height: '18px', accentColor: '#E2231A', cursor: 'pointer' }}
+              />
+              <label htmlFor="chk-destaque" style={{ color: '#111', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>
+                Destaque na Homepage
+              </label>
             </div>
             <p style={{ color: '#999', fontSize: '12px', marginTop: '10px', lineHeight: '1.4' }}>
               Motos em destaque ganham prioridade na primeira página do site público.
@@ -539,35 +539,35 @@ export default function AdminMotoEditPage() {
           </AdminCard>
 
           {!nova && (
-             <AdminCard title="Sistema">
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
-                    <span style={{ color: '#999' }}>Status:</span>
-                    <AdminBadge color={STATUS_LABEL[moto.status!]?.color || '#888'}>
-                      {STATUS_LABEL[moto.status!]?.label || moto.status}
-                    </AdminBadge>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
-                    <span style={{ color: '#999', fontSize: '13px' }}>Slug / URL:</span>
-                    <code style={{ background: '#f5f5f5', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', color: '#666' }}>
-                      {moto.slug || '—'}
+            <AdminCard title="Sistema">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px' }}>
+                  <span style={{ color: '#999' }}>Status:</span>
+                  <AdminBadge color={STATUS_LABEL[moto.status!]?.color || '#888'}>
+                    {STATUS_LABEL[moto.status!]?.label || moto.status}
+                  </AdminBadge>
+                </div>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <span style={{ color: '#999', fontSize: '13px' }}>Slug / URL:</span>
+                  <code style={{ background: '#f5f5f5', padding: '6px 10px', borderRadius: '8px', fontSize: '12px', color: '#666' }}>
+                    {moto.slug || '—'}
+                  </code>
+                </div>
+                {moto.metaProductId && (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
+                    <span style={{ color: '#999', fontSize: '13px' }}>Meta Product ID:</span>
+                    <code style={{ background: '#f0f4ff', padding: '6px 10px', borderRadius: '8px', fontSize: '11px', color: '#4f8ef7' }}>
+                      {moto.metaProductId}
                     </code>
                   </div>
-                  {moto.metaProductId && (
-                     <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '4px' }}>
-                       <span style={{ color: '#999', fontSize: '13px' }}>Meta Product ID:</span>
-                       <code style={{ background: '#f0f4ff', padding: '6px 10px', borderRadius: '8px', fontSize: '11px', color: '#4f8ef7' }}>
-                         {moto.metaProductId}
-                       </code>
-                     </div>
-                  )}
-                </div>
-             </AdminCard>
+                )}
+              </div>
+            </AdminCard>
           )}
 
           {nova && (
-            <div style={{ 
-              padding: '20px', background: '#fff9db', border: '1px solid #ffec99', 
+            <div style={{
+              padding: '20px', background: '#fff9db', border: '1px solid #ffec99',
               borderRadius: '16px', color: '#856404', fontSize: '13px', lineHeight: '1.5'
             }}>
               <strong>Dica:</strong> Salve as informações principais primeiro. Após a criação, você poderá enviar fotos e sincronizar com o Instagram.

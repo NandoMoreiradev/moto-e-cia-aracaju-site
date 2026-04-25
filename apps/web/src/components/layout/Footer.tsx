@@ -177,6 +177,7 @@ export function Footer() {
         {/* Links Rápidos */}
         <FooterCol>
           <ColTitle>Links Rápidos</ColTitle>
+          <FooterLink href="/sobre">A Empresa</FooterLink>
           <FooterLink href="/motos">Catálogo de Motos</FooterLink>
           <FooterLink href="/servicos">Nossos Serviços</FooterLink>
           <FooterLink href="/servicos#financiamento">Financiamento</FooterLink>

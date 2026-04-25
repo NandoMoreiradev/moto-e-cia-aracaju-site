@@ -260,6 +260,7 @@ export function Header() {
     { href: '/motos', label: 'Motos' },
     { href: '/servicos', label: 'Serviços' },
     { href: '/blog', label: 'Blog' },
+    { href: '/sobre', label: 'Nossa História' },
     { href: '/contato', label: 'Contato' },
   ];
 

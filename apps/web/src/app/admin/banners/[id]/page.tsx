@@ -126,11 +126,10 @@ export default function AdminBannerDetailPage() {
                 />
                 
                 <AdminInput 
-                  label="Título Principal"
+                  label="Título Principal (opcional)"
                   placeholder="Ex: Nova Suzuki Hayabusa 2024"
                   value={form.titulo} 
                   onChange={e => setForm({...form, titulo: e.target.value})}
-                  required
                 />
 
                 <AdminTextarea 

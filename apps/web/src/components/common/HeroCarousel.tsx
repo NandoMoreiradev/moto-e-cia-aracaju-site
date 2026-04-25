@@ -10,18 +10,29 @@ import type { BannerDto } from '@moto-e-cia/shared';
 
 const CarouselContainer = styled.section`
   position: relative;
-  width: 100%;
+  width: 97%;
+  max-width: 1600px;
   height: 70vh;
+  margin: ${({ theme }) => theme.spacing.md} auto ${({ theme }) => theme.spacing['2xl']};
   overflow: hidden;
   background: ${({ theme }) => theme.colors.dark};
+  border-radius: 24px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+
+  @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
+    width: 97%;
+    height: 60vh;
+    margin: ${({ theme }) => theme.spacing.xs} auto ${({ theme }) => theme.spacing.lg};
+    border-radius: 16px;
+  }
 `;
 
-const Slide = styled(motion.div)<{ $bgImage: string; $mobileBgImage?: string | null; $hasContent: boolean }>`
+const Slide = styled(motion.div) <{ $bgImage: string; $mobileBgImage?: string | null; $hasContent: boolean }>`
   position: absolute;
   inset: 0;
-  background-image: ${({ $bgImage, $hasContent }) => 
-    $bgImage.includes('gradient') 
-      ? $bgImage 
+  background-image: ${({ $bgImage, $hasContent }) =>
+    $bgImage.includes('gradient')
+      ? $bgImage
       : `${$hasContent ? 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), ' : ''}url("${$bgImage}")`
   };
   background-size: cover;
@@ -32,11 +43,10 @@ const Slide = styled(motion.div)<{ $bgImage: string; $mobileBgImage?: string | n
 
   ${({ $mobileBgImage, $hasContent, theme }) => $mobileBgImage && `
     @media (max-width: ${theme.breakpoints?.md || '768px'}) {
-      background-image: ${
-        $mobileBgImage.includes('gradient')
-          ? $mobileBgImage
-          : `${$hasContent ? 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), ' : ''}url("${$mobileBgImage}")`
-      };
+      background-image: ${$mobileBgImage.includes('gradient')
+      ? $mobileBgImage
+      : `${$hasContent ? 'linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.4)), ' : ''}url("${$mobileBgImage}")`
+    };
     }
   `}
 `;
