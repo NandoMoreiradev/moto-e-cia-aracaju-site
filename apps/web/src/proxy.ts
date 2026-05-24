@@ -9,11 +9,14 @@ export function proxy(request: NextRequest) {
   if (pathname !== '/') return NextResponse.next();
 
   const ua = request.headers.get('user-agent') ?? '';
-  if (MOBILE_REGEX.test(ua)) {
-    return NextResponse.redirect(MOBILE_REDIRECT, { status: 302 });
-  }
+  if (!MOBILE_REGEX.test(ua)) return NextResponse.next();
 
-  return NextResponse.next();
+  // Navegação interna (ex: clicar no logo) não deve redirecionar
+  const referer = request.headers.get('referer') ?? '';
+  const host = request.headers.get('host') ?? '';
+  if (referer && host && referer.includes(host)) return NextResponse.next();
+
+  return NextResponse.redirect(MOBILE_REDIRECT, { status: 302 });
 }
 
 export const config = {
