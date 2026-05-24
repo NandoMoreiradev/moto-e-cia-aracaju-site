@@ -240,7 +240,7 @@ export default function MotosPage() {
 
       <div className="main-content-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
         {marcas.length > 0 && (
-          <div className="marcas-scroll" style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '20px', scrollbarWidth: 'none' }}>
+          <div className="marcas-scroll" style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '72px', scrollbarWidth: 'none' }}>
             {marcas.map(m => (
               <button
                 key={m.id}
