@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { adminMotos } from '@/lib/api';
 import type { MotoDto } from '@moto-e-cia/shared';
-import { Plus, Search, Filter, Edit2, Trash2, Star, Calendar, Gauge } from 'lucide-react';
+import { Plus, Search, Filter, Edit2, Trash2, Star, Calendar, Gauge, Bike } from 'lucide-react';
 import { AdminCard } from '@/components/admin/AdminCard';
 import { AdminButton } from '@/components/admin/AdminButton';
 import { AdminInput } from '@/components/admin/AdminInput';
@@ -119,7 +119,7 @@ export default function AdminMotosPage() {
         </div>
       ) : motos.length === 0 ? (
         <AdminCard style={{ textAlign: 'center', padding: '60px' }}>
-          <div style={{ fontSize: '48px', marginBottom: '16px' }}>🏍️</div>
+          <div style={{ marginBottom: '16px', color: '#ccc' }}><Bike size={48} /></div>
           <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111' }}>Nenhuma moto encontrada</h3>
           <p style={{ color: '#999', marginBottom: '24px' }}>Não encontramos resultados para os filtros aplicados.</p>
           <AdminButton variant="secondary" onClick={() => { setSearch(''); setStatusFilter(''); }}>
@@ -138,8 +138,8 @@ export default function AdminMotosPage() {
                   {foto ? (
                     <Image src={foto.url} alt={moto.nome} fill style={{ objectFit: 'cover' }} />
                   ) : (
-                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc', fontSize: '48px' }}>
-                      🏍️
+                    <div style={{ height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#ccc' }}>
+                      <Bike size={48} />
                     </div>
                   )}
                   {/* Badges Overlay */}

@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Image from 'next/image';
 import { adminBanners } from '@/lib/api';
 import type { BannerDto } from '@moto-e-cia/shared';
-import { Plus, Edit2, Trash2, Image as ImageIcon, ExternalLink, Sliders } from 'lucide-react';
+import { Plus, Edit2, Trash2, Image as ImageIcon, ExternalLink, Sliders, Loader2 } from 'lucide-react';
 import { AdminCard } from '@/components/admin/AdminCard';
 import { AdminButton } from '@/components/admin/AdminButton';
 import { AdminBadge } from '@/components/admin/AdminBadge';
@@ -53,7 +53,7 @@ export default function AdminBannersPage() {
 
       {loading ? (
         <div style={{ color: '#999', textAlign: 'center', padding: '100px 0' }}>
-          <div className="animate-spin mb-4" style={{ display: 'inline-block' }}>⌛</div>
+          <Loader2 size={32} style={{ marginBottom: '16px', animation: 'spin 1s linear infinite' }} />
           <div>Carregando banners...</div>
         </div>
       ) : banners.length === 0 ? (

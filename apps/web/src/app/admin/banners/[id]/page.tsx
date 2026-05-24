@@ -5,7 +5,7 @@ import { useRouter, useParams } from 'next/navigation';
 import { adminBanners } from '@/lib/api';
 import type { BannerDto } from '@moto-e-cia/shared';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Save, X, Image as ImageIcon, Layout, Type, Link as LinkIcon, Hash, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, Save, X, Image as ImageIcon, Layout, Type, Link as LinkIcon, Hash, CheckCircle2, Loader2 } from 'lucide-react';
 import { AdminCard } from '@/components/admin/AdminCard';
 import { AdminButton } from '@/components/admin/AdminButton';
 import { AdminInput } from '@/components/admin/AdminInput';
@@ -88,7 +88,7 @@ export default function AdminBannerDetailPage() {
 
   if (loading) return (
     <div style={{ color: '#999', textAlign: 'center', padding: '100px 0' }}>
-      <div className="animate-spin mb-4" style={{ display: 'inline-block' }}>⌛</div>
+      <Loader2 size={32} style={{ marginBottom: '16px', animation: 'spin 1s linear infinite' }} />
       <div>Carregando dados do banner...</div>
     </div>
   );
