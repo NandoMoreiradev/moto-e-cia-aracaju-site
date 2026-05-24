@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 const MOBILE_REGEX = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i;
 const MOBILE_REDIRECT = 'https://moto-e-cia-web.onrender.com/motos';
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (pathname !== '/') return NextResponse.next();
