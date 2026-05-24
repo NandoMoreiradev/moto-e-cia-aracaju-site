@@ -66,7 +66,7 @@ export default function AdminLoginPage() {
           fontWeight: 500, 
           marginBottom: '40px' 
         }}>
-          Faça login para gerenciar sua loja
+          Faça login para gerenciar a loja
         </p>
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px', textAlign: 'left' }}>
