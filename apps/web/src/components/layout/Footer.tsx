@@ -166,7 +166,7 @@ export function Footer() {
             />
           </BrandLogo>
           <Text>
-            Sua concessionária oficial Suzuki, Haojue e Zontes em Aracaju. 
+            Sua concessionária oficial Suzuki, Haojue e Zontes em Aracaju e Socorro. 
             Paixão por duas rodas e excelência no atendimento.
           </Text>
           <SocialGroup>

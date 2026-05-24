@@ -123,6 +123,7 @@ export default function MotosPage() {
             padding: 16px 16px !important;
             margin-bottom: 0 !important;
             border-bottom: 1px solid #efefef;
+            gap: 12px !important;
           }
           .filters-container {
             display: none !important;
@@ -141,6 +142,17 @@ export default function MotosPage() {
             width: 100%;
             height: 100%;
             object-fit: cover;
+          }
+          .marca-btn {
+            width: 72px !important;
+            height: 72px !important;
+            border-radius: 50% !important;
+            padding: 12px !important;
+            flex-direction: column;
+            gap: 4px;
+          }
+          .marca-btn span {
+            font-size: 9px !important;
           }
         }
 
@@ -230,12 +242,13 @@ export default function MotosPage() {
         {marcas.length > 0 && (
           <div className="marcas-scroll" style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '20px', scrollbarWidth: 'none' }}>
             {marcas.map(m => (
-              <button 
+              <button
                 key={m.id}
-                onClick={() => { 
-                  setMarca(marca === m.nome ? '' : m.nome as any); 
+                className="marca-btn"
+                onClick={() => {
+                  setMarca(marca === m.nome ? '' : m.nome as any);
                   setCondicao('');
-                  setPage(1); 
+                  setPage(1);
                 }}
                 style={{
                   flex: '0 0 auto', width: '120px', height: '70px', borderRadius: '4px',
@@ -257,6 +270,7 @@ export default function MotosPage() {
               </button>
             ))}
             <button
+              className="marca-btn"
               onClick={() => {
                 setCondicao(condicao === 'SEMINOVA' ? '' : 'SEMINOVA');
                 setMarca('');
