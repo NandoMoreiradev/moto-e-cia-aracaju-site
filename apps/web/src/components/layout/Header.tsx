@@ -126,8 +126,7 @@ const WhatsappIcon = () => (
   </svg>
 );
 const HeaderContainer = styled.header`
-  position: sticky;
-  top: 0;
+  position: relative;
   z-index: 50;
   background: ${({ theme }) => theme.colors.white};
   border-bottom: 1px solid ${({ theme }) => theme.colors.lightGray};

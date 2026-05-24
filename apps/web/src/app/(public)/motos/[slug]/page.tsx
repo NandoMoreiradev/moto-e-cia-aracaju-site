@@ -5,7 +5,7 @@ import { useParams } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronLeft, ChevronRight, X, Maximize2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, Maximize2, Loader2 } from 'lucide-react';
 import { motos as motosApi } from '@/lib/api';
 import type { MotoDto } from '@moto-e-cia/shared';
 
@@ -54,7 +54,9 @@ export default function MotoDetalhePage() {
   if (loading) return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f8f8f8', color: '#111' }}>
       <div style={{ textAlign: 'center' }}>
-        <div style={{ fontSize: '48px', animation: 'spin 2s linear infinite' }}>🏍️</div>
+        <div style={{ display: 'inline-block', animation: 'spin 2s linear infinite' }}>
+          <Loader2 size={48} color="#e31b23" />
+        </div>
         <div style={{ marginTop: '16px', color: '#666', letterSpacing: '4px', textTransform: 'uppercase', fontSize: '12px' }}>Carregando Máquina</div>
       </div>
     </div>
@@ -87,29 +89,44 @@ export default function MotoDetalhePage() {
         </div>
 
         {moto.capaUrl ? (
-          <section style={{ width: '100%', height: '55vh', position: 'relative' }}>
+          <section style={{ width: '100%', height: '70vh', position: 'relative' }}>
             <Image src={moto.capaUrl} alt={`Capa da ${moto.nome}`} fill style={{ objectFit: 'cover', objectPosition: 'center' }} priority />
+            {/* Gradiente escuro no fundo para dar destaque à logo */}
+            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)', pointerEvents: 'none' }} />
+            
+            {/* Logomarca sobreposta ao banner (se houver logo) */}
+            {moto.logoUrl && (
+              <div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
+                <div style={{ position: 'relative', width: '350px', height: '120px' }}>
+                  <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain', filter: 'drop-shadow(0px 4px 12px rgba(0,0,0,0.5))' }} />
+                </div>
+              </div>
+            )}
           </section>
         ) : (
-          <div style={{ width: '100%', height: '140px', background: 'radial-gradient(circle at center, #939393 0%, #444444 100%)' }} />
+          <div style={{ width: '100%', height: '140px', background: 'radial-gradient(circle at center, #939393 0%, #444444 100%)', position: 'relative' }}>
+             {/* Logomarca sobreposta ao banner fallback */}
+             {moto.logoUrl && (
+              <div style={{ position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
+                <div style={{ position: 'relative', width: '250px', height: '80px' }}>
+                  <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain', filter: 'drop-shadow(0px 4px 8px rgba(0,0,0,0.5))' }} />
+                </div>
+              </div>
+            )}
+          </div>
         )}
       </div>
 
       {/* 2. ÁREA DA MOTO ISOLADA E SELETOR DE COR */}
       <section style={{ maxWidth: '1200px', margin: '40px auto 60px', padding: '0 5%', textAlign: 'center' }}>
         
-        {/* Logomarca e Slogan ou Título Fallback */}
+        {/* Slogan ou Título Fallback */}
         {moto.logoUrl ? (
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '32px' }}>
-             <div style={{ position: 'relative', width: '300px', height: '100px' }}>
-               <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain' }} />
-             </div>
-             {moto.slogan && (
-               <div style={{ marginTop: '12px', fontSize: '20px', fontWeight: 700, letterSpacing: '2px', color: '#111', textTransform: 'uppercase' }}>
-                 {moto.slogan}
-               </div>
-             )}
-          </div>
+          moto.slogan && (
+            <div style={{ marginBottom: '32px', fontSize: '20px', fontWeight: 700, letterSpacing: '2px', color: '#111', textTransform: 'uppercase' }}>
+              {moto.slogan}
+            </div>
+          )
         ) : (
           <h2 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, marginBottom: '24px', color: '#333' }}>
             Conquiste sua <span style={{ color: '#e31b23' }}>{moto.nome}</span>

@@ -3,6 +3,7 @@
 import { Clock, Mail, MapPin, Smartphone, Facebook, Instagram } from 'lucide-react';
 import styled from 'styled-components';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const FooterContainer = styled.footer`
   background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
@@ -46,17 +47,13 @@ const FooterCol = styled.div`
   gap: ${({ theme }) => theme.spacing.md};
 `;
 
-const Brand = styled.div`
-  font-size: 2.5rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: -0.02em;
-  color: ${({ theme }) => theme.colors.primary};
-  margin-bottom: ${({ theme }) => theme.spacing.sm};
-  line-height: 1;
+const BrandLogo = styled(Link)`
+  display: block;
+  margin-bottom: ${({ theme }) => theme.spacing.md};
+  transition: opacity 0.2s ease;
 
-  span {
-    color: ${({ theme }) => theme.colors.white};
+  &:hover {
+    opacity: 0.8;
   }
 `;
 
@@ -159,7 +156,15 @@ export function Footer() {
       <FooterContent>
         {/* Marca & Sobre */}
         <FooterCol>
-          <Brand>Moto<span>&</span>Cia</Brand>
+          <BrandLogo href="/">
+            <Image
+              src="/logo_moto_e_cia_branca.png"
+              alt="Moto e Cia Aracaju"
+              width={200}
+              height={80}
+              style={{ objectFit: 'contain' }}
+            />
+          </BrandLogo>
           <Text>
             Sua concessionária oficial Suzuki, Haojue e Zontes em Aracaju. 
             Paixão por duas rodas e excelência no atendimento.
