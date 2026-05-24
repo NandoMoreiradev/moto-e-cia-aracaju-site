@@ -4,7 +4,7 @@ import { MarcaMoto, TipoMoto, StatusMoto, CondicaoMoto, Combustivel, Transmissao
 
 const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO'];
 const CONDICOES = ['NOVA', 'SEMINOVA'];
-const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL'];
+const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL', 'STREET', 'CROSSOVER', 'CUSTOM', 'TOURING'];
 const STATUS = ['DISPONIVEL', 'VENDIDA', 'RESERVADA', 'ALUGUEL'];
 const COMBUSTIVEIS = ['GASOLINA', 'ETANOL', 'FLEX', 'ELETRICO'];
 const TRANSMISSOES = ['MANUAL', 'AUTOMATICA', 'SEMI_AUTOMATICA'];

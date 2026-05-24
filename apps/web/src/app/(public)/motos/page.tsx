@@ -24,6 +24,10 @@ const TIPOS: { value: TipoMoto | ''; label: string }[] = [
   { value: 'ADVENTURE', label: 'Adventure' },
   { value: 'SCOOTER', label: 'Scooter' },
   { value: 'TRAIL', label: 'Trail' },
+  { value: 'STREET', label: 'Street' },
+  { value: 'CROSSOVER', label: 'Crossover' },
+  { value: 'CUSTOM', label: 'Custom' },
+  { value: 'TOURING', label: 'Touring' },
 ];
 
 const CONDICOES: { value: 'NOVA' | 'SEMINOVA' | ''; label:string }[] = [

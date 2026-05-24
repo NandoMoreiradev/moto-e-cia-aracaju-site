@@ -115,6 +115,10 @@ enum TipoMoto {
   ADVENTURE
   SCOOTER
   TRAIL
+  STREET
+  CROSSOVER
+  CUSTOM
+  TOURING
 }
 
 enum StatusMoto {

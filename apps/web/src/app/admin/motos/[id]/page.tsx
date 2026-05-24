@@ -20,7 +20,7 @@ import { AdminBadge } from '@/components/admin/AdminBadge';
 const isNova = (id: string) => id === 'nova';
 
 const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO'];
-const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL'];
+const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL', 'STREET', 'CROSSOVER', 'CUSTOM', 'TOURING'];
 const STATUS_OPTS = ['DISPONIVEL', 'RESERVADA', 'VENDIDA', 'ALUGUEL'];
 const CONDICOES = ['NOVA', 'SEMINOVA'];
 const COMBUSTIVEIS = ['GASOLINA', 'ETANOL', 'FLEX', 'ELETRICO'];
