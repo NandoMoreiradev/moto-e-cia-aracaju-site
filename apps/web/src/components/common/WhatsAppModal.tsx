@@ -47,12 +47,12 @@ const ModalContent = styled(motion.div)`
 
 const ModalHeader = styled.div`
   padding: 32px 32px 20px;
-  color: ${({ theme }) => theme.colors?.white || '#ffffff'};
   text-align: center;
   position: relative;
   z-index: 2;
 
   h2 {
+    color: ${({ theme }) => theme.colors?.white || '#ffffff'};
     font-size: ${({ theme }) => theme.fontSizes?.xl || '1.25rem'};
     font-weight: 800;
     margin: 0 0 8px;
@@ -61,8 +61,8 @@ const ModalHeader = styled.div`
   }
   
   p {
-    font-size: ${({ theme }) => theme.fontSizes?.sm || '0.875rem'};
     color: rgba(255, 255, 255, 0.7);
+    font-size: ${({ theme }) => theme.fontSizes?.sm || '0.875rem'};
     margin: 0;
     font-weight: 500;
   }
@@ -175,7 +175,7 @@ export function WhatsAppModal() {
   }, [isOpen]);
 
   const handleStoreClick = (phone: string) => {
-    const url = `https://wa.me/${phone}${message ? \`?text=\${encodeURIComponent(message)}\` : ''}`;
+    const url = `https://wa.me/${phone}${message ? '?text=' + encodeURIComponent(message) : ''}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     closeWhatsApp();
   };
