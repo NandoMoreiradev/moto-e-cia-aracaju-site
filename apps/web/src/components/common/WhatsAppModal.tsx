@@ -3,7 +3,7 @@
 import { useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, MapPin, MessageCircle } from 'lucide-react';
+import { X, MessageCircle } from 'lucide-react';
 import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 const Overlay = styled(motion.div)`
@@ -19,116 +19,128 @@ const Overlay = styled(motion.div)`
 `;
 
 const ModalContent = styled(motion.div)`
-  background: ${({ theme }) => theme.colors?.white || '#ffffff'};
-  border-radius: 20px;
+  background: linear-gradient(135deg, ${({ theme }) => theme.colors?.dark || '#151515'} 0%, #0a0a0a 100%);
+  border-radius: 20px 0 20px 0;
+  border-left: 6px solid ${({ theme }) => theme.colors?.primary || '#0055A4'};
+  border-right: 6px solid ${({ theme }) => theme.colors?.primary || '#0055A4'};
   width: 100%;
-  max-width: 480px;
+  max-width: 400px;
   overflow: hidden;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
   position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+      -45deg,
+      rgba(255, 255, 255, 0.02),
+      rgba(255, 255, 255, 0.02) 2px,
+      transparent 2px,
+      transparent 8px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
 `;
 
 const ModalHeader = styled.div`
-  background: ${({ theme }) => theme.colors?.primary || '#0055A4'};
-  padding: ${({ theme }) => theme.spacing?.xl || '32px'};
+  padding: 32px 32px 20px;
   color: ${({ theme }) => theme.colors?.white || '#ffffff'};
   text-align: center;
   position: relative;
+  z-index: 2;
 
   h2 {
-    font-size: ${({ theme }) => theme.fontSizes?.['2xl'] || '1.5rem'};
+    font-size: ${({ theme }) => theme.fontSizes?.xl || '1.25rem'};
     font-weight: 800;
-    margin: 0 0 ${({ theme }) => theme.spacing?.xs || '8px'};
+    margin: 0 0 8px;
     text-transform: uppercase;
+    letter-spacing: 0.02em;
   }
   
   p {
     font-size: ${({ theme }) => theme.fontSizes?.sm || '0.875rem'};
-    opacity: 0.9;
+    color: rgba(255, 255, 255, 0.7);
     margin: 0;
+    font-weight: 500;
   }
 `;
 
 const CloseButton = styled.button`
   position: absolute;
-  top: ${({ theme }) => theme.spacing?.md || '16px'};
-  right: ${({ theme }) => theme.spacing?.md || '16px'};
-  background: rgba(255, 255, 255, 0.2);
+  top: 12px;
+  right: 12px;
+  background: transparent;
   border: none;
-  color: white;
+  color: rgba(255, 255, 255, 0.4);
   width: 32px;
   height: 32px;
-  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
+  z-index: 3;
   
   &:hover {
-    background: rgba(255, 255, 255, 0.3);
+    color: white;
     transform: scale(1.1);
   }
 `;
 
 const ModalBody = styled.div`
-  padding: ${({ theme }) => theme.spacing?.xl || '32px'};
+  padding: 0 32px 32px;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 `;
 
 const StoreOption = styled.button`
   display: flex;
   align-items: center;
+  justify-content: center;
   width: 100%;
-  padding: ${({ theme }) => theme.spacing?.xl || '32px'};
-  background: ${({ theme }) => theme.colors?.offWhite || '#f5f5f5'};
-  border: 2px solid transparent;
-  border-radius: 12px;
-  margin-bottom: ${({ theme }) => theme.spacing?.md || '16px'};
+  padding: 16px 20px;
+  background: #25D366;
+  color: white;
+  border: none;
   cursor: pointer;
   transition: all 0.3s ease;
-  text-align: left;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
+  clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
+  font-family: inherit;
 
   &:hover {
-    background: white;
-    border-color: #25D366;
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(37, 211, 102, 0.1);
+    background: #20b858;
+    transform: scale(1.03) translateX(3px);
   }
 
   .icon-wrapper {
-    background: rgba(37, 211, 102, 0.1);
-    color: #25D366;
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
+    margin-right: 12px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-right: ${({ theme }) => theme.spacing?.lg || '24px'};
-    flex-shrink: 0;
   }
 
   .details {
-    flex: 1;
+    text-align: left;
     
     h3 {
-      font-size: ${({ theme }) => theme.fontSizes?.lg || '1.125rem'};
-      font-weight: 700;
-      color: ${({ theme }) => theme.colors?.textPrimary || '#111111'};
-      margin: 0 0 4px;
+      font-size: 15px;
+      font-weight: 800;
+      text-transform: uppercase;
+      margin: 0 0 2px;
+      letter-spacing: 0.05em;
     }
     
     p {
-      font-size: ${({ theme }) => theme.fontSizes?.sm || '0.875rem'};
-      color: ${({ theme }) => theme.colors?.gray || '#666666'};
+      font-size: 12px;
       margin: 0;
-      display: flex;
-      align-items: center;
-      gap: 4px;
+      opacity: 0.9;
+      font-weight: 500;
     }
   }
 `;
@@ -163,7 +175,7 @@ export function WhatsAppModal() {
   }, [isOpen]);
 
   const handleStoreClick = (phone: string) => {
-    const url = `https://wa.me/${phone}${message ? `?text=${encodeURIComponent(message)}` : ''}`;
+    const url = `https://wa.me/${phone}${message ? \`?text=\${encodeURIComponent(message)}\` : ''}`;
     window.open(url, '_blank', 'noopener,noreferrer');
     closeWhatsApp();
   };
@@ -183,13 +195,15 @@ export function WhatsAppModal() {
             exit={{ scale: 0.9, opacity: 0, y: 20 }}
             onClick={(e) => e.stopPropagation()}
           >
+            <CloseButton onClick={closeWhatsApp} aria-label="Fechar">
+              <X size={20} />
+            </CloseButton>
+            
             <ModalHeader>
-              <CloseButton onClick={closeWhatsApp} aria-label="Fechar">
-                <X size={20} />
-              </CloseButton>
               <h2>Fale Conosco</h2>
-              <p>Escolha com qual loja você deseja falar</p>
+              <p>Escolha com qual loja deseja falar</p>
             </ModalHeader>
+            
             <ModalBody>
               {STORES.map((store) => (
                 <StoreOption key={store.id} onClick={() => handleStoreClick(store.phone)}>
@@ -198,7 +212,7 @@ export function WhatsAppModal() {
                   </div>
                   <div className="details">
                     <h3>{store.name}</h3>
-                    <p><MapPin size={14} /> {store.address}</p>
+                    <p>{store.address}</p>
                   </div>
                 </StoreOption>
               ))}
