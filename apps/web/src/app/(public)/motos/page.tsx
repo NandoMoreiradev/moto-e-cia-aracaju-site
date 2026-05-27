@@ -8,6 +8,7 @@ import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
 import type { MotoDto, MarcaMoto, TipoMoto, MarcaDto } from '@moto-e-cia/shared';
 import { Calendar, Gauge, Palette, Search, X, Star, Eye, Zap, Box } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 const MARCAS: { value: MarcaMoto | ''; label: string }[] = [
   { value: '', label: 'Todas as marcas' },
@@ -54,6 +55,7 @@ export default function MotosPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedMoto, setSelectedMoto] = useState<MotoDto | null>(null);
+  const { openWhatsApp } = useWhatsApp();
 
   useEffect(() => {
     if (selectedMoto) {
@@ -226,14 +228,12 @@ export default function MotosPage() {
             >
               Seguir
             </a>
-            <a 
-              href="https://wa.me/5579981072289" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ flex: 1, background: '#efefef', textDecoration: 'none', textAlign: 'center', borderRadius: '8px', padding: '8px 0', fontSize: '14px', fontWeight: 600, color: '#111' }}
+            <button 
+              onClick={() => openWhatsApp()}
+              style={{ flex: 1, background: '#efefef', textDecoration: 'none', textAlign: 'center', borderRadius: '8px', padding: '8px 0', fontSize: '14px', fontWeight: 600, color: '#111', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
             >
               Fale no Whatsapp
-            </a>
+            </button>
           </div>
         </div>
       </div>

@@ -272,9 +272,9 @@ export const StoresSection = () => {
     {
       id: 1,
       name: 'Moto e Cia - Matriz',
-      address: 'Endereço da Matriz - Aracaju, SE',
-      phone: '(79) 0000-0000',
-      whatsapp: '5579999999999',
+      address: 'Aracaju-SE: Av. Pedro Calazans, 717, Centro',
+      phone: '(79) 98166-4850',
+      whatsapp: '5579981664850',
       schedule: 'Seg à Sex: 08:00 às 18:00 | Sáb: 08:00 às 13:00',
       mapUrl: 'https://maps.google.com',
       images: [
@@ -285,9 +285,9 @@ export const StoresSection = () => {
     {
       id: 2,
       name: 'Moto e Cia - Filial',
-      address: 'Endereço da Filial - Aracaju, SE',
-      phone: '(79) 0000-0000',
-      whatsapp: '5579999999999',
+      address: 'N. Sra. do Socorro-SE: Av. Moacir de Oliveira, 37, João Alves',
+      phone: '(79) 99147-0176',
+      whatsapp: '5579991470176',
       schedule: 'Seg à Sex: 08:00 às 18:00 | Sáb: 08:00 às 13:00',
       mapUrl: 'https://maps.google.com',
       images: [

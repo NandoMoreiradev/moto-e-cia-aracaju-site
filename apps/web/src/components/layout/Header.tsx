@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import Link from 'next/link';
 import { useState } from 'react';
 import { usePathname } from 'next/navigation';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 import Image from 'next/image';
 import { MapPin, Facebook, Instagram } from 'lucide-react';
@@ -228,7 +229,7 @@ const HamburgerButton = styled.button`
   }
 `;
 
-const ContactButton = styled.a`
+const ContactButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.xs};
@@ -255,6 +256,7 @@ const ContactButton = styled.a`
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { openWhatsApp } = useWhatsApp();
 
   const toggleMenu = () => setIsOpen(!isOpen);
 
@@ -283,15 +285,15 @@ export function Header() {
             <StoreItem>
               <MapPin size={12} />
               <span>Aracaju-SE: Av. Pedro Calazans, 717, Centro</span>
-              <WhatsappLink href="https://wa.me/5579999999999" target="_blank" rel="noopener noreferrer">
-                <WhatsappIcon /> (79) 99999-9999
+              <WhatsappLink href="https://wa.me/5579981664850" target="_blank" rel="noopener noreferrer">
+                <WhatsappIcon /> (79) 98166-4850
               </WhatsappLink>
             </StoreItem>
             <StoreItem>
               <MapPin size={12} />
               <span>N. Sra. do Socorro-SE: Av. Moacir de Oliveira, 37, João Alves</span>
-              <WhatsappLink href="https://wa.me/5579999999999" target="_blank" rel="noopener noreferrer">
-                <WhatsappIcon /> (79) 99999-9999
+              <WhatsappLink href="https://wa.me/5579991470176" target="_blank" rel="noopener noreferrer">
+                <WhatsappIcon /> (79) 99147-0176
               </WhatsappLink>
             </StoreItem>
           </StoreInfoGroup>
@@ -326,9 +328,8 @@ export function Header() {
             </StyledLink>
           ))}
           <ContactButton
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}`}
-            target="_blank"
-            rel="noopener noreferrer"
+            onClick={() => openWhatsApp()}
+            style={{ border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 'inherit' }}
           >
             Fale com um Vendedor
           </ContactButton>

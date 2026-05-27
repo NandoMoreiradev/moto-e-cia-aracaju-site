@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { CheckCircle2, TrendingUp, Handshake, ShieldCheck } from 'lucide-react';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 /* ── Styled components ────────────────────────────────────────────────── */
 const SectionWrapper = styled.section`
@@ -176,7 +177,7 @@ const BenefitItem = styled.li`
   }
 `;
 
-const PrimaryButton = styled(Link)`
+const PrimaryButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -192,6 +193,7 @@ const PrimaryButton = styled(Link)`
   clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
   transition: all 0.3s ease;
   width: fit-content;
+  border: none; cursor: pointer; fontFamily: inherit;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primaryLight};
@@ -200,7 +202,7 @@ const PrimaryButton = styled(Link)`
   }
 `;
 
-const SecondaryButton = styled(Link)`
+const SecondaryButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -217,6 +219,7 @@ const SecondaryButton = styled(Link)`
   clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
   transition: all 0.3s ease;
   width: fit-content;
+  cursor: pointer; fontFamily: inherit;
 
   &:hover {
     background: ${({ theme }) => theme.colors.primary};
@@ -237,7 +240,7 @@ const ButtonGroup = styled.div`
 
 /* ── Component ────────────────────────────────────────────────── */
 export function PaymentOptions() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999';
+  const { openWhatsApp } = useWhatsApp();
 
   return (
     <SectionWrapper>
@@ -288,9 +291,7 @@ export function PaymentOptions() {
             </BenefitsList>
             <ButtonGroup>
               <PrimaryButton 
-                href={`https://wa.me/${whatsappNumber}?text=Olá,%20gostaria%20de%20saber%20mais%20sobre%20o%20Consórcio%20Nacional%20Suzuki`}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => openWhatsApp('Olá, gostaria de saber mais sobre o Consórcio Nacional Suzuki')}
               >
                 Fazer Simulação
               </PrimaryButton>
@@ -341,9 +342,7 @@ export function PaymentOptions() {
             </BenefitsList>
             <ButtonGroup>
               <SecondaryButton 
-                href={`https://wa.me/${whatsappNumber}?text=Olá,%20gostaria%20de%20fazer%20uma%20análise%20de%20crédito%20para%20financiamento`}
-                target="_blank"
-                rel="noopener noreferrer"
+                onClick={() => openWhatsApp('Olá, gostaria de fazer uma análise de crédito para financiamento')}
               >
                 Análise de Crédito
               </SecondaryButton>

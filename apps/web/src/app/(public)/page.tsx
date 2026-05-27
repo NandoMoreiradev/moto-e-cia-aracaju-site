@@ -11,6 +11,7 @@ import { PaymentOptions } from '@/components/common/PaymentOptions';
 import { StoresSection } from '@/components/common/StoresSection';
 import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
 import type { MotoDto, MarcaDto } from '@moto-e-cia/shared';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 /* ── Styled components ────────────────────────────────────────────────── */
 const BrandsSection = styled.section`
@@ -211,12 +212,13 @@ const CTAContent = styled.div`
   position: relative;
   z-index: 2;
 `;
-const WhatsAppButton = styled.a`
+const WhatsAppButton = styled.button`
   display: inline-flex; align-items: center; justify-content: center; gap: ${({ theme }) => theme.spacing.sm};
   padding: ${({ theme }) => `${theme.spacing.md} ${theme.spacing['3xl']}`};
   background: #25D366; color: ${({ theme }) => theme.colors.white};
   font-size: ${({ theme }) => theme.fontSizes.lg}; font-weight: 800;
   text-transform: uppercase; letter-spacing: 0.05em;
+  border: none; cursor: pointer;
   clip-path: polygon(15px 0, 100% 0, calc(100% - 15px) 100%, 0 100%);
   transition: all 0.3s ease; margin-top: ${({ theme }) => theme.spacing['2xl']};
   &:hover { background: #20b858; transform: scale(1.05) translateX(5px); box-shadow: 0 0 30px rgba(37, 211, 102, 0.5); }
@@ -249,6 +251,7 @@ export default function HomePage() {
   const [destaques, setDestaques] = useState<MotoDto[]>([]);
   const [marcas, setMarcas] = useState<MarcaDto[]>([]);
   const [loadingMotos, setLoadingMotos] = useState(true);
+  const { openWhatsApp } = useWhatsApp();
 
   useEffect(() => {
     Promise.all([
@@ -402,11 +405,7 @@ export default function HomePage() {
           <p style={{ color: 'rgba(255, 255, 255, 0.7)', margin: '1rem 0 2rem' }}>
             Nossa equipe está pronta para te ajudar a encontrar a moto perfeita para você.
           </p>
-          <WhatsAppButton
-            href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}`}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <WhatsAppButton onClick={() => openWhatsApp()}>
             Chamar no WhatsApp
           </WhatsAppButton>
         </CTAContent>

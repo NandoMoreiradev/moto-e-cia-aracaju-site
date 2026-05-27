@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight, X, Maximize2, Loader2 } from 'lucide-react';
 import { motos as motosApi } from '@/lib/api';
 import type { MotoDto } from '@moto-e-cia/shared';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 const TRANSMISSAO_LABEL: Record<string, string> = {
   MANUAL: 'Manual', AUTOMATICA: 'Automática', SEMI_AUTOMATICA: 'Semi-automática',
@@ -32,6 +33,8 @@ export default function MotoDetalhePage() {
     'dimensoes': false,
     'motor': false,
   });
+
+  const { openWhatsApp } = useWhatsApp();
 
   const toggleSpec = (group: string) => setOpenSpecs(prev => ({ ...prev, [group]: !prev[group] }));
   
@@ -72,9 +75,7 @@ export default function MotoDetalhePage() {
   const fotosOrdenadas = [...(moto.fotos || [])].sort((a, b) => (b.principal ? 1 : 0) - (a.principal ? 1 : 0));
   const fotoAtual = fotosOrdenadas[selectedFotoIndex] || null;
 
-  const whatsappMsg = encodeURIComponent(
-    `Olá! Tenho interesse na *${moto.nome}* (${moto.ano || ''}, ${moto.km === 0 ? '0 km' : `${(moto.km ?? 0).toLocaleString('pt-BR')} km`}). Pode me dar mais informações e verificar a disponibilidade?`
-  );
+  const whatsappMsg = `Olá! Tenho interesse na *${moto.nome}* (${moto.ano || ''}, ${moto.km === 0 ? '0 km' : `${(moto.km ?? 0).toLocaleString('pt-BR')} km`}). Pode me dar mais informações e verificar a disponibilidade?`;
 
   return (
     <div style={{ background: '#fafafa', minHeight: '100vh', color: '#111', fontFamily: 'inherit', overflowX: 'hidden' }}>
@@ -198,45 +199,42 @@ export default function MotoDetalhePage() {
 
         {/* CTAs (Tenho Interesse / Financiamento) */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', flexWrap: 'wrap' }}>
-            <a 
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${whatsappMsg}`}
-              target="_blank" rel="noopener noreferrer"
+            <button 
+              onClick={() => openWhatsApp(whatsappMsg)}
               style={{
                 background: '#e31b23', color: '#fff', borderRadius: '30px', 
                 padding: '16px 40px', fontSize: '14px', fontWeight: 800, 
-                textDecoration: 'none', transition: 'background 0.2s'
+                border: 'none', cursor: 'pointer', transition: 'background 0.2s', fontFamily: 'inherit'
               }}
               onMouseEnter={e => e.currentTarget.style.background = '#ff2028'}
               onMouseLeave={e => e.currentTarget.style.background = '#e31b23'}
             >
               FALE COM UM VENDEDOR
-            </a>
-            <a 
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${encodeURIComponent(`Olá, gostaria de simular um financiamento para a moto: ${moto.nome}.`)}`}
-              target="_blank" rel="noopener noreferrer"
+            </button>
+            <button 
+              onClick={() => openWhatsApp(`Olá, gostaria de simular um financiamento para a moto: ${moto.nome}.`)}
               style={{
                 background: '#fff', color: '#e31b23', border: '2px solid #e31b23', 
                 borderRadius: '30px', padding: '16px 40px', fontSize: '14px', 
-                fontWeight: 800, textDecoration: 'none', transition: 'all 0.2s'
+                fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit'
               }}
               onMouseEnter={e => { e.currentTarget.style.background = '#e31b23'; e.currentTarget.style.color = '#fff'; }}
               onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#e31b23'; }}
             >
               FINANCIAMENTO
-            </a>
-            <a 
-              href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${encodeURIComponent(`Olá, gostaria de simular um consórcio para a moto: ${moto.nome}.`)}`}
-              target="_blank" rel="noopener noreferrer"
+            </button>
+            <button 
+              onClick={() => openWhatsApp(`Olá, gostaria de simular um consórcio para a moto: ${moto.nome}.`)}
               style={{
                 background: '#fff', color: '#e31b23', border: '2px solid #e31b23', 
                 borderRadius: '30px', padding: '16px 40px', fontSize: '14px', 
-                fontWeight: 800, textDecoration: 'none', transition: 'all 0.2s'
+                fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit'
               }}
               onMouseEnter={e => { e.currentTarget.style.background = '#e31b23'; e.currentTarget.style.color = '#fff'; }}
               onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#e31b23'; }}
             >
               CONSÓRCIO
-            </a>
+            </button>
         </div>
       </section>
 
@@ -654,14 +652,13 @@ export default function MotoDetalhePage() {
       </section>
       
       {/* Botão Fixo WhatsApp Flutuante */}
-      <a 
-        href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP || '5579999999999'}?text=${whatsappMsg}`}
-        target="_blank" rel="noopener noreferrer"
+      <button 
+        onClick={() => openWhatsApp(whatsappMsg)}
         style={{
           position: 'fixed', bottom: '32px', right: '32px', zIndex: 999,
           background: '#25D366', color: '#fff', width: '64px', height: '64px', 
           borderRadius: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-          boxShadow: '0 8px 24px rgba(37, 211, 102, 0.4)', textDecoration: 'none',
+          boxShadow: '0 8px 24px rgba(37, 211, 102, 0.4)', border: 'none', cursor: 'pointer',
           transition: 'transform 0.2s'
         }}
         onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
@@ -675,7 +672,7 @@ export default function MotoDetalhePage() {
         >
           <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.414 0 .004 5.411.002 12.048c0 2.12.54 4.19 1.566 6.02L0 24l6.135-1.61a11.81 11.81 0 005.911 1.586h.005c6.637 0 12.048-5.411 12.05-12.048a11.82 11.82 0 00-3.418-8.521z"/>
         </svg>
-      </a>
+      </button>
 
     </div>
   );

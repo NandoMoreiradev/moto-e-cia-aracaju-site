@@ -4,6 +4,7 @@ import { Clock, Mail, MapPin, Smartphone, Facebook, Instagram } from 'lucide-rea
 import styled from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 const FooterContainer = styled.footer`
   background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
@@ -136,6 +137,32 @@ const ContactInfo = styled.div`
   }
 `;
 
+const WhatsappButton = styled.button`
+  display: flex;
+  align-items: flex-start;
+  gap: ${({ theme }) => theme.spacing.md};
+  color: rgba(255, 255, 255, 0.7);
+  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-weight: 500;
+  line-height: 1.6;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.3s ease;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary};
+  }
+
+  svg {
+    color: ${({ theme }) => theme.colors.primary};
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+`;
+
 const Copyright = styled.div`
   position: relative;
   z-index: 2;
@@ -150,6 +177,7 @@ const Copyright = styled.div`
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
+  const { openWhatsApp } = useWhatsApp();
 
   return (
     <FooterContainer>
@@ -207,10 +235,10 @@ export function Footer() {
               Av. Moacir de Oliveira, 37, João Alves
             </div>
           </ContactInfo>
-          <ContactInfo>
+          <WhatsappButton onClick={() => openWhatsApp()}>
             <Smartphone size={18} />
-            <span>(79) 99999-9999 (WhatsApp)</span>
-          </ContactInfo>
+            <span>Fale pelo WhatsApp</span>
+          </WhatsappButton>
           <ContactInfo>
             <Mail size={18} />
             <span>contato@motoeciaaracaju.com.br</span>

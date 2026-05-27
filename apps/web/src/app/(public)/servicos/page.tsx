@@ -3,6 +3,7 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
 import { Wrench, MessageCircle } from 'lucide-react';
+import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
 const PageContainer = styled.div`
   /* Removes padding from container to allow full-width banner */
@@ -188,12 +189,15 @@ const CTADesc = styled.p`
   font-weight: 500;
 `;
 
-const CTAButton = styled.a`
+const CTAButton = styled.button`
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 12px;
   background: #25D366;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
   color: white;
   padding: 18px 40px;
   font-size: 18px;
@@ -253,6 +257,8 @@ const SERVICOS = [
 ];
 
 export default function ServicosPage() {
+  const { openWhatsApp } = useWhatsApp();
+
   return (
     <PageContainer>
       <HeroBanner>
@@ -289,7 +295,7 @@ export default function ServicosPage() {
           <Wrench size={48} color="#0055A4" style={{ marginBottom: '16px' }} />
           <CTATitle>Precisa de manutenção?</CTATitle>
           <CTADesc>Agende sua revisão ou tire dúvidas com nossos mecânicos especialistas direto pelo WhatsApp.</CTADesc>
-          <CTAButton href="https://wa.me/5579999999999?text=Olá,%20gostaria%20de%20agendar%20um%20serviço%20na%20oficina!" target="_blank" rel="noopener noreferrer">
+          <CTAButton onClick={() => openWhatsApp('Olá, gostaria de agendar um serviço na oficina!')}>
             <MessageCircle size={24} /> Falar com a Oficina
           </CTAButton>
         </CTAContentWrapper>
