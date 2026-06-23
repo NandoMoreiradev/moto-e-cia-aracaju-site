@@ -6,7 +6,7 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { motos as motosApi, marcas as marcasApi } from '@/lib/api';
 import type { MotoDto, MarcaMoto, TipoMoto, MarcaDto } from '@moto-e-cia/shared';
-import { Calendar, Gauge, Palette, Search, X, Star, Eye, Zap, Box } from 'lucide-react';
+import { Calendar, Gauge, Palette, Search, X, Star, Eye, Zap, Box, ArrowLeft, Bell, MoreVertical, Grid, UserPlus, Link as LinkIcon, Images, PlaySquare } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useWhatsApp } from '@/contexts/WhatsAppContext';
 
@@ -97,7 +97,7 @@ export default function MotosPage() {
   function resetFilters() { setMarca(''); setTipo(''); setSearch(''); setCondicao(''); setPage(1); }
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f8f8f8' }}>
+    <div className="page-wrapper" style={{ minHeight: '100vh', background: '#f8f8f8' }}>
       <style dangerouslySetInnerHTML={{ __html: `
         .motos-grid {
           display: grid;
@@ -106,26 +106,62 @@ export default function MotosPage() {
         }
 
         @media (max-width: 768px) {
+          .page-wrapper {
+            background: #000 !important;
+            color: #f5f5f5 !important;
+          }
           .motos-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 1px;
             padding: 0;
-            background: #fff;
+            background: #000;
           }
           .desktop-header {
             display: none !important;
           }
           .mobile-bio-header {
             display: block !important;
+            background: #000 !important;
+            color: #f5f5f5 !important;
           }
           .main-content-container {
             padding: 0 !important;
           }
           .marcas-scroll {
-            padding: 16px 16px !important;
+            padding: 0 16px 16px !important;
             margin-bottom: 0 !important;
-            border-bottom: 1px solid #efefef;
-            gap: 12px !important;
+            gap: 16px !important;
+            border-bottom: 1px solid #262626 !important;
+            scrollbar-width: none;
+          }
+          .marcas-scroll::-webkit-scrollbar {
+            display: none;
+          }
+          .insta-story-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+            flex: 0 0 auto;
+          }
+          .marca-btn {
+            width: 64px !important;
+            height: 64px !important;
+            border-radius: 50% !important;
+            padding: 2px !important;
+            border: 1px solid #363636 !important;
+            background: #000 !important;
+            opacity: 1 !important;
+            filter: none !important;
+            box-shadow: none !important;
+            transform: none !important;
+            flex-direction: row;
+          }
+          .marca-btn.active-story {
+            border: 2px solid transparent !important;
+            background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%) !important;
+            background-origin: border-box !important;
+            background-clip: padding-box, border-box !important;
           }
           .filters-container {
             display: none !important;
@@ -139,28 +175,37 @@ export default function MotosPage() {
             position: relative;
             overflow: hidden;
             cursor: pointer;
+            background: #262626;
           }
           .mobile-insta-item img {
             width: 100%;
             height: 100%;
             object-fit: cover;
           }
-          .marca-btn {
-            width: 72px !important;
-            height: 72px !important;
-            border-radius: 50% !important;
-            padding: 12px !important;
-            flex-direction: column;
-            gap: 4px;
+          .mobile-tabs {
+            display: flex !important;
+            border-bottom: 1px solid #262626;
           }
-          .marca-btn span {
-            font-size: 9px !important;
+          .mobile-tab {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            padding: 12px 0;
+            color: #888;
+            border-bottom: 1px solid transparent;
+          }
+          .mobile-tab.active {
+            color: #fff;
+            border-bottom: 1px solid #fff;
+          }
+          .desktop-marcas-scroll {
+            display: none !important;
           }
         }
 
         @media (min-width: 769px) {
-          .mobile-insta-item {
-            display: none;
+          .mobile-insta-item, .mobile-tabs, .mobile-bio-header, .mobile-marcas-scroll {
+            display: none !important;
           }
         }
       `}} />
@@ -193,58 +238,69 @@ export default function MotosPage() {
       </div>
 
       {/* Instagram-style Bio Header - mobile only */}
-      <div className="mobile-bio-header" style={{
-        background: '#fff',
-        padding: '24px 16px 20px',
-        borderBottom: '1px solid #efefef',
-        display: 'none'
-      }}>
-        <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center', marginBottom: '16px', padding: '0 20px' }}>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '16px', color: '#111' }}>{total}</div>
-            <div style={{ fontSize: '12px', color: '#262626' }}>Motos</div>
+      <div className="mobile-bio-header">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <ArrowLeft size={24} />
+            <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>motoeciaaracaju_oficial</h1>
           </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '16px', color: '#111' }}>{marcas.length}</div>
-            <div style={{ fontSize: '12px', color: '#262626' }}>Marcas</div>
-          </div>
-          <div>
-            <div style={{ fontWeight: 700, fontSize: '16px', color: '#111' }}>+ de 5000</div>
-            <div style={{ fontSize: '12px', color: '#262626' }}>Clientes</div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <Bell size={24} />
+            <MoreVertical size={24} />
           </div>
         </div>
-        <div>
-          <h2 style={{ fontSize: '14px', fontWeight: 700, color: '#111', margin: '0 0 4px' }}>Moto e Cia Aracaju</h2>
-          <p style={{ fontSize: '14px', color: '#262626', margin: '0 0 16px', lineHeight: '1.4' }}>
-            Qualidade, procedência e as melhores marcas. Realizando sonhos sobre duas rodas desde 2011. <br/>
-            📍 Av. Pedro Calazans, 717, Centro, Aracaju-SE
-          </p>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <a 
-              href="https://www.instagram.com/suzukiaracaju_motoecia/" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              style={{ flex: 1, background: '#efefef', textDecoration: 'none', textAlign: 'center', borderRadius: '8px', padding: '8px 0', fontSize: '14px', fontWeight: 600, color: '#111' }}
-            >
-              Seguir
-            </a>
-            <button 
-              onClick={() => openWhatsApp()}
-              style={{ flex: 1, background: '#efefef', textDecoration: 'none', textAlign: 'center', borderRadius: '8px', padding: '8px 0', fontSize: '14px', fontWeight: 600, color: '#111', border: 'none', cursor: 'pointer', fontFamily: 'inherit' }}
-            >
-              Fale no Whatsapp
-            </button>
+        
+        <div style={{ display: 'flex', alignItems: 'center', padding: '0 16px', marginBottom: '16px', gap: '20px' }}>
+          <div style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', padding: '3px' }}>
+            <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#000', overflow: 'hidden', border: '2px solid #000' }}>
+              <Image src="/logo_moto_e_cia.png" alt="Logo" width={80} height={80} style={{ objectFit: 'cover' }} />
+            </div>
           </div>
+          <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', textAlign: 'center' }}>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '16px' }}>{total}</div>
+              <div style={{ fontSize: '13px', color: '#f5f5f5' }}>posts</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '16px' }}>48 mil</div>
+              <div style={{ fontSize: '13px', color: '#f5f5f5' }}>seguidores</div>
+            </div>
+            <div>
+              <div style={{ fontWeight: 700, fontSize: '16px' }}>4.077</div>
+              <div style={{ fontSize: '13px', color: '#f5f5f5' }}>seguindo</div>
+            </div>
+          </div>
+        </div>
+
+        <div style={{ padding: '0 16px', marginBottom: '16px' }}>
+          <h2 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 4px' }}>Moto & Cia Aracaju Oficial</h2>
+          <p style={{ fontSize: '14px', margin: '0 0 4px', lineHeight: '1.4' }}>
+            🏆A mais de 20 anos sendo referência em motos em Sergipe<br/>
+            🚩Compro | Vendo | Troco | Financio | Serviços | Peças e Acessórios
+          </p>
+          <a href="https://linktr.ee/motoeciasuzuki" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e0f1ff', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
+            <LinkIcon size={14} /> linktr.ee/motoeciasuzuki e 1 outra pessoa
+          </a>
+          <p style={{ fontSize: '13px', color: '#a8c7fa', margin: '4px 0 0' }}>Av Pedro Calazans 717, Aracaju, Brazil 49010490</p>
+        </div>
+
+        <div style={{ padding: '0 16px', display: 'flex', gap: '8px', marginBottom: '16px' }}>
+          <button style={{ flex: 1, background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>Seguindo <span style={{fontSize:'10px'}}>v</span></button>
+          <button style={{ flex: 1, background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Mensagem</button>
+          <button onClick={() => openWhatsApp()} style={{ flex: 1, background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Contato</button>
+          <button style={{ background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><UserPlus size={16} /></button>
         </div>
       </div>
 
       <div className="main-content-container" style={{ maxWidth: '1280px', margin: '0 auto', padding: '32px 24px' }}>
         {marcas.length > 0 && (
-          <div className="marcas-scroll" style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '72px', scrollbarWidth: 'none' }}>
+          <>
+          {/* Desktop Marcas */}
+          <div className="marcas-scroll desktop-marcas-scroll" style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '72px', scrollbarWidth: 'none' }}>
             {marcas.map(m => (
               <button
                 key={m.id}
-                className="marca-btn"
+                className="marca-btn-desktop"
                 onClick={() => {
                   setMarca(marca === m.nome ? '' : m.nome as any);
                   setCondicao('');
@@ -270,7 +326,7 @@ export default function MotosPage() {
               </button>
             ))}
             <button
-              className="marca-btn"
+              className="marca-btn-desktop"
               onClick={() => {
                 setCondicao(condicao === 'SEMINOVA' ? '' : 'SEMINOVA');
                 setMarca('');
@@ -291,6 +347,54 @@ export default function MotosPage() {
               <span style={{ fontSize: '13px', fontWeight: 800, textTransform: 'uppercase', color: condicao === 'SEMINOVA' ? '#0055A4' : '#888' }}>Seminovas</span>
             </button>
           </div>
+
+          {/* Mobile Marcas */}
+          <div className="marcas-scroll mobile-marcas-scroll" style={{ display: 'flex', gap: '16px', overflowX: 'auto', padding: '4px 0 16px', marginBottom: '72px', scrollbarWidth: 'none' }}>
+            <div className="insta-story-container">
+              <button
+                className={`marca-btn ${condicao === 'SEMINOVA' ? 'active-story' : ''}`}
+                onClick={() => {
+                  setCondicao(condicao === 'SEMINOVA' ? '' : 'SEMINOVA');
+                  setMarca('');
+                  setPage(1);
+                }}
+                style={{
+                  opacity: marca ? 0.5 : 1
+                }}
+              >
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                   <img src="/logo_moto_e_cia.png" alt="Seminovas" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
+                </div>
+              </button>
+              <span style={{ fontSize: '11px', color: condicao === 'SEMINOVA' ? '#fff' : '#f5f5f5', fontWeight: condicao === 'SEMINOVA' ? 700 : 400 }}>SEMINOVAS</span>
+            </div>
+            
+            {marcas.map(m => (
+              <div key={m.id} className="insta-story-container">
+                <button
+                  className={`marca-btn ${marca === m.nome ? 'active-story' : ''}`}
+                  onClick={() => {
+                    setMarca(marca === m.nome ? '' : m.nome as any);
+                    setCondicao('');
+                    setPage(1);
+                  }}
+                  style={{
+                    opacity: (marca && marca !== m.nome) || condicao === 'SEMINOVA' ? 0.5 : 1
+                  }}
+                >
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                    {m.logoUrl ? (
+                      <img src={m.logoUrl} alt={m.nome} style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+                    ) : (
+                      <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: '#fff' }}>{m.nome.substring(0,3)}</span>
+                    )}
+                  </div>
+                </button>
+                <span style={{ fontSize: '11px', color: marca === m.nome ? '#fff' : '#f5f5f5', textTransform: 'uppercase', fontWeight: marca === m.nome ? 700 : 400, whiteSpace: 'nowrap' }}>{m.nome}</span>
+              </div>
+            ))}
+          </div>
+          </>
         )}
 
         {/* Filters */}
@@ -322,6 +426,19 @@ export default function MotosPage() {
               <X size={14} /> Limpar
             </button>
           )}
+        </div>
+
+        {/* Mobile Tabs */}
+        <div className="mobile-tabs" style={{ display: 'none' }}>
+          <div className="mobile-tab active">
+            <Grid size={24} />
+          </div>
+          <div className="mobile-tab">
+            <PlaySquare size={24} />
+          </div>
+          <div className="mobile-tab">
+            <UserPlus size={24} />
+          </div>
         </div>
 
         {/* Grid */}
@@ -400,13 +517,29 @@ export default function MotosPage() {
                     {foto ? (
                       <img src={foto.url} alt={moto.nome} />
                     ) : (
-                      <div style={{ width: '100%', height: '100%', background: '#eee', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🏍️</div>
+                      <div style={{ width: '100%', height: '100%', background: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px' }}>🏍️</div>
                     )}
-                    {moto.destaque && (
+                    {moto.fotos && moto.fotos.length > 1 ? (
+                      <div style={{ position: 'absolute', top: '8px', right: '8px', color: '#fff' }}>
+                        <Images size={16} fill="currentColor" />
+                      </div>
+                    ) : moto.destaque ? (
                       <div style={{ position: 'absolute', top: '5px', right: '5px', color: '#fff' }}>
                         <Star size={12} fill="#E2231A" stroke="#E2231A" />
                       </div>
-                    )}
+                    ) : null}
+                    <div style={{ position: 'absolute', bottom: '8px', left: '8px', display: 'flex', gap: '4px' }}>
+                      {moto.condicao && (
+                        <div style={{ background: moto.condicao === 'NOVA' ? '#fff' : 'rgba(0,0,0,0.6)', color: moto.condicao === 'NOVA' ? '#000' : '#fff', fontSize: '11px', fontWeight: 800, padding: '2px 4px', borderRadius: '2px' }}>
+                           {moto.condicao === 'NOVA' ? 'Novo' : 'Semi'}
+                        </div>
+                      )}
+                      {moto.preco && (
+                        <div style={{ background: '#E2231A', color: '#fff', fontSize: '11px', fontWeight: 800, padding: '2px 4px', borderRadius: '2px' }}>
+                           R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 0 })}
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </React.Fragment>
               );
