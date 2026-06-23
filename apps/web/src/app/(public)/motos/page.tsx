@@ -107,22 +107,22 @@ export default function MotosPage() {
 
         @media (max-width: 768px) {
           .page-wrapper {
-            background: #000 !important;
-            color: #f5f5f5 !important;
+            background: #fff !important;
+            color: #111 !important;
           }
           .motos-grid {
             grid-template-columns: repeat(3, 1fr);
             gap: 1px;
             padding: 0;
-            background: #000;
+            background: #fff;
           }
           .desktop-header {
             display: none !important;
           }
           .mobile-bio-header {
             display: block !important;
-            background: #000 !important;
-            color: #f5f5f5 !important;
+            background: #fff !important;
+            color: #111 !important;
           }
           .main-content-container {
             padding: 0 !important;
@@ -131,7 +131,7 @@ export default function MotosPage() {
             padding: 0 16px 16px !important;
             margin-bottom: 0 !important;
             gap: 16px !important;
-            border-bottom: 1px solid #262626 !important;
+            border-bottom: 1px solid #efefef !important;
             scrollbar-width: none;
           }
           .marcas-scroll::-webkit-scrollbar {
@@ -149,8 +149,8 @@ export default function MotosPage() {
             height: 64px !important;
             border-radius: 50% !important;
             padding: 2px !important;
-            border: 1px solid #363636 !important;
-            background: #000 !important;
+            border: 1px solid #e5e5e5 !important;
+            background: #fff !important;
             opacity: 1 !important;
             filter: none !important;
             box-shadow: none !important;
@@ -175,7 +175,7 @@ export default function MotosPage() {
             position: relative;
             overflow: hidden;
             cursor: pointer;
-            background: #262626;
+            background: #efefef;
           }
           .mobile-insta-item img {
             width: 100%;
@@ -184,7 +184,7 @@ export default function MotosPage() {
           }
           .mobile-tabs {
             display: flex !important;
-            border-bottom: 1px solid #262626;
+            border-bottom: 1px solid #efefef;
           }
           .mobile-tab {
             flex: 1;
@@ -195,8 +195,8 @@ export default function MotosPage() {
             border-bottom: 1px solid transparent;
           }
           .mobile-tab.active {
-            color: #fff;
-            border-bottom: 1px solid #fff;
+            color: #111;
+            border-bottom: 1px solid #111;
           }
           .desktop-marcas-scroll {
             display: none !important;
@@ -252,22 +252,22 @@ export default function MotosPage() {
         
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 16px', marginBottom: '16px', gap: '20px' }}>
           <div style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', padding: '3px' }}>
-            <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#000', overflow: 'hidden', border: '2px solid #000' }}>
+            <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', overflow: 'hidden', border: '2px solid #fff' }}>
               <Image src="/logo_moto_e_cia.png" alt="Logo" width={80} height={80} style={{ objectFit: 'cover' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', textAlign: 'center' }}>
             <div>
               <div style={{ fontWeight: 700, fontSize: '16px' }}>{total}</div>
-              <div style={{ fontSize: '13px', color: '#f5f5f5' }}>posts</div>
+              <div style={{ fontSize: '13px', color: '#111' }}>posts</div>
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '16px' }}>48 mil</div>
-              <div style={{ fontSize: '13px', color: '#f5f5f5' }}>seguidores</div>
+              <div style={{ fontSize: '13px', color: '#111' }}>seguidores</div>
             </div>
             <div>
               <div style={{ fontWeight: 700, fontSize: '16px' }}>4.077</div>
-              <div style={{ fontSize: '13px', color: '#f5f5f5' }}>seguindo</div>
+              <div style={{ fontSize: '13px', color: '#111' }}>seguindo</div>
             </div>
           </div>
         </div>
@@ -275,20 +275,20 @@ export default function MotosPage() {
         <div style={{ padding: '0 16px', marginBottom: '16px' }}>
           <h2 style={{ fontSize: '14px', fontWeight: 700, margin: '0 0 4px' }}>Moto & Cia Aracaju Oficial</h2>
           <p style={{ fontSize: '14px', margin: '0 0 4px', lineHeight: '1.4' }}>
-            🏆A mais de 20 anos sendo referência em motos em Sergipe<br/>
-            🚩Compro | Vendo | Troco | Financio | Serviços | Peças e Acessórios
+            🏆Há mais de 20 anos sendo referência em motos<br/>
+            📍Aracaju e N. Sra. do Socorro<br/>
+            📱(79) 98166-4850 | (79) 99147-0176
           </p>
-          <a href="https://linktr.ee/motoeciasuzuki" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#e0f1ff', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
+          <a href="https://linktr.ee/motoeciasuzuki" target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#00376b', fontSize: '14px', textDecoration: 'none', fontWeight: 600 }}>
             <LinkIcon size={14} /> linktr.ee/motoeciasuzuki e 1 outra pessoa
           </a>
-          <p style={{ fontSize: '13px', color: '#a8c7fa', margin: '4px 0 0' }}>Av Pedro Calazans 717, Aracaju, Brazil 49010490</p>
         </div>
 
         <div style={{ padding: '0 16px', display: 'flex', gap: '8px', marginBottom: '16px' }}>
-          <button style={{ flex: 1, background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>Seguindo <span style={{fontSize:'10px'}}>v</span></button>
-          <button style={{ flex: 1, background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Mensagem</button>
-          <button onClick={() => openWhatsApp()} style={{ flex: 1, background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Contato</button>
-          <button style={{ background: '#363636', color: '#fff', border: 'none', borderRadius: '8px', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><UserPlus size={16} /></button>
+          <button style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>Seguindo <span style={{fontSize:'10px'}}>v</span></button>
+          <button style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Mensagem</button>
+          <button onClick={() => openWhatsApp()} style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Contato</button>
+          <button style={{ background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><UserPlus size={16} /></button>
         </div>
       </div>
 
@@ -362,11 +362,11 @@ export default function MotosPage() {
                   opacity: marca ? 0.5 : 1
                 }}
               >
-                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                    <img src="/logo_moto_e_cia.png" alt="Seminovas" style={{ width: '60%', height: '60%', objectFit: 'contain' }} />
                 </div>
               </button>
-              <span style={{ fontSize: '11px', color: condicao === 'SEMINOVA' ? '#fff' : '#f5f5f5', fontWeight: condicao === 'SEMINOVA' ? 700 : 400 }}>SEMINOVAS</span>
+              <span style={{ fontSize: '11px', color: '#111', fontWeight: condicao === 'SEMINOVA' ? 700 : 400 }}>SEMINOVAS</span>
             </div>
             
             {marcas.map(m => (
@@ -382,15 +382,15 @@ export default function MotosPage() {
                     opacity: (marca && marca !== m.nome) || condicao === 'SEMINOVA' ? 0.5 : 1
                   }}
                 >
-                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#262626', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                  <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#f8f8f8', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
                     {m.logoUrl ? (
-                      <img src={m.logoUrl} alt={m.nome} style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain', filter: 'brightness(0) invert(1)' }} />
+                      <img src={m.logoUrl} alt={m.nome} style={{ maxWidth: '70%', maxHeight: '70%', objectFit: 'contain' }} />
                     ) : (
-                      <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: '#fff' }}>{m.nome.substring(0,3)}</span>
+                      <span style={{ fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', color: '#111' }}>{m.nome.substring(0,3)}</span>
                     )}
                   </div>
                 </button>
-                <span style={{ fontSize: '11px', color: marca === m.nome ? '#fff' : '#f5f5f5', textTransform: 'uppercase', fontWeight: marca === m.nome ? 700 : 400, whiteSpace: 'nowrap' }}>{m.nome}</span>
+                <span style={{ fontSize: '11px', color: '#111', textTransform: 'uppercase', fontWeight: marca === m.nome ? 700 : 400, whiteSpace: 'nowrap' }}>{m.nome}</span>
               </div>
             ))}
           </div>
