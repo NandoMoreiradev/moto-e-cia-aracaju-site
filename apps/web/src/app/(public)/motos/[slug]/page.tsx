@@ -39,6 +39,7 @@ export default function MotoDetalhePage() {
   const toggleSpec = (group: string) => setOpenSpecs(prev => ({ ...prev, [group]: !prev[group] }));
   
   const scrollRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -124,33 +125,63 @@ export default function MotoDetalhePage() {
         {/* Slogan ou Título Fallback */}
         {moto.logoUrl ? (
           moto.slogan && (
-            <div style={{ marginBottom: '32px', fontSize: '20px', fontWeight: 700, letterSpacing: '2px', color: '#111', textTransform: 'uppercase' }}>
+            <div style={{ marginBottom: '16px', fontSize: '20px', fontWeight: 700, letterSpacing: '2px', color: '#111', textTransform: 'uppercase' }}>
               {moto.slogan}
             </div>
           )
         ) : (
-          <h2 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, marginBottom: '24px', color: '#333' }}>
+          <h2 style={{ fontSize: 'clamp(32px, 5vw, 48px)', fontWeight: 800, marginBottom: '16px', color: '#333' }}>
             Conquiste sua <span style={{ color: '#e31b23' }}>{moto.nome}</span>
           </h2>
         )}
         
-        {/* Badge de Preço */}
-        {moto.preco && (
-          <div style={{ 
-            display: 'inline-block', 
-            background: '#fff', 
-            padding: '16px 36px', 
-            borderRadius: '40px', 
-            border: '1px solid #eaeaea',
-            boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
-            marginBottom: '40px'
-          }}>
-            <div style={{ color: '#e31b23', fontSize: '28px', fontWeight: 900, letterSpacing: '-0.5px' }}>
-              R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span style={{fontSize:'14px', fontWeight:700, marginLeft: '4px'}}>+ frete</span>
+        {/* Agrupamento Preço e Condição */}
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '40px' }}>
+          
+          {/* Badge de Preço */}
+          {moto.preco && (
+            <div style={{ 
+              display: 'inline-block', 
+              background: '#fff', 
+              padding: '16px 36px', 
+              borderRadius: '40px', 
+              border: '1px solid #eaeaea',
+              boxShadow: '0 8px 24px rgba(0,0,0,0.04)',
+              marginBottom: moto.condicao === 'SEMINOVA' ? '12px' : '0'
+            }}>
+              <div style={{ color: '#e31b23', fontSize: '28px', fontWeight: 900, letterSpacing: '-0.5px' }}>
+                R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span style={{fontSize:'14px', fontWeight:700, marginLeft: '4px'}}>+ frete</span>
+              </div>
+              <div style={{ color: '#111', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>*preço público sugerido</div>
             </div>
-            <div style={{ color: '#111', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>*preço público sugerido</div>
-          </div>
-        )}
+          )}
+
+          {/* Badge Condição / KM */}
+          {moto.condicao === 'SEMINOVA' && (
+            <div style={{ 
+              display: 'inline-flex', 
+              alignItems: 'center', 
+              background: '#f9f9f9', 
+              padding: '6px 16px', 
+              borderRadius: '20px', 
+              color: '#444',
+              fontSize: '12px',
+              fontWeight: 700,
+              border: '1px solid #eaeaea',
+              gap: '6px'
+            }}>
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333', color: '#fff', width: '14px', height: '14px', borderRadius: '50%', fontSize: '8px' }}>✓</span> 
+              SEMINOVA 
+              {moto.km !== null && (
+                <>
+                  <span style={{ color: '#999', margin: '0 2px' }}>•</span>
+                  {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                </>
+              )}
+            </div>
+          )}
+
+        </div>
 
         {/* Imagem da Moto Isolada */}
         <div style={{ position: 'relative', height: '55vh', minHeight: '350px', marginBottom: '40px' }}>
@@ -295,12 +326,19 @@ export default function MotoDetalhePage() {
                 el.style.userSelect = 'none';
                 el.style.scrollBehavior = 'auto'; // Disable smooth for drag
                 
+                // Disable scroll snap while dragging for smoother experience
+                el.style.scrollSnapType = 'none';
+                
                 const startX = e.pageX - el.offsetLeft;
                 const scrollLeft = el.scrollLeft;
+                isDraggingRef.current = false;
                 
                 const onMouseMove = (e: MouseEvent) => {
                   const x = e.pageX - el.offsetLeft;
                   const walk = (x - startX) * 2;
+                  if (Math.abs(walk) > 5) {
+                    isDraggingRef.current = true;
+                  }
                   el.scrollLeft = scrollLeft - walk;
                 };
                 
@@ -308,8 +346,15 @@ export default function MotoDetalhePage() {
                   el.style.cursor = 'grab';
                   el.style.userSelect = 'auto';
                   el.style.scrollBehavior = 'smooth';
+                  // Restore scroll snap
+                  el.style.scrollSnapType = '';
+                  
                   window.removeEventListener('mousemove', onMouseMove);
                   window.removeEventListener('mouseup', onMouseUp);
+                  
+                  setTimeout(() => {
+                    isDraggingRef.current = false;
+                  }, 50);
                 };
                 
                 window.addEventListener('mousemove', onMouseMove);
@@ -327,7 +372,11 @@ export default function MotoDetalhePage() {
                 <motion.div 
                   key={foto.id} 
                   whileHover={{ y: -5 }}
-                  onClick={() => {
+                  onClick={(e) => {
+                    if (isDraggingRef.current) {
+                      e.preventDefault();
+                      return;
+                    }
                     setModalImageIndex(i);
                     setIsModalOpen(true);
                   }}

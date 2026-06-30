@@ -1,21 +1,11 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
-
-// Seed: npx ts-node --project ../../prisma/tsconfig.json ../../prisma/seed.ts
-// (executar a partir de apps/api/)
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
-// ==========================================
-// USERS & AUTH
-// ==========================================
 
 model User {
   id        String   @id @default(cuid())
@@ -29,71 +19,126 @@ model User {
   @@map("users")
 }
 
-enum Role {
-  ADMIN
-  EDITOR
-}
-
-// ==========================================
-// MOTOS
-// ==========================================
-
 model Moto {
-  id             String     @id @default(cuid())
-  slug           String     @unique
+  id             String       @id @default(cuid())
+  slug           String       @unique
   nome           String
   marca          MarcaMoto
   tipo           TipoMoto
-  preco          Decimal?   @db.Decimal(10, 2)
+  preco          Decimal?     @db.Decimal(10, 2)
   precoFormatado String?
-  descricao      String     @db.Text
-  specs          Json       @default("{}")
-  destaque       Boolean    @default(false)
-  status         StatusMoto @default(DISPONIVEL)
-  metaProductId  String?    // ID do produto sincronizado com Meta Commerce
-
-  // Imagem de Capa (Hero Banner)
-  capaUrl        String?
+  descricao      String
+  specs          Json         @default("{}")
+  destaque       Boolean      @default(false)
+  status         StatusMoto   @default(DISPONIVEL)
+  metaProductId  String?
+  ano            Int?
+  km             Int?
+  cor            String?
+  vin            String?
+  combustivel    Combustivel  @default(GASOLINA)
+  transmissao    Transmissao  @default(MANUAL)
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
   capaR2Key      String?
-
-  // Logomarca e Slogan
-  logoUrl        String?
+  capaUrl        String?
   logoR2Key      String?
+  logoUrl        String?
   slogan         String?
-  diferenciais   String?    @db.Text
-
-  // Condição da moto
-  condicao      CondicaoMoto @default(NOVA)
-
-  // Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0)
-  ano           Int?        // Ano de fabricação
-  km            Int?        // Quilometragem (0 = zero km)
-  cor           String?     // Cor principal
-  vin           String?     // Número de chassi / VIN (opcional mas recomendado)
-  combustivel   Combustivel @default(GASOLINA)
-  transmissao   Transmissao @default(MANUAL)
-
-  fotos MotoFoto[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  diferenciais   String?
+  condicao       CondicaoMoto @default(NOVA)
+  fotos          MotoFoto[]
 
   @@map("motos")
 }
 
 model MotoFoto {
   id        String  @id @default(cuid())
-  url       String  // URL pública do Cloudflare R2
-  r2Key     String  // Chave do objeto no bucket R2
+  url       String
+  r2Key     String
   principal Boolean @default(false)
   ordem     Int     @default(0)
-  corHex    String? // Código Hexadecimal para o dot de seleção
-  corNome   String? // Nome da cor (ex: Vermelho Candy)
-
-  motoId String
-  moto   Moto   @relation(fields: [motoId], references: [id], onDelete: Cascade)
+  motoId    String
+  corHex    String?
+  corNome   String?
+  moto      Moto    @relation(fields: [motoId], references: [id], onDelete: Cascade)
 
   @@map("moto_fotos")
+}
+
+model BlogPost {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  titulo      String
+  resumo      String
+  conteudo    Json      @default("{}")
+  coverUrl    String?
+  coverR2Key  String?
+  tags        String[]
+  publicado   Boolean   @default(false)
+  publicadoEm DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("blog_posts")
+}
+
+model Lead {
+  id            String   @id @default(cuid())
+  nome          String
+  email         String
+  whatsapp      String?
+  mensagem      String
+  motoInteresse String?
+  lido          Boolean  @default(false)
+  createdAt     DateTime @default(now())
+
+  @@map("leads")
+}
+
+model SiteConfig {
+  id        String   @id @default(cuid())
+  key       String   @unique
+  value     Json
+  updatedAt DateTime @updatedAt
+
+  @@map("site_configs")
+}
+
+model Banner {
+  id               String   @id @default(cuid())
+  label            String?
+  titulo           String?
+  subtitulo        String?
+  imageUrl         String
+  imageR2Key       String
+  link             String?
+  ordem            Int      @default(0)
+  ativo            Boolean  @default(true)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  mobileImageUrl   String?
+  mobileImageR2Key String?
+
+  @@map("banners")
+}
+
+model Marca {
+  id        String   @id @default(cuid())
+  nome      String   @unique
+  logoUrl   String
+  logoR2Key String
+  ordem     Int      @default(0)
+  ativa     Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("marcas")
+}
+
+enum Role {
+  ADMIN
+  EDITOR
 }
 
 enum MarcaMoto {
@@ -139,98 +184,4 @@ enum Transmissao {
   MANUAL
   AUTOMATICA
   SEMI_AUTOMATICA
-}
-
-// ==========================================
-// BLOG
-// ==========================================
-
-model BlogPost {
-  id          String    @id @default(cuid())
-  slug        String    @unique
-  titulo      String
-  resumo      String    @db.Text
-  conteudo    Json      @default("{}") // TipTap JSON
-  coverUrl    String?   // URL pública do Cloudflare R2
-  coverR2Key  String?   // Chave do objeto no bucket R2
-  tags        String[]
-  publicado   Boolean   @default(false)
-  publicadoEm DateTime?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@map("blog_posts")
-}
-
-// ==========================================
-// LEADS / CONTATO
-// ==========================================
-
-model Lead {
-  id             String  @id @default(cuid())
-  nome           String
-  email          String
-  whatsapp       String?
-  mensagem       String  @db.Text
-  motoInteresse  String? // slug da moto de interesse
-  lido           Boolean @default(false)
-
-  createdAt DateTime @default(now())
-
-  @@map("leads")
-}
-
-// ==========================================
-// CONFIGURAÇÕES DO SITE
-// ==========================================
-
-model SiteConfig {
-  id    String @id @default(cuid())
-  key   String @unique
-  value Json
-
-  updatedAt DateTime @updatedAt
-
-  @@map("site_configs")
-}
-// ==========================================
-// BANNERS (Hero Carousel)
-// ==========================================
-
-model Banner {
-  id          String   @id @default(cuid())
-  label       String?  // Ex: "Performance Pura"
-  titulo      String?  // Ex: "Suzuki GSX-R1000R"
-  subtitulo   String?  @db.Text
-  imageUrl         String
-  imageR2Key       String
-  mobileImageUrl   String?
-  mobileImageR2Key String?
-  link             String?  // URL para onde o banner aponta
-  ordem       Int      @default(0)
-  ativo       Boolean  @default(true)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("banners")
-}
-
-// ==========================================
-// MARCAS OFICIAIS
-// ==========================================
-
-model Marca {
-  id          String   @id @default(cuid())
-  nome        String   @unique // Ex: "SUZUKI"
-  logoUrl     String
-  logoR2Key   String
-  ordem       Int      @default(0)
-  ativa       Boolean  @default(true)
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@map("marcas")
 }

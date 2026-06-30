@@ -180,7 +180,9 @@ export default function MotosPage() {
           .mobile-insta-item img {
             width: 100%;
             height: 100%;
-            object-fit: cover;
+            object-fit: contain;
+            padding: 4px;
+            box-sizing: border-box;
           }
           .mobile-tabs {
             display: flex !important;
@@ -252,8 +254,8 @@ export default function MotosPage() {
         
         <div style={{ display: 'flex', alignItems: 'center', padding: '0 16px', marginBottom: '16px', gap: '20px' }}>
           <div style={{ position: 'relative', width: '80px', height: '80px', borderRadius: '50%', background: 'linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', padding: '3px' }}>
-            <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', overflow: 'hidden', border: '2px solid #fff' }}>
-              <Image src="/logo_moto_e_cia.png" alt="Logo" width={80} height={80} style={{ objectFit: 'cover' }} />
+            <div style={{ width: '100%', height: '100%', borderRadius: '50%', background: '#fff', overflow: 'hidden', border: '2px solid #fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <Image src="/logo_moto_e_cia.png" alt="Logo" width={74} height={74} style={{ objectFit: 'contain', padding: '6px' }} />
             </div>
           </div>
           <div style={{ display: 'flex', flex: 1, justifyContent: 'space-between', textAlign: 'center' }}>
