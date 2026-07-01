@@ -82,42 +82,50 @@ export default function MotoDetalhePage() {
     <div style={{ background: '#fafafa', minHeight: '100vh', color: '#111', fontFamily: 'inherit', overflowX: 'hidden' }}>
       
       {/* 1. MOTO CAPA (HERO BANNER) */}
-      <div style={{ position: 'relative' }}>
-        {/* Floating Back Header (Absolute no topo) */}
-        <div style={{ position: 'absolute', top: '24px', left: '0', right: '0', zIndex: 10, padding: '0 5%', maxWidth: '1440px', margin: '0 auto' }}>
-          <Link href="/motos" style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: '30px', color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', backdropFilter: 'blur(4px)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>
+      {moto.condicao !== 'SEMINOVA' ? (
+        <div style={{ position: 'relative' }}>
+          {/* Floating Back Header (Absolute no topo) */}
+          <div style={{ position: 'absolute', top: '24px', left: '0', right: '0', zIndex: 10, padding: '0 5%', maxWidth: '1440px', margin: '0 auto' }}>
+            <Link href="/motos" style={{ display: 'inline-flex', alignItems: 'center', background: 'rgba(0,0,0,0.5)', padding: '8px 16px', borderRadius: '30px', color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', backdropFilter: 'blur(4px)', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = 'rgba(0,0,0,0.8)'} onMouseLeave={e => e.currentTarget.style.background = 'rgba(0,0,0,0.5)'}>
+              ← Voltar para Motos
+            </Link>
+          </div>
+
+          {moto.capaUrl ? (
+            <section style={{ width: '100%', height: '70vh', position: 'relative' }}>
+              <Image src={moto.capaUrl} alt={`Capa da ${moto.nome}`} fill style={{ objectFit: 'cover', objectPosition: 'center' }} priority />
+              {/* Gradiente escuro no fundo para dar destaque à logo */}
+              <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)', pointerEvents: 'none' }} />
+              
+              {/* Logomarca sobreposta ao banner (se houver logo) */}
+              {moto.logoUrl && (
+                <div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
+                  <div style={{ position: 'relative', width: '350px', height: '120px' }}>
+                    <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain', filter: 'drop-shadow(0px 4px 12px rgba(0,0,0,0.5))' }} />
+                  </div>
+                </div>
+              )}
+            </section>
+          ) : (
+            <div style={{ width: '100%', height: '140px', background: 'radial-gradient(circle at center, #939393 0%, #444444 100%)', position: 'relative' }}>
+               {/* Logomarca sobreposta ao banner fallback */}
+               {moto.logoUrl && (
+                <div style={{ position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
+                  <div style={{ position: 'relative', width: '250px', height: '80px' }}>
+                    <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain', filter: 'drop-shadow(0px 4px 8px rgba(0,0,0,0.5))' }} />
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      ) : (
+        <div style={{ padding: '24px 5% 0', maxWidth: '1440px', margin: '0 auto' }}>
+          <Link href="/motos" style={{ display: 'inline-flex', alignItems: 'center', background: '#e31b23', padding: '8px 16px', borderRadius: '30px', color: '#fff', textDecoration: 'none', fontSize: '12px', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '1px', transition: 'background 0.2s' }} onMouseEnter={e => e.currentTarget.style.background = '#c2161d'} onMouseLeave={e => e.currentTarget.style.background = '#e31b23'}>
             ← Voltar para Motos
           </Link>
         </div>
-
-        {moto.capaUrl ? (
-          <section style={{ width: '100%', height: '70vh', position: 'relative' }}>
-            <Image src={moto.capaUrl} alt={`Capa da ${moto.nome}`} fill style={{ objectFit: 'cover', objectPosition: 'center' }} priority />
-            {/* Gradiente escuro no fundo para dar destaque à logo */}
-            <div style={{ position: 'absolute', bottom: 0, left: 0, right: 0, height: '40%', background: 'linear-gradient(to top, rgba(0,0,0,0.6) 0%, transparent 100%)', pointerEvents: 'none' }} />
-            
-            {/* Logomarca sobreposta ao banner (se houver logo) */}
-            {moto.logoUrl && (
-              <div style={{ position: 'absolute', bottom: '40px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
-                <div style={{ position: 'relative', width: '350px', height: '120px' }}>
-                  <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain', filter: 'drop-shadow(0px 4px 12px rgba(0,0,0,0.5))' }} />
-                </div>
-              </div>
-            )}
-          </section>
-        ) : (
-          <div style={{ width: '100%', height: '140px', background: 'radial-gradient(circle at center, #939393 0%, #444444 100%)', position: 'relative' }}>
-             {/* Logomarca sobreposta ao banner fallback */}
-             {moto.logoUrl && (
-              <div style={{ position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', zIndex: 10 }}>
-                <div style={{ position: 'relative', width: '250px', height: '80px' }}>
-                  <Image src={moto.logoUrl} alt={`Logo ${moto.nome}`} fill style={{ objectFit: 'contain', filter: 'drop-shadow(0px 4px 8px rgba(0,0,0,0.5))' }} />
-                </div>
-              </div>
-            )}
-          </div>
-        )}
-      </div>
+      )}
 
       {/* 2. ÁREA DA MOTO ISOLADA E SELETOR DE COR */}
       <section style={{ maxWidth: '1200px', margin: '40px auto 60px', padding: '0 5%', textAlign: 'center' }}>
@@ -150,7 +158,7 @@ export default function MotoDetalhePage() {
               marginBottom: moto.condicao === 'SEMINOVA' ? '12px' : '0'
             }}>
               <div style={{ color: '#e31b23', fontSize: '28px', fontWeight: 900, letterSpacing: '-0.5px' }}>
-                R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })} <span style={{fontSize:'14px', fontWeight:700, marginLeft: '4px'}}>+ frete</span>
+                R$ {Number(moto.preco).toLocaleString('pt-BR', { minimumFractionDigits: 2 })}
               </div>
               <div style={{ color: '#111', fontSize: '13px', fontWeight: 700, marginTop: '4px' }}>*preço público sugerido</div>
             </div>
@@ -254,18 +262,20 @@ export default function MotoDetalhePage() {
             >
               FINANCIAMENTO
             </button>
-            <button 
-              onClick={() => openWhatsApp(`Olá, gostaria de simular um consórcio para a moto: ${moto.nome}.`)}
-              style={{
-                background: '#fff', color: '#e31b23', border: '2px solid #e31b23', 
-                borderRadius: '30px', padding: '16px 40px', fontSize: '14px', 
-                fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit'
-              }}
-              onMouseEnter={e => { e.currentTarget.style.background = '#e31b23'; e.currentTarget.style.color = '#fff'; }}
-              onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#e31b23'; }}
-            >
-              CONSÓRCIO
-            </button>
+            {moto.condicao !== 'SEMINOVA' && (
+              <button 
+                onClick={() => openWhatsApp(`Olá, gostaria de simular um consórcio para a moto: ${moto.nome}.`)}
+                style={{
+                  background: '#fff', color: '#e31b23', border: '2px solid #e31b23', 
+                  borderRadius: '30px', padding: '16px 40px', fontSize: '14px', 
+                  fontWeight: 800, cursor: 'pointer', transition: 'all 0.2s', fontFamily: 'inherit'
+                }}
+                onMouseEnter={e => { e.currentTarget.style.background = '#e31b23'; e.currentTarget.style.color = '#fff'; }}
+                onMouseLeave={e => { e.currentTarget.style.background = '#fff'; e.currentTarget.style.color = '#e31b23'; }}
+              >
+                CONSÓRCIO
+              </button>
+            )}
         </div>
       </section>
 
