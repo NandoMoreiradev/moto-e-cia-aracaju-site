@@ -235,6 +235,15 @@ export default function AdminMotoEditPage() {
     }
   }
 
+  async function handleUpdateVisibilidade(fotoId: string, field: 'exibirNoSeletor' | 'exibirNaGaleria', value: boolean) {
+    try {
+      await adminMotos.updateFoto(id, fotoId, { [field]: value });
+      setFotos((prev) => prev.map((f) => (f.id === fotoId ? { ...f, [field]: value } : f)));
+    } catch (err: any) {
+      alert(err.message);
+    }
+  }
+
   return (
     <form onSubmit={handleSave} style={{ maxWidth: '1200px', margin: '0 auto' }}>
       {/* Page Header */}
@@ -542,19 +551,43 @@ export default function AdminMotoEditPage() {
                             <div style={{ position: 'absolute', top: '8px', left: '8px', background: '#E2231A', color: '#fff', borderRadius: '6px', padding: '3px 6px', fontSize: '10px', fontWeight: 800 }}>CAPA</div>
                           )}
                         </div>
-                        <div style={{ padding: '8px', display: 'flex', gap: '4px' }}>
-                          <AdminButton variant="secondary" size="sm" type="button" title="Principal" onClick={() => handleSetPrincipal(foto.id)} style={{ flex: 1, padding: '6px' }}>
-                            <Star size={14} fill={foto.principal ? '#f39c12' : 'none'} color={foto.principal ? '#f39c12' : '#999'} />
-                          </AdminButton>
-                          <input
-                            type="color"
-                            value={foto.corHex || '#ffffff'}
-                            onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
-                            style={{ width: '30px', height: '30px', padding: '0', border: '1px solid #eee', borderRadius: '6px', cursor: 'pointer' }}
-                          />
-                          <AdminButton variant="danger" size="sm" type="button" onClick={() => handleDeleteFoto(foto.id)} style={{ padding: '6px' }}>
-                            <Trash2 size={14} />
-                          </AdminButton>
+                        <div style={{ padding: '8px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                          <div style={{ display: 'flex', gap: '4px' }}>
+                            <AdminButton variant="secondary" size="sm" type="button" title="Principal" onClick={() => handleSetPrincipal(foto.id)} style={{ flex: 1, padding: '6px' }}>
+                              <Star size={14} fill={foto.principal ? '#f39c12' : 'none'} color={foto.principal ? '#f39c12' : '#999'} />
+                            </AdminButton>
+                            <input
+                              type="color"
+                              title="Cor no seletor"
+                              value={foto.corHex || '#ffffff'}
+                              onChange={(e) => handleUpdateCor(foto.id, e.target.value)}
+                              style={{ width: '30px', height: '30px', padding: '0', border: '1px solid #eee', borderRadius: '6px', cursor: 'pointer' }}
+                            />
+                            <AdminButton variant="danger" size="sm" type="button" onClick={() => handleDeleteFoto(foto.id)} style={{ padding: '6px' }}>
+                              <Trash2 size={14} />
+                            </AdminButton>
+                          </div>
+                          
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', background: '#f9f9f9', padding: '8px', borderRadius: '8px', border: '1px solid #eee' }}>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600, color: '#555', cursor: 'pointer' }}>
+                              <input 
+                                type="checkbox" 
+                                checked={foto.exibirNoSeletor ?? true}
+                                onChange={(e) => handleUpdateVisibilidade(foto.id, 'exibirNoSeletor', e.target.checked)}
+                                style={{ accentColor: '#E2231A' }}
+                              />
+                              Mostrar no Topo (Seletor)
+                            </label>
+                            <label style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', fontWeight: 600, color: '#555', cursor: 'pointer' }}>
+                              <input 
+                                type="checkbox" 
+                                checked={foto.exibirNaGaleria ?? true}
+                                onChange={(e) => handleUpdateVisibilidade(foto.id, 'exibirNaGaleria', e.target.checked)}
+                                style={{ accentColor: '#E2231A' }}
+                              />
+                              Mostrar na Galeria Inferior
+                            </label>
+                          </div>
                         </div>
                       </div>
                     ))}

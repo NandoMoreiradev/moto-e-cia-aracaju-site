@@ -74,7 +74,9 @@ export default function MotoDetalhePage() {
   );
 
   const fotosOrdenadas = [...(moto.fotos || [])].sort((a, b) => (b.principal ? 1 : 0) - (a.principal ? 1 : 0));
-  const fotoAtual = fotosOrdenadas[selectedFotoIndex] || null;
+  const fotosSeletor = fotosOrdenadas.filter(f => f.exibirNoSeletor !== false);
+  const fotosGaleria = fotosOrdenadas.filter(f => f.exibirNaGaleria !== false);
+  const fotoAtual = fotosSeletor[selectedFotoIndex] || null;
 
   const whatsappMsg = `Olá! Tenho interesse na *${moto.nome}* (${moto.ano || ''}, ${moto.km === 0 ? '0 km' : `${(moto.km ?? 0).toLocaleString('pt-BR')} km`}). Pode me dar mais informações e verificar a disponibilidade?`;
 
@@ -207,9 +209,9 @@ export default function MotoDetalhePage() {
         </div>
 
         {/* Dots (Seletor de Cor) */}
-        {fotosOrdenadas.length > 0 && (
+        {fotosSeletor.length > 0 && (
           <div style={{ display: 'flex', justifyContent: 'center', gap: '20px', marginBottom: '50px' }}>
-            {fotosOrdenadas.map((foto, i) => {
+            {fotosSeletor.map((foto, i) => {
               // Se não preencheu a cor, usamos um cinza neutro
               const bgColor = foto.corHex || '#999999';
               const isSelected = i === selectedFotoIndex;
@@ -280,7 +282,7 @@ export default function MotoDetalhePage() {
       </section>
 
       {/* 3. GALERIA DE FOTOS (Carrossel Horizontal) */}
-      {fotosOrdenadas.length > 0 && (
+      {fotosGaleria.length > 0 && (
         <section style={{ maxWidth: '1200px', margin: '0 auto 100px', padding: '0 5%' }}>
           <div style={{ textAlign: 'center', marginBottom: '40px' }}>
             <h3 style={{ color: '#111', fontSize: '28px', fontWeight: 800, textTransform: 'uppercase', margin: 0 }}>GALERIA DE FOTOS</h3>
@@ -378,7 +380,7 @@ export default function MotoDetalhePage() {
                 }
               `}} />
               
-              {fotosOrdenadas.map((foto, i) => (
+              {fotosGaleria.map((foto, i) => (
                 <motion.div 
                   key={foto.id} 
                   whileHover={{ y: -5 }}
@@ -459,7 +461,7 @@ export default function MotoDetalhePage() {
             <button 
               onClick={(e) => {
                 e.stopPropagation();
-                setModalImageIndex(prev => (prev === 0 ? fotosOrdenadas.length - 1 : prev - 1));
+                setModalImageIndex(prev => (prev === 0 ? fotosGaleria.length - 1 : prev - 1));
               }}
               style={{
                 position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
@@ -474,7 +476,7 @@ export default function MotoDetalhePage() {
             <button 
               onClick={(e) => {
                 e.stopPropagation();
-                setModalImageIndex(prev => (prev === fotosOrdenadas.length - 1 ? 0 : prev + 1));
+                setModalImageIndex(prev => (prev === fotosGaleria.length - 1 ? 0 : prev + 1));
               }}
               style={{
                 position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
@@ -489,7 +491,7 @@ export default function MotoDetalhePage() {
             {/* Modal Image */}
             <div style={{ position: 'relative', width: '90%', height: '80%', userSelect: 'none' }} onClick={(e) => e.stopPropagation()}>
               <Image 
-                src={fotosOrdenadas[modalImageIndex].url} 
+                src={fotosGaleria[modalImageIndex]?.url || ''} 
                 alt="Visualização" 
                 fill 
                 style={{ objectFit: 'contain' }}
@@ -498,7 +500,7 @@ export default function MotoDetalhePage() {
                 position: 'absolute', bottom: '-40px', left: 0, right: 0, 
                 textAlign: 'center', color: '#fff', fontSize: '14px' 
               }}>
-                {modalImageIndex + 1} / {fotosOrdenadas.length} {fotosOrdenadas[modalImageIndex].corNome ? `— ${fotosOrdenadas[modalImageIndex].corNome}` : ''}
+                {modalImageIndex + 1} / {fotosGaleria.length} {fotosGaleria[modalImageIndex]?.corNome ? `— ${fotosGaleria[modalImageIndex].corNome}` : ''}
               </div>
             </div>
           </motion.div>

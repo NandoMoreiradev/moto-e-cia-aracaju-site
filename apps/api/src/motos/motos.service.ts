@@ -173,7 +173,7 @@ export class MotosService {
     return { message: 'Foto removida com sucesso' };
   }
 
-  async updateFoto(motoId: string, fotoId: string, data: { corHex?: string; corNome?: string }) {
+  async updateFoto(motoId: string, fotoId: string, data: { corHex?: string; corNome?: string; exibirNoSeletor?: boolean; exibirNaGaleria?: boolean }) {
     const foto = await this.prisma.motoFoto.findFirst({
       where: { id: fotoId, motoId },
     });
@@ -185,6 +185,8 @@ export class MotosService {
       data: {
         corHex: data.corHex,
         corNome: data.corNome,
+        exibirNoSeletor: data.exibirNoSeletor,
+        exibirNaGaleria: data.exibirNaGaleria,
       },
     });
 

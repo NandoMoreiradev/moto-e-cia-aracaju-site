@@ -53,15 +53,17 @@ model Moto {
 }
 
 model MotoFoto {
-  id        String  @id @default(cuid())
-  url       String
-  r2Key     String
-  principal Boolean @default(false)
-  ordem     Int     @default(0)
-  motoId    String
-  corHex    String?
-  corNome   String?
-  moto      Moto    @relation(fields: [motoId], references: [id], onDelete: Cascade)
+  id              String  @id @default(cuid())
+  url             String
+  r2Key           String
+  principal       Boolean @default(false)
+  ordem           Int     @default(0)
+  motoId          String
+  corHex          String?
+  corNome         String?
+  exibirNoSeletor Boolean @default(true)
+  exibirNaGaleria Boolean @default(true)
+  moto            Moto    @relation(fields: [motoId], references: [id], onDelete: Cascade)
 
   @@map("moto_fotos")
 }

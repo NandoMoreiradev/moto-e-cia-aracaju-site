@@ -14,6 +14,8 @@ export interface MotoFotoDto {
   ordem: number;
   corHex: string | null;
   corNome: string | null;
+  exibirNoSeletor: boolean;
+  exibirNaGaleria: boolean;
 }
 
 export interface MotoDto {

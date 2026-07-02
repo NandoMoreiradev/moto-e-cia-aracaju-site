@@ -127,7 +127,7 @@ export const adminMotos = {
     );
   },
 
-  updateFoto: (motoId: string, fotoId: string, data: { corHex?: string; corNome?: string }) =>
+  updateFoto: (motoId: string, fotoId: string, data: { corHex?: string; corNome?: string; exibirNoSeletor?: boolean; exibirNaGaleria?: boolean }) =>
     apiFetch<{ id: string }>(`/admin/motos/${motoId}/fotos/${fotoId}`, {
       method: 'PATCH',
       body: JSON.stringify(data),

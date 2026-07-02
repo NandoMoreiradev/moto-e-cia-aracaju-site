@@ -121,7 +121,7 @@ export class MotosController {
   updateFoto(
     @Param('id') id: string,
     @Param('fotoId') fotoId: string,
-    @Body() body: { corHex?: string; corNome?: string },
+    @Body() body: { corHex?: string; corNome?: string; exibirNoSeletor?: boolean; exibirNaGaleria?: boolean },
   ) {
     return this.motosService.updateFoto(id, fotoId, body);
   }
