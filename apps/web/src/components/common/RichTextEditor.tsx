@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { adminR2 } from '@/lib/api';
 import { toast } from 'react-hot-toast';
+import { useEffect } from 'react';
 
 /* ── Styled Components ────────────────────────────────────────────────── */
 
@@ -175,6 +176,13 @@ export function RichTextEditor({ value, onChange, placeholder = 'Comece a escrev
       onChange(editor.getHTML());
     },
   });
+
+  // Sincronizar o valor que vem de fora (ex: quando a API carrega) com o editor
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || '');
+    }
+  }, [value, editor]);
 
   if (!editor) {
     return null;
