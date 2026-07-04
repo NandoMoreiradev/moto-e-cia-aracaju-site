@@ -330,9 +330,9 @@ export default function HomePage() {
                         </MotoCardMarca>
                         <MotoCardNome>{moto.nome}</MotoCardNome>
                         <MotoCardMeta>
-                          {moto.ano && (
+                          {(moto.anoFabricacao || moto.anoModelo) && (
                             <MotoCardMetaItem title="Ano">
-                              <Calendar size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {moto.ano}
+                              <Calendar size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} /> {moto.anoFabricacao ? moto.anoFabricacao + '/' : ''}{moto.anoModelo || ''}
                             </MotoCardMetaItem>
                           )}
                           {moto.km !== null && moto.km !== undefined && (

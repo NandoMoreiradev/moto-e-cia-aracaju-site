@@ -172,7 +172,7 @@ export default function AdminMotosPage() {
                   </h3>
                   
                   <div style={{ display: 'flex', gap: '16px', marginTop: '12px', color: '#888', fontSize: '13px' }}>
-                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={14} /> {moto.ano || '—'}</span>
+                    <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Calendar size={14} /> {moto.anoFabricacao ? moto.anoFabricacao + '/' : ''}{moto.anoModelo || '—'}</span>
                     <span style={{ display: 'flex', alignItems: 'center', gap: '6px' }}><Gauge size={14} /> {moto.km === 0 ? '0 km' : (moto.km ? `${moto.km.toLocaleString('pt-BR')} km` : '—')}</span>
                   </div>
 

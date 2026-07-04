@@ -168,7 +168,7 @@ export default function AdminMetaPage() {
                   )}
                 </div>
                 <div style={{ color: '#999', fontSize: '13px', marginTop: '2px' }}>
-                  {moto.marca} • {moto.ano} • {moto.km === 0 ? 'Zero KM' : `${moto.km?.toLocaleString()} km`}
+                  {moto.marca} • {moto.anoFabricacao ? moto.anoFabricacao + '/' : ''}{moto.anoModelo || 'N/A'} • {moto.km === 0 ? 'Zero KM' : `${moto.km?.toLocaleString()} km`}
                   {moto.metaProductId && <span style={{ marginLeft: '12px', color: '#ccc' }}>ID: {moto.metaProductId}</span>}
                 </div>
               </div>
