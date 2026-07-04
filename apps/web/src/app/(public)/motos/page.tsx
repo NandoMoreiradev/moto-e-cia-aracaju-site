@@ -460,7 +460,7 @@ export default function MotosPage() {
         </div>
 
         {/* Grid */}
-        {loading ? (
+        {loading && page === 1 ? (
           <div style={{ textAlign: 'center', padding: '64px', color: '#999' }}>Carregando...</div>
         ) : motos.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '64px', color: '#999' }}>

@@ -11,7 +11,7 @@ const FooterContainer = styled.footer`
   position: relative;
   overflow: hidden;
   color: ${({ theme }) => theme.colors.white};
-  padding: ${({ theme }) => `${theme.spacing['5xl']} 0 0`};
+  padding: ${({ theme }) => `${theme.spacing['2xl']} 0 0`};
   border-top: 4px solid ${({ theme }) => theme.colors.primary};
 
   &::before {
@@ -36,21 +36,31 @@ const FooterContent = styled.div`
   padding: 0 ${({ theme }) => theme.spacing.lg};
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: ${({ theme }) => theme.spacing['4xl']};
-  margin-bottom: ${({ theme }) => theme.spacing['4xl']};
+  gap: ${({ theme }) => theme.spacing['2xl']};
+  margin-bottom: ${({ theme }) => theme.spacing['2xl']};
   position: relative;
   z-index: 2;
+
+  @media (max-width: 768px) {
+    text-align: center;
+    gap: ${({ theme }) => theme.spacing.xl};
+    margin-bottom: ${({ theme }) => theme.spacing.xl};
+  }
 `;
 
 const FooterCol = styled.div`
   display: flex;
   flex-direction: column;
   gap: ${({ theme }) => theme.spacing.md};
+
+  @media (max-width: 768px) {
+    align-items: center;
+  }
 `;
 
 const BrandLogo = styled(Link)`
   display: block;
-  margin-bottom: ${({ theme }) => theme.spacing.md};
+  margin-bottom: ${({ theme }) => theme.spacing.sm};
   transition: opacity 0.2s ease;
 
   &:hover {
@@ -62,14 +72,14 @@ const SocialGroup = styled.div`
   display: flex;
   align-items: center;
   gap: ${({ theme }) => theme.spacing.md};
-  margin-top: ${({ theme }) => theme.spacing.lg};
+  margin-top: ${({ theme }) => theme.spacing.sm};
   
   a {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     background: rgba(255, 255, 255, 0.05);
     color: ${({ theme }) => theme.colors.white};
     border-radius: 50%;
@@ -81,6 +91,10 @@ const SocialGroup = styled.div`
       box-shadow: 0 5px 15px rgba(0, 85, 164, 0.4);
     }
   }
+
+  @media (max-width: 768px) {
+    justify-content: center;
+  }
 `;
 
 const Text = styled.p`
@@ -90,13 +104,14 @@ const Text = styled.p`
 `;
 
 const ColTitle = styled.h4`
-  font-size: ${({ theme }) => theme.fontSizes.xl};
+  font-size: ${({ theme }) => theme.fontSizes.lg};
   font-weight: 800;
   text-transform: uppercase;
-  margin-bottom: ${({ theme }) => theme.spacing.lg};
+  margin-bottom: ${({ theme }) => theme.spacing.md};
   color: ${({ theme }) => theme.colors.white};
   position: relative;
   padding-bottom: 8px;
+  align-self: flex-start;
 
   &::after {
     content: '';
@@ -106,45 +121,71 @@ const ColTitle = styled.h4`
     background: ${({ theme }) => theme.colors.primary};
     transform: skewX(-20deg);
   }
+
+  @media (max-width: 768px) {
+    align-self: center;
+    &::after {
+      left: 50%;
+      transform: translateX(-50%) skewX(-20deg);
+    }
+  }
 `;
 
 const FooterLink = styled(Link)`
   color: rgba(255, 255, 255, 0.6);
-  font-size: ${({ theme }) => theme.fontSizes.md};
+  font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
   transition: all 0.3s ease;
   display: inline-block;
+  align-self: flex-start;
 
   &:hover {
     color: ${({ theme }) => theme.colors.primary};
     transform: translateX(5px);
+  }
+
+  @media (max-width: 768px) {
+    align-self: center;
+    &:hover {
+      transform: translateY(-2px);
+    }
   }
 `;
 
 const ContactInfo = styled.div`
   display: flex;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing.md};
+  gap: ${({ theme }) => theme.spacing.sm};
   color: rgba(255, 255, 255, 0.7);
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.5;
 
   svg {
     color: ${({ theme }) => theme.colors.primary};
     flex-shrink: 0;
     margin-top: 2px;
   }
+
+  @media (max-width: 768px) {
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    gap: ${({ theme }) => theme.spacing.xs};
+    svg {
+      margin-top: 0;
+    }
+  }
 `;
 
 const WhatsappButton = styled.button`
   display: flex;
   align-items: flex-start;
-  gap: ${({ theme }) => theme.spacing.md};
+  gap: ${({ theme }) => theme.spacing.sm};
   color: rgba(255, 255, 255, 0.7);
   font-size: ${({ theme }) => theme.fontSizes.sm};
   font-weight: 500;
-  line-height: 1.6;
+  line-height: 1.5;
   background: transparent;
   border: none;
   padding: 0;
@@ -161,17 +202,28 @@ const WhatsappButton = styled.button`
     flex-shrink: 0;
     margin-top: 2px;
   }
+
+  @media (max-width: 768px) {
+    align-items: center;
+    flex-direction: column;
+    text-align: center;
+    width: 100%;
+    gap: ${({ theme }) => theme.spacing.xs};
+    svg {
+      margin-top: 0;
+    }
+  }
 `;
 
 const Copyright = styled.div`
   position: relative;
   z-index: 2;
   background: #000;
-  padding: ${({ theme }) => theme.spacing.xl};
+  padding: ${({ theme }) => theme.spacing.md};
   border-top: 1px solid rgba(255, 255, 255, 0.05);
   text-align: center;
   color: rgba(255, 255, 255, 0.5);
-  font-size: ${({ theme }) => theme.fontSizes.sm};
+  font-size: ${({ theme }) => theme.fontSizes.xs};
   font-weight: 500;
 `;
 

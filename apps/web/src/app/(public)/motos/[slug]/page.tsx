@@ -290,16 +290,15 @@ export default function MotoDetalhePage() {
           </div>
           
           <div style={{ position: 'relative', width: '100%' }}>
-            {/* Nav Arrows (Desktop Only) */}
+            {/* Nav Arrows */}
             <button 
               onClick={() => scroll('left')}
               style={{
-                position: 'absolute', left: '-20px', top: '50%', transform: 'translateY(-50%)',
-                zIndex: 2, background: '#fff', border: '1px solid #eaeaea', borderRadius: '50%',
+                position: 'absolute', left: '0px', top: '50%', transform: 'translateY(-50%)',
+                zIndex: 10, background: 'rgba(255,255,255,0.9)', border: '1px solid #eaeaea', borderRadius: '50%',
                 width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', color: '#e31b23'
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)', cursor: 'pointer', color: '#e31b23'
               }}
-              className="desktop-only-btn"
             >
               <ChevronLeft size={24} />
             </button>
@@ -307,12 +306,11 @@ export default function MotoDetalhePage() {
             <button 
               onClick={() => scroll('right')}
               style={{
-                position: 'absolute', right: '-20px', top: '50%', transform: 'translateY(-50%)',
-                zIndex: 2, background: '#fff', border: '1px solid #eaeaea', borderRadius: '50%',
+                position: 'absolute', right: '0px', top: '50%', transform: 'translateY(-50%)',
+                zIndex: 10, background: 'rgba(255,255,255,0.9)', border: '1px solid #eaeaea', borderRadius: '50%',
                 width: '44px', height: '44px', display: 'flex', alignItems: 'center', justifyContent: 'center',
-                boxShadow: '0 4px 12px rgba(0,0,0,0.1)', cursor: 'pointer', color: '#e31b23'
+                boxShadow: '0 4px 12px rgba(0,0,0,0.15)', cursor: 'pointer', color: '#e31b23'
               }}
-              className="desktop-only-btn"
             >
               <ChevronRight size={24} />
             </button>
@@ -359,7 +357,7 @@ export default function MotoDetalhePage() {
                   el.style.userSelect = 'auto';
                   el.style.scrollBehavior = 'smooth';
                   // Restore scroll snap
-                  el.style.scrollSnapType = '';
+                  el.style.scrollSnapType = 'x mandatory';
                   
                   window.removeEventListener('mousemove', onMouseMove);
                   window.removeEventListener('mouseup', onMouseUp);
@@ -375,9 +373,6 @@ export default function MotoDetalhePage() {
             >
               <style dangerouslySetInnerHTML={{ __html: `
                 .hide-scrollbar::-webkit-scrollbar { display: none; }
-                @media (max-width: 1250px) {
-                  .desktop-only-btn { display: none !important; }
-                }
               `}} />
               
               {fotosGaleria.map((foto, i) => (
@@ -449,12 +444,12 @@ export default function MotoDetalhePage() {
             <button 
               onClick={(e) => { e.stopPropagation(); setIsModalOpen(false); }}
               style={{
-                position: 'absolute', top: '30px', right: '30px',
-                background: 'none', border: 'none', color: '#fff',
-                cursor: 'pointer', padding: '10px'
+                position: 'absolute', top: '20px', right: '20px',
+                background: 'rgba(0,0,0,0.5)', border: 'none', color: '#fff', borderRadius: '50%',
+                cursor: 'pointer', padding: '8px', zIndex: 20
               }}
             >
-              <X size={32} />
+              <X size={28} />
             </button>
 
             {/* Nav Buttons */}
@@ -464,13 +459,14 @@ export default function MotoDetalhePage() {
                 setModalImageIndex(prev => (prev === 0 ? fotosGaleria.length - 1 : prev - 1));
               }}
               style={{
-                position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
-                width: '50px', height: '50px', borderRadius: '50%',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
+                width: '44px', height: '44px', borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                zIndex: 20, backdropFilter: 'blur(4px)'
               }}
             >
-              <ChevronLeft size={32} />
+              <ChevronLeft size={28} />
             </button>
 
             <button 
@@ -479,30 +475,45 @@ export default function MotoDetalhePage() {
                 setModalImageIndex(prev => (prev === fotosGaleria.length - 1 ? 0 : prev + 1));
               }}
               style={{
-                position: 'absolute', right: '20px', top: '50%', transform: 'translateY(-50%)',
-                background: 'rgba(255,255,255,0.1)', border: 'none', color: '#fff',
-                width: '50px', height: '50px', borderRadius: '50%',
-                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center'
+                position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)',
+                background: 'rgba(255,255,255,0.15)', border: 'none', color: '#fff',
+                width: '44px', height: '44px', borderRadius: '50%',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                zIndex: 20, backdropFilter: 'blur(4px)'
               }}
             >
-              <ChevronRight size={32} />
+              <ChevronRight size={28} />
             </button>
 
             {/* Modal Image */}
-            <div style={{ position: 'relative', width: '90%', height: '80%', userSelect: 'none' }} onClick={(e) => e.stopPropagation()}>
+            <motion.div 
+              drag="x"
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.2}
+              onDragEnd={(e, { offset }) => {
+                if (offset.x < -50) {
+                  setModalImageIndex(prev => (prev === fotosGaleria.length - 1 ? 0 : prev + 1));
+                } else if (offset.x > 50) {
+                  setModalImageIndex(prev => (prev === 0 ? fotosGaleria.length - 1 : prev - 1));
+                }
+              }}
+              style={{ position: 'relative', width: '100%', height: '80%', userSelect: 'none', cursor: 'grab', touchAction: 'none' }} 
+              onClick={(e) => e.stopPropagation()}
+            >
               <Image 
                 src={fotosGaleria[modalImageIndex]?.url || ''} 
                 alt="Visualização" 
                 fill 
                 style={{ objectFit: 'contain' }}
+                draggable={false}
               />
               <div style={{ 
                 position: 'absolute', bottom: '-40px', left: 0, right: 0, 
-                textAlign: 'center', color: '#fff', fontSize: '14px' 
+                textAlign: 'center', color: '#fff', fontSize: '14px', zIndex: 10
               }}>
                 {modalImageIndex + 1} / {fotosGaleria.length} {fotosGaleria[modalImageIndex]?.corNome ? `— ${fotosGaleria[modalImageIndex].corNome}` : ''}
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
