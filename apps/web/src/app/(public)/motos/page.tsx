@@ -303,10 +303,10 @@ export default function MotosPage() {
         </div>
 
         <div style={{ padding: '0 16px', display: 'flex', gap: '8px', marginBottom: '16px' }}>
-          <button style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>Seguindo <span style={{fontSize:'10px'}}>v</span></button>
-          <button style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Mensagem</button>
-          <button onClick={() => openWhatsApp()} style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Contato</button>
-          <button style={{ background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}><UserPlus size={16} /></button>
+          <a href="https://www.instagram.com/motoeciaaracaju_oficial/" target="_blank" rel="noopener noreferrer" style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px', textDecoration: 'none' }}>Seguir</a>
+          <button onClick={() => openWhatsApp()} style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer' }}>Whatsapp</button>
+          <a href="tel:+5579998191298" style={{ flex: 1, background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 0', fontSize: '14px', fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', textDecoration: 'none' }}>Contato</a>
+          <a href="https://www.instagram.com/motoeciaaracaju_oficial/" target="_blank" rel="noopener noreferrer" style={{ background: '#efefef', color: '#111', border: 'none', borderRadius: '8px', padding: '6px 12px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', textDecoration: 'none' }}><UserPlus size={16} /></a>
         </div>
       </div>
 
