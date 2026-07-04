@@ -138,7 +138,7 @@ export const adminMotos = {
 
   setFotoPrincipal: (motoId: string, fotoId: string) =>
     apiFetch<{ message: string }>(`/admin/motos/${motoId}/fotos/${fotoId}/principal`, {
-      method: 'PUT',
+      method: 'PATCH',
     }),
 
   generateSpecs: (marca: string, nome: string) =>
