@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
@@ -55,6 +55,7 @@ export default function MotosPage() {
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
   const [selectedMoto, setSelectedMoto] = useState<MotoDto | null>(null);
+  const observerTarget = useRef<HTMLDivElement>(null);
   const { openWhatsApp } = useWhatsApp();
 
   useEffect(() => {
@@ -86,7 +87,7 @@ export default function MotosPage() {
         search: search || undefined,
         status: 'DISPONIVEL',
       });
-      setMotos(res.data);
+      setMotos(prev => page === 1 ? res.data : [...prev, ...res.data]);
       setTotal(res.total);
     } finally {
       setLoading(false);
@@ -95,6 +96,21 @@ export default function MotosPage() {
 
   useEffect(() => { load(); }, [load]);
   function resetFilters() { setMarca(''); setTipo(''); setSearch(''); setCondicao(''); setPage(1); }
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => {
+        if (entries[0].isIntersecting && motos.length < total && !loading) {
+          setPage(p => p + 1);
+        }
+      },
+      { rootMargin: '100px' }
+    );
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+    return () => observer.disconnect();
+  }, [motos.length, total, loading]);
 
   return (
     <div className="page-wrapper" style={{ minHeight: '100vh', background: '#f8f8f8' }}>
@@ -305,7 +321,7 @@ export default function MotosPage() {
                 className="marca-btn-desktop"
                 onClick={() => {
                   setMarca(marca === m.nome ? '' : m.nome as any);
-                  setCondicao('');
+                  setCondicao(marca === m.nome ? '' : 'NOVA');
                   setPage(1);
                 }}
                 style={{
@@ -377,7 +393,7 @@ export default function MotosPage() {
                   className={`marca-btn ${marca === m.nome ? 'active-story' : ''}`}
                   onClick={() => {
                     setMarca(marca === m.nome ? '' : m.nome as any);
-                    setCondicao('');
+                    setCondicao(marca === m.nome ? '' : 'NOVA');
                     setPage(1);
                   }}
                   style={{
@@ -549,14 +565,12 @@ export default function MotosPage() {
           </div>
         )}
 
-        {/* Pagination */}
-        {total > LIMIT && (
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '8px', marginTop: '40px' }}>
-            <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-              style={{ padding: '10px 20px', background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px', cursor: 'pointer' }}>← Anterior</button>
-            <span style={{ padding: '10px 16px', color: '#888', fontSize: '14px' }}>{page} / {Math.ceil(total / LIMIT)}</span>
-            <button disabled={page >= Math.ceil(total / LIMIT)} onClick={() => setPage(p => p + 1)}
-              style={{ padding: '10px 20px', background: '#fff', border: '1px solid #e5e5e5', borderRadius: '8px', cursor: 'pointer' }}>Próxima →</button>
+        {/* Infinite Scroll Observer Target */}
+        {total > motos.length && (
+          <div ref={observerTarget} style={{ display: 'flex', justifyContent: 'center', marginTop: '40px', padding: '20px' }}>
+            {loading ? (
+              <div style={{ color: '#888', fontSize: '14px', fontWeight: 600 }}>Carregando mais motos...</div>
+            ) : null}
           </div>
         )}
       </div>

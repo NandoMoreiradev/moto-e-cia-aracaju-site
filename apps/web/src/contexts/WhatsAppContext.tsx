@@ -12,21 +12,18 @@ interface WhatsAppContextProps {
 const WhatsAppContext = createContext<WhatsAppContextProps | undefined>(undefined);
 
 export function WhatsAppProvider({ children }: { children: ReactNode }) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [message, setMessage] = useState('');
-
   const openWhatsApp = (msg?: string) => {
-    setMessage(msg || '');
-    setIsOpen(true);
+    const defaultMsg = 'Olá! Gostaria de mais informações.';
+    const text = encodeURIComponent(msg || defaultMsg);
+    window.open(`https://wa.me/5579998191298?text=${text}`, '_blank');
   };
 
   const closeWhatsApp = () => {
-    setIsOpen(false);
-    setMessage('');
+    // No-op as modal is removed
   };
 
   return (
-    <WhatsAppContext.Provider value={{ isOpen, message, openWhatsApp, closeWhatsApp }}>
+    <WhatsAppContext.Provider value={{ isOpen: false, message: '', openWhatsApp, closeWhatsApp }}>
       {children}
     </WhatsAppContext.Provider>
   );

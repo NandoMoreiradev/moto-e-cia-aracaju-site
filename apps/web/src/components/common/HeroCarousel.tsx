@@ -10,20 +10,18 @@ import type { BannerDto } from '@moto-e-cia/shared';
 
 const CarouselContainer = styled.section`
   position: relative;
-  width: 97%;
-  max-width: 1600px;
-  height: 70vh;
-  margin: ${({ theme }) => theme.spacing.md} auto ${({ theme }) => theme.spacing['2xl']};
+  width: 100%;
+  max-width: 1920px;
+  aspect-ratio: 1920 / 1080;
+  height: auto;
+  margin: 0 auto ${({ theme }) => theme.spacing['2xl']};
   overflow: hidden;
   background: ${({ theme }) => theme.colors.dark};
-  border-radius: 24px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.15);
 
   @media (max-width: ${({ theme }) => theme.breakpoints.md}) {
-    width: 97%;
-    height: 60vh;
-    margin: ${({ theme }) => theme.spacing.xs} auto ${({ theme }) => theme.spacing.lg};
-    border-radius: 16px;
+    width: 100%;
+    aspect-ratio: 1080 / 1080;
+    margin: 0 auto ${({ theme }) => theme.spacing.lg};
   }
 `;
 
