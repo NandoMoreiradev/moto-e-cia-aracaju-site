@@ -259,7 +259,9 @@ export default function MotosPage() {
       <div className="mobile-bio-header">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px 16px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <ArrowLeft size={24} />
+            <Link href="/" style={{ color: 'inherit', display: 'flex', alignItems: 'center' }}>
+              <ArrowLeft size={24} />
+            </Link>
             <h1 style={{ fontSize: '18px', fontWeight: 700, margin: 0 }}>motoeciaaracaju_oficial</h1>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
