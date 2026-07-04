@@ -508,9 +508,9 @@ export default function MotosPage() {
                         <div style={{ color: '#0055A4', fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{moto.marca}</div>
                         <h2 style={{ color: '#111', fontSize: '22px', fontWeight: 800, textTransform: 'uppercase', margin: '4px 0 12px', lineHeight: 1.1 }}>{moto.nome}</h2>
                         <div style={{ display: 'flex', gap: '16px', marginBottom: '16px', flexWrap: 'wrap' }}>
-                          {moto.ano && (
+                          {(moto.anoFabricacao || moto.anoModelo) && (
                             <span style={{ color: '#666', fontSize: '14px', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
-                              <Calendar size={14} /> {moto.ano}
+                              <Calendar size={14} /> {moto.anoFabricacao ? `${moto.anoFabricacao}/` : ''}{moto.anoModelo || ''}
                             </span>
                           )}
                           {moto.km !== null && (
@@ -656,7 +656,7 @@ export default function MotosPage() {
                       
                       <div style={{ background: '#f8f8f8', borderRadius: '12px', padding: '16px', marginBottom: '16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                         <div style={{ fontSize: '13px', color: '#666', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <Calendar size={15} style={{ color: '#888' }} /> {moto.ano || 'N/A'}
+                          <Calendar size={15} style={{ color: '#888' }} /> {moto.anoFabricacao || moto.anoModelo ? `${moto.anoFabricacao ? moto.anoFabricacao + '/' : ''}${moto.anoModelo || ''}` : 'N/A'}
                         </div>
                         <div style={{ fontSize: '13px', color: '#666', display: 'flex', alignItems: 'center', gap: '8px' }}>
                           <Gauge size={15} style={{ color: '#888' }} /> {moto.km === 0 ? '0 km' : `${moto.km?.toLocaleString('pt-BR')} km`}

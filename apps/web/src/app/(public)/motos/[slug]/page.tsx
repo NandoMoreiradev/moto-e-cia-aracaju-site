@@ -78,7 +78,7 @@ export default function MotoDetalhePage() {
   const fotosGaleria = fotosOrdenadas.filter(f => f.exibirNaGaleria !== false);
   const fotoAtual = fotosSeletor[selectedFotoIndex] || null;
 
-  const whatsappMsg = `Olá! Tenho interesse na *${moto.nome}* (${moto.ano || ''}, ${moto.km === 0 ? '0 km' : `${(moto.km ?? 0).toLocaleString('pt-BR')} km`}). Pode me dar mais informações e verificar a disponibilidade?`;
+  const whatsappMsg = `Olá! Tenho interesse na *${moto.nome}* (${moto.anoFabricacao ? moto.anoFabricacao + '/' : ''}${moto.anoModelo || ''}, ${moto.km === 0 ? '0 km' : `${(moto.km ?? 0).toLocaleString('pt-BR')} km`}). Pode me dar mais informações e verificar a disponibilidade?`;
 
   return (
     <div style={{ background: '#fafafa', minHeight: '100vh', color: '#111', fontFamily: 'inherit', overflowX: 'hidden' }}>
@@ -669,7 +669,8 @@ export default function MotoDetalhePage() {
             <div style={{ paddingBottom: '32px' }}>
               <SpecItem label="Marca Oficial" value={moto.marca} />
               <SpecItem label="Nome do Modelo" value={moto.nome} />
-              <SpecItem label="Ano de Fabricação" value={moto.ano?.toString()} />
+              <SpecItem label="Ano de Fabricação" value={moto.anoFabricacao?.toString()} />
+              <SpecItem label="Ano do Modelo" value={moto.anoModelo?.toString()} />
               <SpecItem label="Quilometragem (Odomêtro)" value={moto.km !== null ? (moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`) : undefined} />
               <SpecItem label="Cor Disponível" value={moto.cor || undefined} />
               <SpecItem label="Chassi (VIN)" value={moto.vin ? moto.vin.substring(0, 8) + '*****' : undefined} />

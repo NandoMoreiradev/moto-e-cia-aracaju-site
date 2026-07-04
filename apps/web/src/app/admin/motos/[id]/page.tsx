@@ -40,7 +40,8 @@ export default function AdminMotoEditPage() {
     transmissao: 'MANUAL' as any,
     destaque: false,
     km: 0,
-    ano: new Date().getFullYear(),
+    anoFabricacao: new Date().getFullYear(),
+    anoModelo: new Date().getFullYear(),
   });
   const [fotos, setFotos] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
@@ -350,8 +351,9 @@ export default function AdminMotoEditPage() {
           </AdminCard>
 
           <AdminCard title="Especificações para Catálogos">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px' }}>
-              <AdminInput label="Ano *" type="number" value={moto.ano || ''} onChange={e => set('ano', Number(e.target.value))} required />
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '20px' }}>
+              <AdminInput label="Ano Fabricação *" type="number" value={moto.anoFabricacao || ''} onChange={e => set('anoFabricacao', Number(e.target.value))} required />
+              <AdminInput label="Ano Modelo *" type="number" value={moto.anoModelo || ''} onChange={e => set('anoModelo', Number(e.target.value))} required />
               <AdminInput label="Quilometragem (KM) *" type="number" value={moto.km ?? ''} onChange={e => set('km', Number(e.target.value))} required />
               <AdminInput label="Cor Predominante" value={moto.cor || ''} onChange={e => set('cor', e.target.value)} placeholder="Ex: Azul Metálico" />
             </div>

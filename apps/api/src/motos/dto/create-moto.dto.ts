@@ -84,10 +84,15 @@ export class CreateMotoDto {
 
   // ── Campos obrigatórios Meta Vehicle Catalog (Graph API v25.0) ─────────────
 
-  @ApiProperty({ example: 2024, description: 'Ano de fabricação' })
+  @ApiProperty({ example: 2023, description: 'Ano de fabricação' })
   @IsOptional()
   @IsNumber()
-  ano?: number;
+  anoFabricacao?: number;
+
+  @ApiProperty({ example: 2024, description: 'Ano do modelo' })
+  @IsOptional()
+  @IsNumber()
+  anoModelo?: number;
 
   @ApiPropertyOptional({ example: 0, description: 'Quilometragem (0 = zero km)' })
   @IsOptional()

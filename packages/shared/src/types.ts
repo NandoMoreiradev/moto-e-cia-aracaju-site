@@ -40,7 +40,8 @@ export interface MotoDto {
   condicao: CondicaoMoto;
   metaProductId: string | null;
   // Campos Meta Vehicle Catalog (Graph API v25.0)
-  ano: number | null;
+  anoFabricacao: number | null;
+  anoModelo: number | null;
   km: number | null;
   cor: string | null;
   vin: string | null;
@@ -113,7 +114,8 @@ export interface CreateMotoDto {
   status?: StatusMoto;
   condicao?: CondicaoMoto;
   // Campos Meta Vehicle Catalog
-  ano?: number;
+  anoFabricacao?: number;
+  anoModelo?: number;
   km?: number;
   cor?: string;
   vin?: string;

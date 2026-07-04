@@ -72,7 +72,7 @@ export class MetaService {
       // Campos obrigatórios pelo Meta Vehicle Catalog API v25.0
       make: moto.marca === 'SEMINOVA' ? 'Outra' : this.capitalize(moto.marca),
       model: moto.nome,
-      year: moto.ano ?? new Date().getFullYear(),
+      year: moto.anoModelo ?? new Date().getFullYear(),
       mileage: { unit: 'KILOMETERS', value: moto.km ?? 0 },
       price: priceStr,
       currency: 'BRL',

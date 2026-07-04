@@ -32,7 +32,8 @@ model Moto {
   destaque       Boolean      @default(false)
   status         StatusMoto   @default(DISPONIVEL)
   metaProductId  String?
-  ano            Int?
+  anoFabricacao  Int?
+  anoModelo      Int?         @map("ano")
   km             Int?
   cor            String?
   vin            String?
