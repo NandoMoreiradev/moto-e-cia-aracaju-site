@@ -1,6 +1,6 @@
 // Tipos de Motos
 export type MarcaMoto = 'SUZUKI' | 'HAOJUE' | 'ZONTES' | 'KYMCO' | 'OUTRO';
-export type TipoMoto = 'SPORT' | 'NAKED' | 'ADVENTURE' | 'SCOOTER' | 'TRAIL' | 'STREET' | 'CROSSOVER' | 'CUSTOM' | 'TOURING';
+export type TipoMoto = 'SPORT' | 'NAKED' | 'ADVENTURE' | 'SCOOTER' | 'TRAIL' | 'STREET' | 'CROSSOVER' | 'CUSTOM' | 'TOURING' | 'BIGTRAIL' | 'OFFROAD' | 'CRUISER' | 'CAFERACER';
 export type StatusMoto = 'DISPONIVEL' | 'VENDIDA' | 'RESERVADA' | 'ALUGUEL';
 export type CondicaoMoto = 'NOVA' | 'SEMINOVA';
 export type Combustivel = 'GASOLINA' | 'ETANOL' | 'FLEX' | 'ELETRICO';

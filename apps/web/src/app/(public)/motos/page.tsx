@@ -29,6 +29,10 @@ const TIPOS: { value: TipoMoto | ''; label: string }[] = [
   { value: 'CROSSOVER', label: 'Crossover' },
   { value: 'CUSTOM', label: 'Custom' },
   { value: 'TOURING', label: 'Touring' },
+  { value: 'BIGTRAIL', label: 'Big Trail' },
+  { value: 'OFFROAD', label: 'Off-Road' },
+  { value: 'CRUISER', label: 'Cruiser' },
+  { value: 'CAFERACER', label: 'Café Racer' },
 ];
 
 const CONDICOES: { value: 'NOVA' | 'SEMINOVA' | ''; label:string }[] = [

@@ -167,6 +167,10 @@ enum TipoMoto {
   CROSSOVER
   CUSTOM
   TOURING
+  BIGTRAIL
+  OFFROAD
+  CRUISER
+  CAFERACER
 }
 
 enum StatusMoto {
