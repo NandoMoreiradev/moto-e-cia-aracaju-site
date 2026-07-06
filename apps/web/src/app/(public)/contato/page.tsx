@@ -1,9 +1,11 @@
 'use client';
 
 import styled from 'styled-components';
-import { FormEvent, useState } from 'react';
+import { FormEvent, useEffect, useState } from 'react';
 import { MapPin, Smartphone, Clock } from 'lucide-react';
 import { useWhatsApp } from '@/contexts/WhatsAppContext';
+import { lojas as lojasApi } from '@/lib/api';
+import type { LojaDto } from '@moto-e-cia/shared';
 
 const PageContainer = styled.div`
   max-width: 1280px;
@@ -206,6 +208,11 @@ const SubmitButton = styled.button`
 export default function ContatoPage() {
   const [status, setStatus] = useState<'idle' | 'loading' | 'success'>('idle');
   const { openWhatsApp } = useWhatsApp();
+  const [lojas, setLojas] = useState<LojaDto[]>([]);
+
+  useEffect(() => {
+    lojasApi.list().then(setLojas).catch(() => setLojas([]));
+  }, []);
 
   const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
@@ -238,14 +245,12 @@ export default function ContatoPage() {
             <MapPin size={24} />
             <div>
               <h4>Nossas Lojas</h4>
-              <p style={{ marginBottom: '12px' }}>
-                <strong style={{ color: '#fff' }}>Aracaju - SE (Matriz)</strong><br/>
-                Av. Pedro Calazans, nº 717, Centro
-              </p>
-              <p>
-                <strong style={{ color: '#fff' }}>N. Sra. do Socorro - SE (Filial)</strong><br/>
-                Av. Moacir de Oliveira, 37, João Alves
-              </p>
+              {lojas.map((loja, idx) => (
+                <p key={loja.id} style={{ marginBottom: idx === lojas.length - 1 ? 0 : '12px' }}>
+                  <strong style={{ color: '#fff' }}>{loja.cidadeEstado} ({loja.nome})</strong><br/>
+                  {loja.endereco}
+                </p>
+              ))}
             </div>
           </InfoItem>
 

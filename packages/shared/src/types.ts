@@ -263,3 +263,40 @@ export interface CreateMarcaDto {
   ordem?: number;
   ativa?: boolean;
 }
+
+// Lojas
+export interface LojaFotoDto {
+  id: string;
+  url: string;
+  r2Key: string;
+  ordem: number;
+  lojaId: string;
+}
+
+export interface LojaDto {
+  id: string;
+  nome: string;
+  cidadeEstado: string;
+  endereco: string;
+  telefone: string;
+  whatsapp: string;
+  horario: string;
+  mapUrl: string | null;
+  ordem: number;
+  ativa: boolean;
+  fotos: LojaFotoDto[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateLojaDto {
+  nome: string;
+  cidadeEstado: string;
+  endereco: string;
+  telefone: string;
+  whatsapp: string;
+  horario: string;
+  mapUrl?: string;
+  ordem?: number;
+  ativa?: boolean;
+}

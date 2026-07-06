@@ -4,7 +4,10 @@ import { Clock, Mail, MapPin, Smartphone, Facebook, Instagram } from 'lucide-rea
 import styled from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { useWhatsApp } from '@/contexts/WhatsAppContext';
+import { lojas as lojasApi } from '@/lib/api';
+import type { LojaDto } from '@moto-e-cia/shared';
 
 const FooterContainer = styled.footer`
   background: linear-gradient(135deg, #151515 0%, #0a0a0a 100%);
@@ -230,6 +233,11 @@ const Copyright = styled.div`
 export function Footer() {
   const currentYear = new Date().getFullYear();
   const { openWhatsApp } = useWhatsApp();
+  const [lojas, setLojas] = useState<LojaDto[]>([]);
+
+  useEffect(() => {
+    lojasApi.list().then(setLojas).catch(() => setLojas([]));
+  }, []);
 
   return (
     <FooterContainer>
@@ -273,20 +281,15 @@ export function Footer() {
         {/* Contato & Endereço */}
         <FooterCol>
           <ColTitle>Atendimento</ColTitle>
-          <ContactInfo>
-            <MapPin size={18} />
-            <div>
-              <strong>Aracaju-SE (Matriz)</strong><br />
-              Av. Pedro Calazans, nº 717, Centro
-            </div>
-          </ContactInfo>
-          <ContactInfo>
-            <MapPin size={18} />
-            <div>
-              <strong>N. Sra. do Socorro-SE (Filial)</strong><br />
-              Av. Moacir de Oliveira, 37, João Alves
-            </div>
-          </ContactInfo>
+          {lojas.map((loja) => (
+            <ContactInfo key={loja.id}>
+              <MapPin size={18} />
+              <div>
+                <strong>{loja.cidadeEstado} ({loja.nome})</strong><br />
+                {loja.endereco}
+              </div>
+            </ContactInfo>
+          ))}
           <WhatsappButton onClick={() => openWhatsApp()}>
             <Smartphone size={18} />
             <span>Fale pelo WhatsApp</span>

@@ -1,6 +1,6 @@
-import type { 
+import type {
   MotoDto, PaginatedResponse, MotoFiltersDto, LoginDto, AuthResponseDto,
-  BannerDto, CreateBannerDto, MarcaDto, CreateMarcaDto
+  BannerDto, CreateBannerDto, MarcaDto, CreateMarcaDto, LojaDto, CreateLojaDto
 } from '@moto-e-cia/shared';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000';
@@ -78,6 +78,11 @@ export const banners = {
 // ─── Marcas (público) ─────────────────────────────────────────────────────────
 export const marcas = {
   list: () => apiFetch<MarcaDto[]>('/marcas'),
+};
+
+// ─── Lojas (público) ──────────────────────────────────────────────────────────
+export const lojas = {
+  list: () => apiFetch<LojaDto[]>('/lojas'),
 };
 
 // ─── Admin — Motos ─────────────────────────────────────────────────────────────
@@ -202,6 +207,24 @@ export const adminMarcas = {
     formData.append('logo', file);
     return apiFetchFormData<MarcaDto>(`/admin/marcas/${id}/logo`, formData);
   },
+};
+
+// ─── Admin — Lojas ────────────────────────────────────────────────────────────
+export const adminLojas = {
+  list: () => apiFetch<LojaDto[]>('/admin/lojas'),
+  create: (dto: CreateLojaDto) =>
+    apiFetch<LojaDto>('/admin/lojas', { method: 'POST', body: JSON.stringify(dto) }),
+  update: (id: string, dto: Partial<CreateLojaDto>) =>
+    apiFetch<LojaDto>(`/admin/lojas/${id}`, { method: 'PATCH', body: JSON.stringify(dto) }),
+  delete: (id: string) =>
+    apiFetch<{ message: string }>(`/admin/lojas/${id}`, { method: 'DELETE' }),
+  uploadFoto: (id: string, file: File) => {
+    const formData = new FormData();
+    formData.append('foto', file);
+    return apiFetchFormData<{ id: string; url: string }>(`/admin/lojas/${id}/fotos`, formData);
+  },
+  deleteFoto: (id: string, fotoId: string) =>
+    apiFetch<{ message: string }>(`/admin/lojas/${id}/fotos/${fotoId}`, { method: 'DELETE' }),
 };
 
 // ─── Admin — Generic R2 ────────────────────────────────────────────────────────

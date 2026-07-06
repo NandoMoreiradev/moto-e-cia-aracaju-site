@@ -1,10 +1,12 @@
 'use client';
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, MessageCircle } from 'lucide-react';
 import { useWhatsApp } from '@/contexts/WhatsAppContext';
+import { lojas as lojasApi } from '@/lib/api';
+import type { LojaDto } from '@moto-e-cia/shared';
 
 const Overlay = styled(motion.div)`
   position: fixed;
@@ -145,23 +147,13 @@ const StoreOption = styled.button`
   }
 `;
 
-const STORES = [
-  {
-    id: 'aracaju',
-    name: 'Loja Aracaju',
-    address: 'Fale com a equipe de Aracaju',
-    phone: '5579981664850', // (79) 98166-4850
-  },
-  {
-    id: 'socorro',
-    name: 'Loja N. S. do Socorro',
-    address: 'Fale com a equipe de Socorro',
-    phone: '5579991470176', // (79) 99147-0176
-  }
-];
-
 export function WhatsAppModal() {
   const { isOpen, message, closeWhatsApp } = useWhatsApp();
+  const [lojas, setLojas] = useState<LojaDto[]>([]);
+
+  useEffect(() => {
+    lojasApi.list().then(setLojas).catch(() => setLojas([]));
+  }, []);
 
   useEffect(() => {
     if (isOpen) {
@@ -205,14 +197,14 @@ export function WhatsAppModal() {
             </ModalHeader>
             
             <ModalBody>
-              {STORES.map((store) => (
-                <StoreOption key={store.id} onClick={() => handleStoreClick(store.phone)}>
+              {lojas.map((loja) => (
+                <StoreOption key={loja.id} onClick={() => handleStoreClick(loja.whatsapp)}>
                   <div className="icon-wrapper">
                     <MessageCircle size={24} />
                   </div>
                   <div className="details">
-                    <h3>{store.name}</h3>
-                    <p>{store.address}</p>
+                    <h3>Loja {loja.nome}</h3>
+                    <p>{loja.cidadeEstado}: {loja.endereco}</p>
                   </div>
                 </StoreOption>
               ))}

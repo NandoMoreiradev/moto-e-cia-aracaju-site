@@ -5,9 +5,9 @@ import { useRouter, usePathname } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
 import { getToken, clearToken, auth } from '@/lib/api';
-import { 
-  BarChart3, Bike, Image as ImageIcon, Tag, Facebook, 
-  LogOut, Globe, LayoutDashboard 
+import {
+  BarChart3, Bike, Image as ImageIcon, Tag, Facebook, Store,
+  LogOut, Globe, LayoutDashboard
 } from 'lucide-react';
 
 const NAV_ITEMS = [
@@ -15,6 +15,7 @@ const NAV_ITEMS = [
   { href: '/admin/motos', label: 'Motos', icon: <Bike size={18} /> },
   { href: '/admin/banners', label: 'Banners', icon: <ImageIcon size={18} /> },
   { href: '/admin/marcas', label: 'Marcas', icon: <Tag size={18} /> },
+  { href: '/admin/lojas', label: 'Lojas', icon: <Store size={18} /> },
   { href: '/admin/meta', label: 'Meta / Instagram', icon: <Facebook size={18} /> },
 ];
 

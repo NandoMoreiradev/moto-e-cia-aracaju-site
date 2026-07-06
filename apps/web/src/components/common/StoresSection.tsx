@@ -1,10 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, MessageCircle, Clock, ChevronLeft, ChevronRight, Navigation } from 'lucide-react';
+import { MapPin, Phone, MessageCircle, Clock, ChevronLeft, ChevronRight, Navigation, Store as StoreIcon } from 'lucide-react';
 import Image from 'next/image';
+import { lojas as lojasApi } from '@/lib/api';
+import type { LojaDto } from '@moto-e-cia/shared';
 
 const SectionWrapper = styled.section`
   padding: ${({ theme }) => `${theme.spacing['5xl']} 0`};
@@ -233,11 +235,30 @@ const Button = styled.a<{ $variant?: 'whatsapp' | 'primary' | 'outline' }>`
   }}
 `;
 
+const CarouselPlaceholder = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.3);
+`;
+
 const StoreCarousel = ({ images }: { images: string[] }) => {
   const [current, setCurrent] = useState(0);
 
   const nextSlide = () => setCurrent((prev) => (prev === images.length - 1 ? 0 : prev + 1));
   const prevSlide = () => setCurrent((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+
+  if (images.length === 0) {
+    return (
+      <CarouselContainer>
+        <CarouselPlaceholder>
+          <StoreIcon size={48} />
+        </CarouselPlaceholder>
+      </CarouselContainer>
+    );
+  }
 
   return (
     <CarouselContainer>
@@ -252,7 +273,7 @@ const StoreCarousel = ({ images }: { images: string[] }) => {
           <Image src={images[current]} alt="Loja da Moto e Cia" fill style={{ objectFit: 'cover' }} />
         </Slide>
       </AnimatePresence>
-      
+
       {images.length > 1 && (
         <>
           <NavButton className="prev" onClick={prevSlide} aria-label="Anterior">
@@ -268,34 +289,13 @@ const StoreCarousel = ({ images }: { images: string[] }) => {
 };
 
 export const StoresSection = () => {
-  const stores = [
-    {
-      id: 1,
-      name: 'Moto e Cia - Matriz',
-      address: 'Aracaju-SE: Av. Pedro Calazans, 717, Centro',
-      phone: '(79) 98166-4850',
-      whatsapp: '5579981664850',
-      schedule: 'Seg à Sex: 08:00 às 18:00 | Sáb: 08:00 às 13:00',
-      mapUrl: 'https://maps.google.com',
-      images: [
-        'https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1568772585407-9361f9bf3a87?q=80&w=2070&auto=format&fit=crop'
-      ]
-    },
-    {
-      id: 2,
-      name: 'Moto e Cia - Filial',
-      address: 'N. Sra. do Socorro-SE: Av. Moacir de Oliveira, 37, João Alves',
-      phone: '(79) 99147-0176',
-      whatsapp: '5579991470176',
-      schedule: 'Seg à Sex: 08:00 às 18:00 | Sáb: 08:00 às 13:00',
-      mapUrl: 'https://maps.google.com',
-      images: [
-        'https://images.unsplash.com/photo-1449426468159-d96dbf08f19f?q=80&w=2070&auto=format&fit=crop',
-        'https://images.unsplash.com/photo-1590740924900-534e7fb21ee8?q=80&w=2070&auto=format&fit=crop'
-      ]
-    }
-  ];
+  const [lojas, setLojas] = useState<LojaDto[]>([]);
+
+  useEffect(() => {
+    lojasApi.list().then(setLojas).catch(() => setLojas([]));
+  }, []);
+
+  if (lojas.length === 0) return null;
 
   return (
     <SectionWrapper id="nossas-lojas">
@@ -306,51 +306,53 @@ export const StoresSection = () => {
         </SectionHeader>
 
         <StoresGrid>
-          {stores.map((store) => (
-            <StoreCard 
-              key={store.id}
+          {lojas.map((loja) => (
+            <StoreCard
+              key={loja.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
               viewport={{ once: true, margin: '-50px' }}
             >
-              <StoreCarousel images={store.images} />
-              
+              <StoreCarousel images={loja.fotos.map(f => f.url)} />
+
               <StoreBody>
-                <StoreName>{store.name}</StoreName>
-                
+                <StoreName>Moto e Cia - {loja.nome}</StoreName>
+
                 <InfoList>
                   <InfoItem>
                     <MapPin size={20} />
-                    <span>{store.address}</span>
+                    <span>{loja.cidadeEstado}: {loja.endereco}</span>
                   </InfoItem>
                   <InfoItem>
                     <Phone size={20} />
-                    <span>{store.phone}</span>
+                    <span>{loja.telefone}</span>
                   </InfoItem>
                   <InfoItem>
                     <Clock size={20} />
-                    <span>{store.schedule}</span>
+                    <span>{loja.horario}</span>
                   </InfoItem>
                 </InfoList>
-                
+
                 <ActionButtons>
-                  <Button 
-                    href={`https://wa.me/${store.whatsapp}`} 
-                    target="_blank" 
+                  <Button
+                    href={`https://wa.me/${loja.whatsapp}`}
+                    target="_blank"
                     rel="noreferrer"
                     $variant="whatsapp"
                   >
                     <MessageCircle size={18} /> WhatsApp
                   </Button>
-                  <Button 
-                    href={store.mapUrl} 
-                    target="_blank" 
-                    rel="noreferrer"
-                    $variant="outline"
-                  >
-                    <Navigation size={18} /> Como Chegar
-                  </Button>
+                  {loja.mapUrl && (
+                    <Button
+                      href={loja.mapUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      $variant="outline"
+                    >
+                      <Navigation size={18} /> Como Chegar
+                    </Button>
+                  )}
                 </ActionButtons>
 
               </StoreBody>

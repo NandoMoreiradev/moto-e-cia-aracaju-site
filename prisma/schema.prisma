@@ -139,6 +139,35 @@ model Marca {
   @@map("marcas")
 }
 
+model Loja {
+  id           String     @id @default(cuid())
+  nome         String
+  cidadeEstado String
+  endereco     String
+  telefone     String
+  whatsapp     String
+  horario      String
+  mapUrl       String?
+  ordem        Int        @default(0)
+  ativa        Boolean    @default(true)
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  fotos        LojaFoto[]
+
+  @@map("lojas")
+}
+
+model LojaFoto {
+  id     String @id @default(cuid())
+  url    String
+  r2Key  String
+  ordem  Int    @default(0)
+  lojaId String
+  loja   Loja   @relation(fields: [lojaId], references: [id], onDelete: Cascade)
+
+  @@map("loja_fotos")
+}
+
 enum Role {
   ADMIN
   EDITOR
