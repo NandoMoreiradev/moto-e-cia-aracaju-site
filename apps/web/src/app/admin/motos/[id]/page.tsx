@@ -354,7 +354,15 @@ export default function AdminMotoEditPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '20px' }}>
               <AdminInput label="Ano Fabricação *" type="number" value={moto.anoFabricacao || ''} onChange={e => set('anoFabricacao', Number(e.target.value))} required />
               <AdminInput label="Ano Modelo *" type="number" value={moto.anoModelo || ''} onChange={e => set('anoModelo', Number(e.target.value))} required />
-              <AdminInput label="Quilometragem (KM) *" type="number" value={moto.km ?? ''} onChange={e => set('km', Number(e.target.value))} required />
+              <AdminInput
+                label="Quilometragem (KM) *"
+                type="text"
+                inputMode="numeric"
+                value={moto.km !== undefined && moto.km !== null ? moto.km.toLocaleString('pt-BR') : ''}
+                onChange={e => set('km', e.target.value.replace(/\D/g, '') ? Number(e.target.value.replace(/\D/g, '')) : 0)}
+                placeholder="Ex: 13.000"
+                required
+              />
               <AdminInput label="Cor Predominante" value={moto.cor || ''} onChange={e => set('cor', e.target.value)} placeholder="Ex: Azul Metálico" />
             </div>
 
@@ -463,6 +471,20 @@ export default function AdminMotoEditPage() {
           </AdminCard>
 
           {/* Media Section */}
+          {nova && (
+            <AdminCard title="Imagens da Moto">
+              <div style={{
+                padding: '20px', borderRadius: '12px', background: '#fcfaf5',
+                border: '1px dashed #e5d9b8', color: '#7a6a3a', fontSize: '13px', lineHeight: 1.5
+              }}>
+                <ImageIcon size={18} style={{ marginBottom: '8px' }} />
+                <div>
+                  Salve as informações básicas primeiro para liberar o envio de capa, logomarca e galeria de fotos.
+                  Ao clicar em <strong>Salvar</strong>, você será levado direto para a tela de edição com o upload de imagens disponível.
+                </div>
+              </div>
+            </AdminCard>
+          )}
           {!nova && (
             <>
               <AdminCard title="Imagens da Moto">

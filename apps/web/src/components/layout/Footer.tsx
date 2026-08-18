@@ -1,6 +1,7 @@
 'use client';
 
-import { Clock, Mail, MapPin, Smartphone, Facebook, Instagram } from 'lucide-react';
+import { Clock, Mail, MapPin, Facebook, Instagram } from 'lucide-react';
+import { WhatsAppIcon } from '@/components/common/WhatsAppIcon';
 import styled from 'styled-components';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -291,7 +292,7 @@ export function Footer() {
             </ContactInfo>
           ))}
           <WhatsappButton onClick={() => openWhatsApp()}>
-            <Smartphone size={18} />
+            <WhatsAppIcon size={18} />
             <span>Fale pelo WhatsApp</span>
           </WhatsappButton>
           <ContactInfo>

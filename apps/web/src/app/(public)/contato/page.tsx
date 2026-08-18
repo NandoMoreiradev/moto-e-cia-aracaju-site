@@ -258,7 +258,7 @@ export default function ContatoPage() {
             <Smartphone size={24} />
             <div>
               <h4>Telefone e WhatsApp</h4>
-              <p style={{ marginBottom: '8px' }}>Atendimento: (79) 3211-0000</p>
+              <p style={{ marginBottom: '8px' }}>Atendimento: (79) 99819-1298</p>
               <button 
                 onClick={() => openWhatsApp()} 
                 style={{ background: 'none', border: 'none', color: '#e31b23', fontWeight: 800, padding: 0, cursor: 'pointer', fontFamily: 'inherit', fontSize: '1rem', display: 'flex', alignItems: 'center', gap: '8px' }}

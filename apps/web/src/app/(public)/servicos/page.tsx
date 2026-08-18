@@ -218,41 +218,41 @@ const CTAButton = styled.button`
 `;
 
 const SERVICOS = [
-  { 
+  {
     id: 'oficina',
-    image: 'https://images.unsplash.com/photo-1558981806-ec527fa84c39?q=80&w=800&auto=format&fit=crop', 
-    titulo: 'Oficina Autorizada', 
-    desc: 'Mecânicos treinados na fábrica preparados para diagnosticar e reparar sua moto com peças originais e garantia de serviço.' 
+    image: '/servicos/oficina.jpg',
+    titulo: 'Oficina Autorizada',
+    desc: 'Mecânicos treinados na fábrica preparados para diagnosticar e reparar sua moto com peças originais e garantia de serviço.'
   },
-  { 
+  {
     id: 'revisao',
-    image: 'https://images.unsplash.com/photo-1579290680388-33dcce0633ed?q=80&w=800&auto=format&fit=crop', 
-    titulo: 'Revisão Periódica', 
-    desc: 'Mantenha sua garantia em dia e sua moto segura. Agende sua revisão com antecedência e garanta o melhor desempenho.' 
+    image: '/servicos/revisao.jpg',
+    titulo: 'Revisão Periódica',
+    desc: 'Mantenha sua garantia em dia e sua moto segura. Agende sua revisão com antecedência e garanta o melhor desempenho.'
   },
-  { 
+  {
     id: 'pecas',
-    image: 'https://images.unsplash.com/photo-1620311497217-1fc9d01217e9?q=80&w=800&auto=format&fit=crop', 
-    titulo: 'Peças Originais', 
-    desc: 'Boutique completa com peças originais Suzuki, Haojue e Zontes. Vida longa para o seu motor.' 
+    image: '/servicos/pecas.jpg',
+    titulo: 'Peças Originais',
+    desc: 'Boutique completa com peças originais Suzuki, Haojue e Zontes. Vida longa para o seu motor.'
   },
-  { 
+  {
     id: 'acessorios',
-    image: 'https://images.unsplash.com/photo-1533090368676-1fd25485eaee?q=80&w=800&auto=format&fit=crop', 
-    titulo: 'Acessórios e Boutique', 
-    desc: 'Capacetes, jaquetas, baús, protetores de motor e tudo mais que você precisa para equipar sua moto e você mesmo.' 
+    image: '/servicos/acessorios.jpg',
+    titulo: 'Acessórios e Boutique',
+    desc: 'Capacetes, jaquetas, baús, protetores de motor e tudo mais que você precisa para equipar sua moto e você mesmo.'
   },
-  { 
+  {
     id: 'financiamento',
-    image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=800&auto=format&fit=crop', 
-    titulo: 'Financiamento e Consórcio', 
-    desc: 'As melhores taxas do mercado. Trabalhamos com consórcios e cartas de crédito contempladas. Realize seu sonho.' 
+    image: 'https://images.unsplash.com/photo-1554224155-8d04cb21cd6c?q=80&w=800&auto=format&fit=crop',
+    titulo: 'Financiamento e Consórcio',
+    desc: 'As melhores taxas do mercado. Trabalhamos com consórcios e cartas de crédito contempladas. Realize seu sonho.'
   },
-  { 
+  {
     id: 'seguros',
-    image: 'https://images.unsplash.com/photo-1450101499163-c8848c66cb85?q=80&w=800&auto=format&fit=crop', 
-    titulo: 'Seguros Parceiros', 
-    desc: 'Saia da concessionária tranquilo. Temos parcerias com as melhores seguradoras para proteger seu novo bem.' 
+    image: '/servicos/seguros.jpg',
+    titulo: 'Seguros Parceiros',
+    desc: 'Saia da concessionária tranquilo. Temos parcerias com as melhores seguradoras para proteger seu novo bem.'
   },
 ];
 

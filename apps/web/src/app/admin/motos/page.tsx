@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import type { CSSProperties } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { adminMotos } from '@/lib/api';
@@ -18,27 +19,66 @@ const STATUS_LABEL: Record<string, { label: string; color: string }> = {
   ALUGUEL: { label: 'Aluguel', color: '#4f8ef7' },
 };
 
+const MARCAS = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO'];
+const TIPOS = ['SPORT', 'NAKED', 'ADVENTURE', 'SCOOTER', 'TRAIL', 'STREET', 'CROSSOVER', 'CUSTOM', 'TOURING', 'BIGTRAIL', 'OFFROAD', 'CRUISER', 'CAFERACER'];
+const CONDICOES = ['NOVA', 'SEMINOVA'];
+
+const selectStyle: CSSProperties = {
+  padding: '11px 14px', background: '#fcfcfc',
+  border: '1px solid #e5e5e5', borderRadius: '10px',
+  color: '#111', fontSize: '14px', outline: 'none',
+  minWidth: '150px'
+};
+
 export default function AdminMotosPage() {
   const [motos, setMotos] = useState<MotoDto[]>([]);
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [marcaFilter, setMarcaFilter] = useState('');
+  const [tipoFilter, setTipoFilter] = useState('');
+  const [condicaoFilter, setCondicaoFilter] = useState('');
   const [loading, setLoading] = useState(true);
   const [deleting, setDeleting] = useState<string | null>(null);
+
+  useEffect(() => {
+    const timer = setTimeout(() => { setSearch(searchInput); setPage(1); }, 350);
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      const res = await adminMotos.list({ page, limit: 12, search: search || undefined, status: (statusFilter as any) || undefined });
+      const res = await adminMotos.list({
+        page, limit: 12,
+        search: search || undefined,
+        status: (statusFilter as any) || undefined,
+        marca: (marcaFilter as any) || undefined,
+        tipo: (tipoFilter as any) || undefined,
+        condicao: (condicaoFilter as any) || undefined,
+      });
       setMotos(res.data);
       setTotal(res.total);
     } finally {
       setLoading(false);
     }
-  }, [page, search, statusFilter]);
+  }, [page, search, statusFilter, marcaFilter, tipoFilter, condicaoFilter]);
 
   useEffect(() => { load(); }, [load]);
+
+  const hasFilters = !!(search || statusFilter || marcaFilter || tipoFilter || condicaoFilter);
+
+  function clearFilters() {
+    setSearchInput('');
+    setSearch('');
+    setStatusFilter('');
+    setMarcaFilter('');
+    setTipoFilter('');
+    setCondicaoFilter('');
+    setPage(1);
+  }
 
   async function handleDelete(id: string, nome: string) {
     if (!confirm(`Tem certeza que deseja excluir "${nome}"?`)) return;
@@ -76,26 +116,21 @@ export default function AdminMotosPage() {
       <AdminCard style={{ padding: '16px 20px' }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
           <div style={{ flex: 1, minWidth: '280px' }}>
-            <AdminInput 
-              placeholder="Buscar por nome, marca ou descrição..." 
-              value={search}
-              onChange={e => { setSearch(e.target.value); setPage(1); }}
+            <AdminInput
+              placeholder="Buscar por nome, marca ou descrição..."
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
               icon={<Search size={18} />}
               style={{ marginBottom: 0 }}
             />
           </div>
-          
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flexWrap: 'wrap' }}>
             <Filter size={16} color="#999" />
             <select
               value={statusFilter}
               onChange={e => { setStatusFilter(e.target.value); setPage(1); }}
-              style={{
-                padding: '11px 14px', background: '#fcfcfc',
-                border: '1px solid #e5e5e5', borderRadius: '10px',
-                color: '#111', fontSize: '14px', outline: 'none',
-                minWidth: '160px'
-              }}
+              style={selectStyle}
             >
               <option value="">Todos os status</option>
               <option value="DISPONIVEL">Disponíveis</option>
@@ -103,6 +138,39 @@ export default function AdminMotosPage() {
               <option value="VENDIDA">Vendidas</option>
               <option value="ALUGUEL">Aluguel</option>
             </select>
+
+            <select
+              value={marcaFilter}
+              onChange={e => { setMarcaFilter(e.target.value); setPage(1); }}
+              style={selectStyle}
+            >
+              <option value="">Todas as marcas</option>
+              {MARCAS.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+
+            <select
+              value={tipoFilter}
+              onChange={e => { setTipoFilter(e.target.value); setPage(1); }}
+              style={selectStyle}
+            >
+              <option value="">Todos os tipos</option>
+              {TIPOS.map(t => <option key={t} value={t}>{t}</option>)}
+            </select>
+
+            <select
+              value={condicaoFilter}
+              onChange={e => { setCondicaoFilter(e.target.value); setPage(1); }}
+              style={selectStyle}
+            >
+              <option value="">Nova e Seminova</option>
+              {CONDICOES.map(c => <option key={c} value={c}>{c === 'NOVA' ? 'Nova' : 'Seminova'}</option>)}
+            </select>
+
+            {hasFilters && (
+              <AdminButton variant="secondary" size="sm" type="button" onClick={clearFilters}>
+                Limpar
+              </AdminButton>
+            )}
           </div>
         </div>
       </AdminCard>
@@ -122,7 +190,7 @@ export default function AdminMotosPage() {
           <div style={{ marginBottom: '16px', color: '#ccc' }}><Bike size={48} /></div>
           <h3 style={{ fontSize: '18px', fontWeight: 700, color: '#111' }}>Nenhuma moto encontrada</h3>
           <p style={{ color: '#999', marginBottom: '24px' }}>Não encontramos resultados para os filtros aplicados.</p>
-          <AdminButton variant="secondary" onClick={() => { setSearch(''); setStatusFilter(''); }}>
+          <AdminButton variant="secondary" onClick={clearFilters}>
             Limpar Filtros
           </AdminButton>
         </AdminCard>
