@@ -180,12 +180,20 @@ export default function MotoDetalhePage() {
               border: '1px solid #eaeaea',
               gap: '6px'
             }}>
-              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333', color: '#fff', width: '14px', height: '14px', borderRadius: '50%', fontSize: '8px' }}>✓</span> 
-              SEMINOVA 
+              <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#333', color: '#fff', width: '14px', height: '14px', borderRadius: '50%', fontSize: '8px' }}>✓</span>
+              SEMINOVA
+              {(moto.anoFabricacao || moto.anoModelo) && (
+                <>
+                  <span style={{ color: '#999', margin: '0 2px' }}>•</span>
+                  {moto.anoFabricacao ? `${moto.anoFabricacao}/` : ''}{moto.anoModelo || ''}
+                </>
+              )}
               {moto.km !== null && (
                 <>
                   <span style={{ color: '#999', margin: '0 2px' }}>•</span>
-                  {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                  <span style={{ fontSize: '15px', fontWeight: 800, color: '#111' }}>
+                    {moto.km === 0 ? '0 km' : `${moto.km.toLocaleString('pt-BR')} km`}
+                  </span>
                 </>
               )}
             </div>
