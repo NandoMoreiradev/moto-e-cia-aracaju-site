@@ -113,7 +113,7 @@ export default function AdminMotosPage() {
       </div>
 
       {/* Filters Area */}
-      <AdminCard style={{ padding: '16px 20px' }}>
+      <AdminCard style={{ padding: '16px 20px', marginBottom: '24px' }}>
         <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', alignItems: 'center' }}>
           <div style={{ flex: 1, minWidth: '280px' }}>
             <AdminInput
