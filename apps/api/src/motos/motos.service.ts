@@ -1,10 +1,13 @@
 import { Injectable, NotFoundException, ConflictException } from '@nestjs/common';
+import { Prisma } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { R2Service } from '../r2/r2.service';
 import { MetaService } from '../meta/meta.service';
 import { CreateMotoDto } from './dto/create-moto.dto';
 import { UpdateMotoDto } from './dto/update-moto.dto';
 import slugify from 'slugify';
+
+const MARCAS_MOTO = ['SUZUKI', 'HAOJUE', 'ZONTES', 'KYMCO', 'OUTRO'];
 
 @Injectable()
 export class MotosService {
@@ -38,10 +41,22 @@ export class MotosService {
     if (filters.status) where.status = filters.status;
     if (filters.destaque !== undefined) where.destaque = filters.destaque;
     if (filters.search) {
-      where.OR = [
-        { nome: { contains: filters.search, mode: 'insensitive' } },
-        { descricao: { contains: filters.search, mode: 'insensitive' } },
-      ];
+      const terms = filters.search.trim().split(/\s+/).filter(Boolean);
+      if (terms.length) {
+        const conditions = terms.map((term) => {
+          const matchingMarcas = MARCAS_MOTO.filter((m) => m.toLowerCase().includes(term.toLowerCase()));
+          const pattern = `%${term}%`;
+          return Prisma.sql`(
+            unaccent(nome) ILIKE unaccent(${pattern})
+            OR unaccent(descricao) ILIKE unaccent(${pattern})
+            ${matchingMarcas.length ? Prisma.sql`OR marca::text IN (${Prisma.join(matchingMarcas)})` : Prisma.empty}
+          )`;
+        });
+        const matched = await this.prisma.$queryRaw<{ id: string }[]>(
+          Prisma.sql`SELECT id FROM motos WHERE ${Prisma.join(conditions, ' AND ')}`,
+        );
+        where.id = { in: matched.map((m) => m.id) };
+      }
     }
     if (filters.condicao === 'NOVA') {
       where.km = 0;
